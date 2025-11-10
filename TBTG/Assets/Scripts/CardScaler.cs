@@ -26,6 +26,9 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private Canvas _canvas;
     private int _originalSortOrder;
 
+    private bool _isDragging = false;
+    private Vector3 _dragOffset;
+
     void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
@@ -95,6 +98,27 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
         // Починаємо анімацію повернення до початкового масштабу, і скинемо order в кінці корутини.
         _scaleCoroutine = StartCoroutine(ScaleToTarget(InitialScale, false));
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        _isDragging = true;
+        _dragOffset = transform.position - Input.mousePosition;
+        _canvas.sortingOrder = _originalSortOrder + SortOrderIncrease;
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (_isDragging)
+        {
+            transform.position = Input.mousePosition + _dragOffset;
+        }
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        _isDragging = false;
+        // Тут додати логіку перевірки зони скидання
     }
 
     /// <summary>

@@ -25,6 +25,10 @@ public class CameraController : MonoBehaviour
     private float _currentX;
     private float _currentY;
 
+    [Header("Field Bounds")]
+    public Vector2 FieldSize = new Vector2(9, 9); // За замовчуванням для 2 гравців
+    public float CellSize = 1f;
+
     // Нове поле: Зберігає поточну згладжену позицію, навколо якої ми обертаємось.
     private Vector3 _currentFocusPosition;
     // Вектор швидкості для плавного руху (потрібен для SmoothDamp)
@@ -128,6 +132,20 @@ public class CameraController : MonoBehaviour
             _distance -= scrollInput * ZoomSpeed * Time.deltaTime;
             _distance = Mathf.Clamp(_distance, MinZoomDistance, MaxZoomDistance);
         }
+    }
+
+    public Vector3 GetWorldPositionFromGrid(Vector2Int gridPosition)
+    {
+        float x = (gridPosition.x - FieldSize.x / 2) * CellSize;
+        float z = (gridPosition.y - FieldSize.y / 2) * CellSize;
+        return new Vector3(x, 0, z);
+    }
+
+    public Vector2Int GetGridPositionFromWorld(Vector3 worldPosition)
+    {
+        int x = Mathf.RoundToInt(worldPosition.x / CellSize + FieldSize.x / 2);
+        int y = Mathf.RoundToInt(worldPosition.z / CellSize + FieldSize.y / 2);
+        return new Vector2Int(x, y);
     }
 
     // LateUpdate ідеально підходить для логіки камери
