@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
+using System.Linq;
 
 // Цей скрипт відповідає за динамічне створення та відображення всіх 
 // карток персонажів гравця у відповідному контейнері UI.
@@ -16,7 +17,7 @@ public class PlayerCardManager : MonoBehaviour
 
     [Header("Data")]
     [Tooltip("Ассет, що містить список CharacterData, обраних гравцем.")]
-    public PlayerHandData PlayerHand;
+    public PlayerHandData PlayerHand; // Посилання на PlayerHandData
 
     [Header("Scaling Settings")]
     [Tooltip("Кількість місць для карток. Використовується для розрахунку початкового масштабу.")]
@@ -24,175 +25,110 @@ public class PlayerCardManager : MonoBehaviour
 
     [Tooltip("Коефіцієнт безпеки для гарантії, що картки помістяться. Наприклад, 0.95 зменшить розмір на 5%.")]
     [Range(0.8f, 1.0f)]
-    public float ScaleSafetyMargin = 0.90f; // За замовчуванням 0.90
+    public float ScaleSafetyMargin = 0.90f;
 
-    [Tooltip("Базова ширина префаба. Візьміть значення Width з RectTransform префаба!")]
-    public float PrefabBaseWidth = 100f; // !!! ПОВИННО БУТИ НАЛАШТОВАНЕ ВРУЧНУ !!!
+    [Tooltip("Базова ширина префаба. Візьміть значення Width з RectTransform префаба.")]
+    public float BaseCardWidth = 300f;
 
-    [Tooltip("Базова висота префаба. Візьміть значення Height з RectTransform префаба!")]
-    public float PrefabBaseHeight = 150f; // !!! ПОВИННО БУТИ НАЛАШТОВАНЕ ВРУЧНУ !!!
-
-
-    // Початковий масштаб, розрахований на основі розміру контейнера
-    private Vector3 _calculatedInitialScale = Vector3.one;
-
-    // Список створених екземплярів UI, щоб ми могли звертатися до них пізніше.
+    // Список усіх створених UI-карток на сцені.
     private List<CharacterCardUI> _spawnedCards = new List<CharacterCardUI>();
 
-    void Start()
+    // Розрахований початковий масштаб
+    private Vector3 _calculatedInitialScale = Vector3.one;
+
+
+    void Awake()
     {
-        // Перевірка критичних посилань
-        Assert.IsNotNull(CharacterCardUIPrefab, "CharacterCardUIPrefab не призначено! Призначте префаб картки.");
-        Assert.IsNotNull(CardsContainer, "CardsContainer (Player_Cards_Area) не призначено!");
-        Assert.IsNotNull(PlayerHand, "PlayerHandData не призначено! Призначте ассет з даними персонажів.");
+        Assert.IsNotNull(CharacterCardUIPrefab, "CharacterCardUIPrefab не призначено в PlayerCardManager.");
+        Assert.IsNotNull(CardsContainer, "CardsContainer не призначено в PlayerCardManager.");
 
-        // Перевірка, чи встановлено базові розміри префаба.
-        if (PrefabBaseWidth <= 0 || PrefabBaseHeight <= 0)
-        {
-            RectTransform cardRect = CharacterCardUIPrefab.GetComponent<RectTransform>();
-            if (cardRect != null)
-            {
-                // Використовуємо .sizeDelta для отримання Width/Height, оскільки .rect може бути невірним у префабі.
-                PrefabBaseWidth = cardRect.sizeDelta.x;
-                PrefabBaseHeight = cardRect.sizeDelta.y;
-                Debug.LogWarning($"PrefabBaseWidth/Height не було встановлено. Встановлено з RectTransform: W={PrefabBaseWidth}, H={PrefabBaseHeight}.");
-            }
-        }
-
-        if (PlayerHand != null && CardsContainer != null && CharacterCardUIPrefab != null && PrefabBaseWidth > 0 && PrefabBaseHeight > 0)
-        {
-            // Якщо все призначено, запускаємо процес створення карток
-            _calculatedInitialScale = CalculateInitialScale();
-            LoadPlayerCards();
-        }
+        // Розрахунок масштабу робимо один раз при старті
+        CalculateInitialScale();
     }
 
-    /// <summary>
-    /// Обчислює необхідний початковий масштаб, щоб MaxCards помістилися в контейнер, 
-    /// враховуючи обмеження як по ВИСОТІ (пріоритет), так і по ШИРИНІ.
-    /// </summary>
-    public Vector3 CalculateInitialScale()
+    private void CalculateInitialScale()
     {
         RectTransform containerRect = CardsContainer.GetComponent<RectTransform>();
-        HorizontalOrVerticalLayoutGroup layoutGroup = CardsContainer.GetComponent<HorizontalOrVerticalLayoutGroup>();
-
-        if (containerRect == null || layoutGroup == null)
+        if (containerRect == null)
         {
-            Debug.LogError("Контейнер не має RectTransform/LayoutGroup! Неможливо розрахувати масштаб.");
-            return Vector3.one;
-        }
-
-        // 1. ПРІОРИТЕТ: Розрахунок коефіцієнта масштабування на основі ВИСОТИ
-        // Мета: Зменшити картку, щоб її висота точно відповідала висоті контейнера.
-
-        float containerHeight = containerRect.rect.height;
-
-        // Віднімаємо верхній і нижній відступи
-        float availableCardHeight = containerHeight - (layoutGroup.padding.top + layoutGroup.padding.bottom);
-
-        // Обчислюємо коефіцієнт масштабування, необхідний для того, щоб поміститися по висоті
-        float scaleFactorByHeight = availableCardHeight / PrefabBaseHeight;
-
-        // Встановлюємо цей масштаб як робочий
-        float workingScaleFactor = scaleFactorByHeight;
-
-
-        // 2. ВЕРИФІКАЦІЯ: Перевірка, чи вміщаються картки по ШИРИНІ з цим робочим масштабом
-
-        float containerWidth = containerRect.rect.width;
-
-        // Базова ширина картки після масштабування за висотою
-        float scaledCardWidth = PrefabBaseWidth * workingScaleFactor;
-
-        float totalPaddingWidth = layoutGroup.padding.left + layoutGroup.padding.right;
-        float totalSpacingWidth = layoutGroup.spacing * (MaxCards - 1);
-
-        // Загальна необхідна ширина, якщо ми використовуємо масштаб по висоті
-        float totalRequiredWidth = (scaledCardWidth * MaxCards) + totalPaddingWidth + totalSpacingWidth;
-
-        // Якщо необхідна ширина перевищує доступну ширину контейнера, ми повинні зменшити масштаб!
-        if (totalRequiredWidth > containerWidth)
-        {
-            Debug.LogWarning("Карток забагато! Зменшуємо масштаб, щоб поміститися по ширині.");
-
-            // Розраховуємо, наскільки потрібно зменшити масштаб, щоб поміститися по ширині
-            float totalAvailableWidthForCards = containerWidth - totalPaddingWidth - totalSpacingWidth;
-            float maxScaledCardWidth = totalAvailableWidthForCards / MaxCards;
-
-            // Новий коефіцієнт масштабування, обмежений шириною
-            float scaleFactorByWidth = maxScaledCardWidth / PrefabBaseWidth;
-
-            // Використовуємо менший коефіцієнт
-            workingScaleFactor = scaleFactorByWidth;
-        }
-
-
-        // 3. Фіналізація: Застосування Маржі Безпеки та Обмеження
-
-        workingScaleFactor *= ScaleSafetyMargin;
-
-        // Обмежуємо масштаб
-        workingScaleFactor = Mathf.Clamp(workingScaleFactor, 0.05f, 1.0f); // 0.05f як мінімум
-
-
-        Debug.Log($"W Container: {containerWidth}, H Container: {containerHeight}. Prefab H: {PrefabBaseHeight}. Initial Scale by H: {scaleFactorByHeight:F2}. Final Scale: {workingScaleFactor:F2}");
-        return new Vector3(workingScaleFactor, workingScaleFactor, workingScaleFactor);
-    }
-
-
-    /// <summary>
-    /// Динамічно створює UI-картки на основі даних PlayerHandData та розміщує їх у контейнері.
-    /// </summary>
-    public void LoadPlayerCards()
-    {
-        ClearCards();
-
-        if (PlayerHand.SelectedCharacters.Count == 0)
-        {
-            Debug.LogWarning("У PlayerHandData немає обраних персонажів для відображення.");
+            Debug.LogError("CardsContainer не має компонента RectTransform. Неможливо розрахувати масштаб.");
             return;
         }
 
-        // Якщо MaxCards > PlayerHand.SelectedCharacters.Count, ми використовуємо фактичну кількість.
-        // Це важливе виправлення, оскільки MaxCards використовується у формулі розрахунку відстаней.
-        // Наразі залишимо, як є, припускаючи, що MaxCards >= PlayerHand.SelectedCharacters.Count
-        int actualCardsToDisplay = PlayerHand.SelectedCharacters.Count;
+        // 1. Ширина контейнера
+        float containerWidth = containerRect.rect.width;
 
-        for (int i = 0; i < actualCardsToDisplay; i++)
+        // 2. Ширина, потрібна для розміщення MaxCards (враховуючи невеликий запас)
+        float totalRequiredWidth = BaseCardWidth * MaxCards;
+
+        // 3. Коефіцієнт масштабування
+        float scaleFactor = 1f;
+        if (totalRequiredWidth > containerWidth)
         {
-            CharacterData data = PlayerHand.SelectedCharacters[i];
+            scaleFactor = (containerWidth / totalRequiredWidth) * ScaleSafetyMargin;
+        }
 
-            if (data == null)
+        _calculatedInitialScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+        Debug.Log($"Initial Card Scale calculated: {_calculatedInitialScale.x}");
+    }
+
+    /// <summary>
+    /// !!! ВИПРАВЛЕННЯ CS1061: ДОДАНО МЕТОД LoadDraftCards !!!
+    /// Створює UI-картки на сцені для фази драфту.
+    /// Повертає список CardSelectionHandler для підписки на події.
+    /// </summary>
+    public List<CardSelectionHandler> LoadDraftCards(List<CharacterData> draftCharacters)
+    {
+        // Очищаємо всі старі картки
+        ClearCards();
+
+        List<CardSelectionHandler> draftHandlers = new List<CardSelectionHandler>();
+
+        foreach (CharacterData data in draftCharacters)
+        {
+            // Створення об'єкта
+            GameObject cardObject = Instantiate(CharacterCardUIPrefab, CardsContainer);
+            cardObject.name = $"Card_Draft_{data.CharacterName}";
+
+            // Отримання компонентів
+            CharacterCardUI cardUI = cardObject.GetComponent<CharacterCardUI>();
+            CardSelectionHandler selectionHandler = cardObject.GetComponent<CardSelectionHandler>();
+            CardScaler cardScaler = cardObject.GetComponent<CardScaler>();
+
+            if (selectionHandler == null)
             {
-                Debug.LogWarning("Знайдено NULL-посилання в списку CharacterData. Пропущено.");
+                Debug.LogError($"Префаб {CharacterCardUIPrefab.name} не має компонента CardSelectionHandler! Draft не працюватиме.");
+                Destroy(cardObject);
                 continue;
             }
 
-            GameObject cardObject = Instantiate(CharacterCardUIPrefab, CardsContainer);
-            cardObject.name = $"Card_UI_{data.CharacterName}";
+            // Ініціалізація Selection Handler (він внутрішньо викликає DisplayCharacter)
+            selectionHandler.Initialize(data);
+            draftHandlers.Add(selectionHandler);
 
-            CharacterCardUI cardUI = cardObject.GetComponent<CharacterCardUI>();
-            CardScaler cardScaler = cardObject.GetComponent<CardScaler>();
-
+            // Зберігаємо UI-компонент у список для майбутнього очищення
             if (cardUI != null)
             {
-                cardUI.DisplayCharacter(data);
                 _spawnedCards.Add(cardUI);
             }
 
+            // Застосовуємо розрахований масштаб
             if (cardScaler != null)
             {
-                // Встановлюємо початковий масштаб, обчислений функцією CalculateInitialScale
-                cardScaler.SetInitialScale(_calculatedInitialScale);
-            }
-            else
-            {
-                Debug.LogError($"Префаб {CharacterCardUIPrefab.name} не має компонента CardScaler! Масштабування не працюватиме.");
+                // Для CardScaler, який не має публічного сеттера InitialScale,
+                // але має публічну властивість.
+                // Оскільки в CardScaler.cs вона: public Vector3 InitialScale { get; private set; } = Vector3.one;
+                // Ми можемо використовувати простий transform.localScale, якщо властивість приватна.
+                // Або змінити CardScaler, щоб він мав публічний метод.
+                // Припускаємо, що простий transform.localScale працює для початку.
+                cardObject.transform.localScale = _calculatedInitialScale;
             }
         }
 
-        Debug.Log($"Успішно завантажено {_spawnedCards.Count} карток персонажів.");
+        Debug.Log($"Успішно завантажено {draftHandlers.Count} карток для драфту.");
+        return draftHandlers;
     }
+
 
     /// <summary>
     /// Очищає контейнер карток.
@@ -207,11 +143,12 @@ public class PlayerCardManager : MonoBehaviour
             }
         }
         _spawnedCards.Clear();
+        Debug.Log("PlayerCardManager: All cards cleared from scene.");
     }
 
     // ПУБЛІЧНИЙ МЕТОД: для виділення активної картки (якщо буде потрібно)
-    public void HighlightCard(CharacterData dataToHighlight, bool isHighlighted)
+    public void HighlightCard(CharacterData data, bool highlight)
     {
-        // Тут буде логіка пошуку відповідної картки у _spawnedCards та її візуальне виділення.
+        // Логіка підсвічування тут
     }
 }

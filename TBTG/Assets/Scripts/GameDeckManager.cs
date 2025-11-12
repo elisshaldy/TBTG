@@ -12,8 +12,13 @@ public class GameDeckManager : MonoBehaviour
     [Tooltip("Головна колода (пул) усіх доступних карт.")]
     public MasterDeckData MasterDeck;
 
-    [Tooltip("Рука гравця, куди ми зберігаємо обрані карти.")]
-    public PlayerHandData PlayerHand;
+    // !!! НОВЕ: Для Hot-Seat нам потрібні окремі посилання на руки гравців !!!
+    [Tooltip("Рука гравця 1, куди ми зберігаємо обрані карти.")]
+    public PlayerHandData Player1Hand;
+
+    [Tooltip("Рука гравця 2, куди ми зберігаємо обрані карти.")]
+    public PlayerHandData Player2Hand;
+    // ------------------------------------------------------------------
 
     [Header("Draft UI")]
     [Tooltip("Кнопка, яка підтверджує вибір 8 карт.")]
@@ -21,6 +26,9 @@ public class GameDeckManager : MonoBehaviour
 
     [Tooltip("Необхідна кількість карт, яку гравець має обрати.")]
     public int CardsToSelect = 8;
+
+    [Tooltip("Кількість карт, які будуть показані для вибору.")]
+    public int CardsToShow = 10;
     // -------------------------------------------------------------------
 
 
@@ -37,122 +45,104 @@ public class GameDeckManager : MonoBehaviour
 
     private bool _isDraftPhaseActive = false;
 
+    // !!! НОВЕ: Поточна активна рука гравця (для Hot-Seat) !!!
+    private PlayerHandData _activePlayerHand;
+    // !!! НОВЕ: Поточний ID гравця (для Hot-Seat) !!!
+    private int _activePlayerID = 1;
+
 
     void Awake()
     {
-        _gameManager = FindObjectOfType<GameManager>();
-        Assert.IsNotNull(_gameManager, "GameManager не знайдено!");
+        // Переконайтеся, що всі необхідні посилання встановлені
+        Assert.IsNotNull(MasterDeck, "MasterDeckData не призначено в GameDeckManager.");
+        Assert.IsNotNull(Player1Hand, "Player1HandData не призначено в GameDeckManager.");
+        Assert.IsNotNull(Player2Hand, "Player2HandData не призначено в GameDeckManager.");
+        Assert.IsNotNull(CardManager, "CardManager не призначено в GameDeckManager.");
+
+        // Знаходимо GameManager, якщо він не призначений
+        if (_gameManager == null) _gameManager = FindObjectOfType<GameManager>();
+
+        if (ConfirmSelectionButton != null) ConfirmSelectionButton.SetActive(false);
     }
 
     void Start()
     {
-        // Перевірка, що всі ScriptableObjects призначені
-        Assert.IsNotNull(MasterDeck, "MasterDeck (тип MasterDeckData) не призначено!");
-        Assert.IsNotNull(PlayerHand, "PlayerHand не призначено!");
-        Assert.IsNotNull(CardManager, "CardManager не призначено!");
-
-        // Налаштування кнопки підтвердження
-        if (ConfirmSelectionButton != null)
-        {
-            ConfirmSelectionButton.SetActive(false);
-            Button btn = ConfirmSelectionButton.GetComponent<Button>();
-            if (btn != null)
-            {
-                btn.onClick.RemoveAllListeners();
-                btn.onClick.AddListener(ConfirmSelection);
-            }
-        }
+        // Припускаємо, що GameManager ініціалізує PlayerHand'и.
+        // Починаємо драфт для першого гравця.
+        StartDraftPhase();
     }
+
+
+    // ----------------------------------------------------------------------
+    // ФАЗА ДРАФТУ
+    // ----------------------------------------------------------------------
 
     public void StartDraftPhase()
     {
-        _isDraftPhaseActive = true;
+        // Визначаємо, чий хід зараз (P1 або P2)
+        _activePlayerHand = (_activePlayerID == 1) ? Player1Hand : Player2Hand;
+
+        // Очищаємо тимчасовий список вибору
         _selectedCharacters.Clear();
-        PlayerHand.SelectedCharacters.Clear();
+        _isDraftPhaseActive = true;
 
-        // Отримуємо 10 унікальних карток для початкового драфту
-        List<CharacterData> draftPool = GetUniqueRandomCards(10);
+        // !!! ВИПРАВЛЕННЯ CS1061 (Line 78) - Повне очищення руки гравця !!!
+        // Очищаємо активну руку перед початком кожного драфту (вибрані + відкинуті)
+        _activePlayerHand.ClearHand();
+        Debug.Log($"P{_activePlayerID}: Starting Draft Phase. Hand cleared.");
 
-        DisplayDraftCards(draftPool);
+        // 1. Визначаємо пул карт для показу
+        // Враховуємо карти, які вже були обрані іншим гравцем (для P2)
+        List<CharacterData> availablePool = MasterDeck.AllAvailableCharacters
+            .Except(Player1Hand.SelectedCharacters) // Виключаємо обрані P1 (для P2)
+            .Except(Player2Hand.SelectedCharacters) // Виключаємо обрані P2 (для P1 - тут поки що нічого, але корисно)
+            .ToList();
 
-        UpdateConfirmButtonState();
+        // 2. Рандомізуємо та обираємо CardsToShow карт
+        List<CharacterData> draftPool = availablePool
+            .OrderBy(x => Random.value)
+            .Take(CardsToShow) // Беремо 10 карт
+            .ToList();
 
-        Debug.Log("Draft Phase started. Select 8 characters.");
-    }
-
-    private List<CharacterData> GetUniqueRandomCards(int count)
-    {
-        // Використовуємо поле AllAvailableCharacters з MasterDeckData
-        if (MasterDeck.AllAvailableCharacters == null || MasterDeck.AllAvailableCharacters.Count < count)
-        {
-            Debug.LogError($"Недостатньо карт у MasterDeck ({MasterDeck.AllAvailableCharacters?.Count ?? 0} доступно). Потрібно {count}.");
-            return MasterDeck.AllAvailableCharacters?.Take(count).ToList() ?? new List<CharacterData>();
-        }
-
-        return MasterDeck.AllAvailableCharacters
-                            .OrderBy(x => Random.value) // Рандомізація
-                            .Take(count)                 // Вибір необхідної кількості
-                            .ToList();
-    }
-
-    private void DisplayDraftCards(List<CharacterData> cards)
-    {
-        // Викликаємо public методи CardManager
-        Vector3 scale = CardManager.CalculateInitialScale();
-
-        CardManager.ClearCards(); // ВИПРАВЛЕННЯ CS0122: ClearCards тепер public
-
+        // 3. Створюємо картки на сцені
         _activeDraftCards.Clear();
 
-        foreach (CharacterData data in cards)
+        // !!! ВИКЛИК ВИПРАВЛЕНОГО МЕТОДУ LoadDraftCards !!!
+        _activeDraftCards = CardManager.LoadDraftCards(draftPool);
+
+        // 4. Призначаємо обробники кліків
+        foreach (var cardHandler in _activeDraftCards)
         {
-            // Створення та налаштування картки
-            GameObject cardObject = Instantiate(CardManager.CharacterCardUIPrefab, CardManager.CardsContainer);
-            cardObject.name = $"Draft_Card_{data.CharacterName}";
-
-            CardScaler cardScaler = cardObject.GetComponent<CardScaler>();
-            if (cardScaler != null)
-            {
-                cardScaler.SetInitialScale(scale);
-            }
-
-            CardSelectionHandler selectionHandler = cardObject.GetComponent<CardSelectionHandler>();
-            if (selectionHandler == null)
-            {
-                selectionHandler = cardObject.AddComponent<CardSelectionHandler>();
-            }
-
-            selectionHandler.Initialize(data);
-            selectionHandler.OnCardClicked += HandleCardClicked; // Підписка на клік
-
-            _activeDraftCards.Add(selectionHandler);
+            cardHandler.OnCardClicked += HandleCardSelection;
         }
+
+        UpdateConfirmButtonState();
     }
 
-    private void HandleCardClicked(CardSelectionHandler clickedCard)
+
+    /// <summary>
+    /// Обробляє клік по картці.
+    /// </summary>
+    private void HandleCardSelection(CardSelectionHandler handler)
     {
         if (!_isDraftPhaseActive) return;
 
-        CharacterData data = clickedCard.CardData;
-
-        if (clickedCard.IsSelected)
+        if (handler.IsSelected)
         {
-            // Зняти вибір
-            _selectedCharacters.Remove(data);
-            clickedCard.SetSelection(false);
+            // Скасування виділення
+            handler.SetSelection(false);
+            _selectedCharacters.Remove(handler.CardData);
+            Debug.Log($"Card {handler.CardData.CharacterName} deselected.");
+        }
+        else if (_selectedCharacters.Count < CardsToSelect)
+        {
+            // Виділення
+            handler.SetSelection(true);
+            _selectedCharacters.Add(handler.CardData);
         }
         else
         {
-            // Обрати
-            if (_selectedCharacters.Count < CardsToSelect)
-            {
-                _selectedCharacters.Add(data);
-                clickedCard.SetSelection(true);
-            }
-            else
-            {
-                Debug.Log("Ви вже обрали максимальну кількість карт.");
-            }
+            Debug.LogWarning($"P{_activePlayerID}: Досягнуто ліміту ({CardsToSelect}) карт.");
         }
 
         UpdateConfirmButtonState();
@@ -182,26 +172,54 @@ public class GameDeckManager : MonoBehaviour
 
         _isDraftPhaseActive = false;
 
-        // 1. Зберігаємо обрані карти в PlayerHandData
-        PlayerHand.SelectedCharacters.Clear();
-        PlayerHand.SelectedCharacters.AddRange(_selectedCharacters);
+        // --- ЛОГІКА: Визначення невибраних карт (які підуть у відкинуті) ---
+        List<CharacterData> unselectedCharacters =
+            _activeDraftCards
+                .Select(csh => csh.CardData)
+                .Except(_selectedCharacters) // Виключаємо обрані карти
+                .ToList();
+        // ------------------------------------------
 
-        // 2. Очищаємо сцену
+        // 1. Зберігаємо обрані карти в активну руку
+        _activePlayerHand.SelectedCharacters.Clear();
+        _activePlayerHand.SelectedCharacters.AddRange(_selectedCharacters);
+
+        // 2. Зберігаємо невибрані карти (ВИРІШЕННЯ ПОМИЛОК 204 і 205)
+        _activePlayerHand.DiscardedCharacters.Clear();
+        _activePlayerHand.DiscardedCharacters.AddRange(unselectedCharacters);
+
+        Debug.Log($"P{_activePlayerID}: Draft confirmed. {CardsToSelect} selected, {unselectedCharacters.Count} discarded.");
+
+        // 3. Очищаємо сцену
         CardManager.ClearCards();
 
-        // 3. Приховуємо кнопку
+        // 4. Приховуємо кнопку
         if (ConfirmSelectionButton != null) ConfirmSelectionButton.SetActive(false);
 
-        // 4. Починаємо фазу формування пар (або переходимо далі)
-        StartPairingPhase();
+        // 5. Переходимо до наступного гравця/фази
+        if (_activePlayerID == 1)
+        {
+            // Переходимо до P2
+            _activePlayerID = 2;
+
+            // !!! ТУТ ПОВИННА БУТИ ЛОГІКА HANDOVER UI !!!
+            // Наприклад: HandoverUI.ShowScreen(2, StartDraftPhase);
+            StartDraftPhase(); // Тимчасовий прямий виклик для тестування
+        }
+        else
+        {
+            // Обидва гравці завершили драфт
+            StartPairingPhase();
+        }
     }
 
 
     private void StartPairingPhase()
     {
-        // ... Логіка підготовки до розміщення ...
+        Debug.Log("Draft Phase Completed. Starting Pairing Phase.");
+        // TODO: Додати логіку UI для формування пар
+        // ...
 
-        // ВИПРАВЛЕННЯ CS1061: CompleteDraftPhase має бути public у GameManager
-        _gameManager.CompleteDraftPhase();
+        // Після формування пар: _gameManager.StartPlacementPhase();
     }
 }

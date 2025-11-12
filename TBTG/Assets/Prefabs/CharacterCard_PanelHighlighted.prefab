@@ -13,9 +13,8 @@ GameObject:
   - component: {fileID: 338085715716019345}
   - component: {fileID: 22570312782971482}
   - component: {fileID: 5363156144297383564}
-  - component: {fileID: 1357405070760377012}
   m_Layer: 5
-  m_Name: CharacterCard_Panel
+  m_Name: CharacterCard_PanelHighlighted
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -67,7 +66,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 0.74509805, g: 0, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -120,19 +119,6 @@ MonoBehaviour:
   HoverScale: {x: 0.75, y: 0.75, z: 0.75}
   AnimationDuration: 0.7
   SortOrderIncrease: 10
---- !u!114 &1357405070760377012
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 149393505435969762}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca887be19d9fa734f878f61801e5c378, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HighlightVisual: {fileID: 149393505435969762, guid: 11bd865cc1205ab4b9cc401635f2a443, type: 3}
 --- !u!1 &3999303568451304401
 GameObject:
   m_ObjectHideFlags: 0

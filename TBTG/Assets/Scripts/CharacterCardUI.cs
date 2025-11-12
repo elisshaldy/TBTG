@@ -8,31 +8,28 @@ using UnityEngine.Events;
 using UnityEngine.Assertions;
 using System.Collections.Generic;
 
-// Додано для примусової перебудови UI-макета
+// Використовуємо статичний метод для примусової перебудови
 using static UnityEngine.UI.LayoutRebuilder;
 
 public class CharacterCardUI : MonoBehaviour
 {
+    // ... (Усі public поля залишаються без змін) ...
     [Header("UI References")]
-    public Image CharacterImage; // Зображення персонажа
-    public TextMeshProUGUI NameText; // Назва персонажа
-
-    // Поля для відображення статистики
+    public Image CharacterImage;
+    public TextMeshProUGUI NameText;
     public TextMeshProUGUI AttackBaseText;
     public TextMeshProUGUI DefenseBaseText;
     public TextMeshProUGUI HealthStateInfoText;
 
-    // Посилання на батьківський об'єкт, що містить 9 UI-клітинок схеми атаки
     [Header("Attack Pattern Grid")]
-    public Transform AttackGridContainer; // AttackGridContainer має бути RectTransform
+    public Transform AttackGridContainer;
 
     [Header("Grid Visuals Prefabs")]
-    // Префаби для відображення клітинок
-    public GameObject BlackTilePrefab;   // Позиція персонажа (чорний)
-    public GameObject RedTilePrefab;     // Місце атаки (червоний)
-    public GameObject EmptyTilePrefab;   // Порожня клітинка (білий/прозорий)
+    public GameObject BlackTilePrefab;
+    public GameObject RedTilePrefab;
+    public GameObject EmptyTilePrefab;
 
-    private CharacterData _currentData;
+    private CharacterData _currentData; // Приватне поле для зберігання даних
     private const int GRID_SIZE = 3;
 
     private RectTransform _gridRectTransform;
@@ -40,10 +37,12 @@ public class CharacterCardUI : MonoBehaviour
 
     void Awake()
     {
-        // Отримуємо Layout Group один раз
         if (AttackGridContainer != null)
         {
+            // Отримання компонентів
             _gridLayoutGroup = AttackGridContainer.GetComponent<GridLayoutGroup>();
+            _gridRectTransform = AttackGridContainer.GetComponent<RectTransform>();
+
             if (_gridLayoutGroup == null)
             {
                 Debug.LogWarning("GridLayoutGroup не знайдено на AttackGridContainer. Сітка не буде розміщена коректно.");
@@ -51,103 +50,80 @@ public class CharacterCardUI : MonoBehaviour
         }
     }
 
+    // --- НОВИЙ МЕТОД: ВИПРАВЛЯЄ ПОМИЛКУ CS1061 ---
+    /// <summary>
+    /// Повертає ассет CharacterData, який наразі відображає ця картка.
+    /// Потрібно для логіки виділення картки в PlayerCardManager.
+    /// </summary>
+    public CharacterData GetCurrentData()
+    {
+        return _currentData;
+    }
+    // ----------------------------------------------------
 
     // Основний метод для оновлення картки
     public void DisplayCharacter(CharacterData data)
     {
-        // Перевірка контейнера
-        if (AttackGridContainer == null)
+        if (data == null)
         {
-            Debug.LogError("AttackGridContainer не призначено в Інспекторі!");
+            Debug.LogError("CharacterData is null on DisplayCharacter call!");
             return;
         }
 
-        // Перевірка та ініціалізація RectTransform
+        // Перевірка, чи ініціалізовані критичні RectTransform
         if (_gridRectTransform == null)
         {
             _gridRectTransform = AttackGridContainer.GetComponent<RectTransform>();
-            Assert.IsNotNull(_gridRectTransform, "AttackGridContainer повинен мати компонент RectTransform!");
             if (_gridRectTransform == null) return;
         }
 
-        // Додаткова перевірка Layout Group
-        if (_gridLayoutGroup == null)
-        {
-            _gridLayoutGroup = AttackGridContainer.GetComponent<GridLayoutGroup>();
-        }
 
-        // Перевіряємо, чи має Layout Group коректний Cell Size
-        if (_gridLayoutGroup != null)
-        {
-            Assert.IsTrue(_gridLayoutGroup.cellSize.x > 0 && _gridLayoutGroup.cellSize.y > 0,
-                "Grid Layout Group на AttackGridContainer має Cell Size = (0, 0)! Сітка не відобразиться.");
-        }
+        _currentData = data; // Зберігаємо дані в приватному полі (це важливо для GetCurrentData)
 
-        _currentData = data;
-
-        // Оновлення текстових полів
-        NameText.text = data.CharacterName;
+        // Оновлення текстових полів з кращим форматуванням
+        if (NameText != null) NameText.text = data.CharacterName;
+        if (CharacterImage != null && data.CharacterSprite != null) CharacterImage.sprite = data.CharacterSprite;
 
         string attackBonusString = (data.BaseAttackBonus > 0) ? $"+{data.BaseAttackBonus}" : "";
-        AttackBaseText.text = $"Атака: {data.AttackRollDice}D{data.AttackRollSides} {attackBonusString}";
+        if (AttackBaseText != null) AttackBaseText.text = $"Атака: {data.AttackRollDice}D{data.AttackRollSides} {attackBonusString}";
 
-        DefenseBaseText.text = $"Захист: {(data.BaseDefenseBonus > 0 ? $"+{data.BaseDefenseBonus}" : "Базовий")}";
+        if (DefenseBaseText != null) DefenseBaseText.text = $"Захист: {(data.BaseDefenseBonus > 0 ? $"+{data.BaseDefenseBonus}" : "Базовий")}";
 
-        HealthStateInfoText.text = $"Критичний Ліміт: {data.CriticalHealthLimit}";
+        if (HealthStateInfoText != null) HealthStateInfoText.text = $"Критичний Ліміт: {data.CriticalHealthLimit}";
 
-        if (data.CharacterSprite != null)
-        {
-            CharacterImage.sprite = data.CharacterSprite;
-        }
-
-        // !!! Використовуємо CenterTilePosition з CharacterData !!!
         DrawAttackPattern(data.AttackPattern, data.CenterTilePosition);
     }
 
     private void DrawAttackPattern(Vector2Int[] pattern, Vector2Int center)
     {
+        // ... (Логіка очищення та генерації плиток з другого коду залишається без змін) ...
+
         if (_gridRectTransform == null) return;
 
         // 1. Очищення попередньої схеми:
-        int childCount = AttackGridContainer.childCount;
-        for (int i = childCount - 1; i >= 0; i--)
+        for (int i = AttackGridContainer.childCount - 1; i >= 0; i--)
         {
-            // Використовуємо DestroyImmediate в режимі редактора або Destroy у режимі гри
-            if (Application.isPlaying)
-            {
-                Destroy(AttackGridContainer.GetChild(i).gameObject);
-            }
-            else
-            {
-                DestroyImmediate(AttackGridContainer.GetChild(i).gameObject);
-            }
+            Destroy(AttackGridContainer.GetChild(i).gameObject);
         }
-
-        // --- УНІФІКОВАНА ЛОГІКА СІТКИ ---
 
         // Створюємо список, що включає всі червоні клітинки та чорну клітинку
-        List<Vector2Int> combinedPattern = new List<Vector2Int>(pattern);
+        HashSet<Vector2Int> combinedPattern = new HashSet<Vector2Int>(pattern);
 
         // Додаємо зміщення (0, 0) до шаблону атаки (це і є Black Tile)
-        if (!combinedPattern.Contains(Vector2Int.zero))
-        {
-            combinedPattern.Add(Vector2Int.zero);
-        }
+        combinedPattern.Add(Vector2Int.zero);
 
-        for (int y = 0; y < GRID_SIZE; y++)
+
+        for (int y = 0; y < GRID_SIZE; y++) // Ітеруємо згори донизу (UI-порядок)
         {
             for (int x = 0; x < GRID_SIZE; x++)
             {
 
                 GameObject prefabToUse = EmptyTilePrefab;
 
-                // 1. Інвертуємо Y-координату: 
-                // Grid Layout Group малює зверху вниз (Y збільшується згори донизу), 
-                // але наша логіка Game Data передбачає, що Y=0 - це нижня частина.
+                // 1. Інвертуємо Y-координату для порівняння з ігровими координатами (0,0 - низ)
                 Vector2Int gameCoord = new Vector2Int(x, GRID_SIZE - 1 - y);
 
                 // 2. Розрахунок зміщення відносно позиції Black Tile (center)
-                // Якщо CenterTilePosition в ассеті (0, 0), а gameCoord (0, 0), то relativeCoord = (0, 0)
                 Vector2Int relativeCoord = gameCoord - center;
 
                 if (combinedPattern.Contains(relativeCoord))
@@ -171,24 +147,17 @@ public class CharacterCardUI : MonoBehaviour
                     continue;
                 }
 
-                // Створення об'єкта та призначення батьківського елемента (вирішує проблему "Persistent Parent")
+                // Створення об'єкта
                 GameObject tileUI = Instantiate(prefabToUse);
                 tileUI.transform.SetParent(AttackGridContainer, false);
-
-                // Активація
-                if (!tileUI.activeSelf)
-                {
-                    tileUI.SetActive(true);
-                }
             }
         }
 
-        // ПРИМУСОВА ПЕРЕБУДОВА UI
+        // ПРИМУСОВА ПЕРЕБУДОВА UI: КРАЩА ПРАКТИКА
         if (_gridRectTransform != null)
         {
-            ForceRebuildLayoutImmediate(_gridRectTransform);
+            // Використовуємо MarkLayoutForRebuild замість ForceRebuildLayoutImmediate
+            MarkLayoutForRebuild(_gridRectTransform);
         }
-
-        Debug.Log("Attack pattern tiles generated and rebuilt layout.");
     }
 }

@@ -84,8 +84,8 @@ public class InitiativeManager : MonoBehaviour
 
         Debug.Log($"Turn {_currentTokenIndex + 1}: Player {currentToken.PlayerID} moves {currentToken.CharacterReference.Data.CharacterName}");
 
-        // Тут потрібно повідомити PlayerController (контролер гравця), що його черга
-        // Наприклад: PlayerController.Instance.StartCharacterTurn(currentToken.CharacterReference);
+        // Повідомляємо GameManager, що його черга, і передаємо посилання на токен
+        GameManager.Instance.StartCharacterTurn(currentToken);
 
         // Після того, як PlayerController повідомить, що хід завершено (через CompleteTurn()), 
         // викликається NextTurn().
