@@ -1297,7 +1297,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CharacterCardUIPrefab: {fileID: 149393505435969762, guid: 9bac17b2de7ef914288d38bd3032b175, type: 3}
-  CardsContainer: {fileID: 110222887}
+  CardsContainer: {fileID: 1468609666}
   PlayerHand: {fileID: 11400000, guid: 043c8f8a70661ec47b9674bc230192d9, type: 2}
   MaxCards: 8
   ScaleSafetyMargin: 0.8
@@ -2057,8 +2057,8 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
+  m_ChildAlignment: 7
+  m_Spacing: -100
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -2334,9 +2334,9 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1468609666}
   - {fileID: 2082108755}
   - {fileID: 2057048022}
-  - {fileID: 1468609666}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

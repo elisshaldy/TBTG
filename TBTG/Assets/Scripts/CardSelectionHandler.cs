@@ -1,13 +1,19 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System; // Потрібно для System.Action
+using UnityEngine.UI;
 
 // Компонент, який дозволяє картці бути обраною/виділеною на етапі драфту.
 // Реалізує IPointerClickHandler для обробки UI кліків.
 public class CardSelectionHandler : MonoBehaviour, IPointerClickHandler
 {
-    // Подія, яку викликаємо при кліку (повідомляємо GameDeckManager).
-    public event Action<CardSelectionHandler> OnCardClicked;
+    // !!! ВИПРАВЛЕННЯ: ВНУТРІШНІЙ ENUM ВИДАЛЕНО !!!
+    // Тепер використовується ГЛОБАЛЬНИЙ enum SelectionMode (з окремого файлу SelectionMode.cs).
+
+    public SelectionMode CurrentMode { get; private set; } = SelectionMode.None;
+
+    // Подія, яка тепер передає також дані кліку (для визначення ЛКМ/ПКМ) до GameDeckManager.
+    public event Action<CardSelectionHandler, PointerEventData> OnCardClicked;
 
     [Tooltip("Посилання на CharacterData, яку відображає ця картка.")]
     public CharacterData CardData { get; private set; }
@@ -16,10 +22,7 @@ public class CardSelectionHandler : MonoBehaviour, IPointerClickHandler
     [Tooltip("Об'єкт або Image, який відображає виділення (наприклад, рамка або галочка).")]
     public GameObject HighlightVisual;
 
-    public bool IsSelected { get; private set; } = false;
-
     // Посилання на UI-компонент для відображення даних.
-    // ПРИМІТКА: Для роботи цього поля, клас CharacterCardUI повинен існувати.
     private CharacterCardUI _cardUI;
 
 
@@ -28,11 +31,9 @@ public class CardSelectionHandler : MonoBehaviour, IPointerClickHandler
         // Отримуємо компонент, який відповідає за відображення даних на картці UI
         _cardUI = GetComponent<CharacterCardUI>();
 
-        // Переконуємося, що візуал виділення вимкнений при старті
-        if (HighlightVisual != null)
-        {
-            HighlightVisual.SetActive(false);
-        }
+        // Переконуємося, що візуал вимкнений при старті
+        // !!! ОНОВЛЕНО: Використовуємо глобальний SelectionMode !!!
+        SetSelection(SelectionMode.None);
     }
 
     /// <summary>
@@ -50,32 +51,59 @@ public class CardSelectionHandler : MonoBehaviour, IPointerClickHandler
         }
 
         // Скидаємо стан виділення
-        SetSelection(false);
+        // !!! ОНОВЛЕНО: Використовуємо глобальний SelectionMode !!!
+        SetSelection(SelectionMode.None);
     }
 
     /// <summary>
-    /// Змінює стан виділення та оновлює візуальне оформлення.
+    /// Змінює стан виділення та оновлює візуальне оформлення (Visible/Hidden/None).
     /// </summary>
-    /// <param name="isSelected">True, якщо картка обрана.</param>
-    public void SetSelection(bool isSelected)
+    // !!! ОНОВЛЕНО: Тепер приймає глобальний SelectionMode, що вирішує CS1503 !!!
+    public void SetSelection(SelectionMode newMode)
     {
-        IsSelected = isSelected;
+        CurrentMode = newMode;
+        // !!! ОНОВЛЕНО: Використовуємо глобальний SelectionMode !!!
+        bool isSelected = newMode != SelectionMode.None;
 
         if (HighlightVisual != null)
         {
             HighlightVisual.SetActive(isSelected);
+
+            // --- ДОДАТКОВА ЛОГІКА ДЛЯ ВІЗУАЛЬНОГО ВІДМІНЮВАННЯ ---
+            if (HighlightVisual.TryGetComponent<Image>(out var image))
+            {
+                // !!! ОНОВЛЕНО: Використовуємо глобальний SelectionMode !!!
+                if (newMode == SelectionMode.Visible)
+                {
+                    image.color = Color.yellow;
+                }
+                // !!! ОНОВЛЕНО: Використовуємо глобальний SelectionMode !!!
+                else if (newMode == SelectionMode.Hidden)
+                {
+                    image.color = Color.gray;
+                }
+                // else залишається коректним
+            }
+            // --------------------------------------------------------
         }
 
-        if (isSelected)
+        // Логіка для Debug.Log, якщо необхідно відслідковувати стан
+        // !!! ОНОВЛЕНО: Використовуємо глобальний SelectionMode !!!
+        if (newMode == SelectionMode.Visible)
         {
-            Debug.Log($"Card {CardData.CharacterName} selected.");
+            Debug.Log($"Card {CardData.CharacterName} selected as VISIBLE (LKM).");
+        }
+        // !!! ОНОВЛЕНО: Використовуємо глобальний SelectionMode !!!
+        else if (newMode == SelectionMode.Hidden)
+        {
+            Debug.Log($"Card {CardData.CharacterName} selected as HIDDEN (PKM).");
         }
     }
 
     // Обробка кліку: вимагається інтерфейсом IPointerClickHandler.
     public void OnPointerClick(PointerEventData eventData)
     {
-        // Повідомляємо менеджеру, що картку було клікнуто.
-        OnCardClicked?.Invoke(this);
+        // Повідомляємо менеджеру, що картку було клікнуто, передаючи дані про тип кліку.
+        OnCardClicked?.Invoke(this, eventData);
     }
 }
