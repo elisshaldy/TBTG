@@ -15,6 +15,7 @@ public class CardSelectionHandler : MonoBehaviour, IBeginDragHandler, IDragHandl
     public event Action<CardSelectionHandler> OnCardBeginDrag;
     public event Action<CardSelectionHandler> OnCardEndDrag;
     public event Action<CardSelectionHandler, DropSlot> OnCardDropped;
+    public event Action<CardSelectionHandler> OnCardReturnedToDraft;
 
     private RectTransform _rectTransform;
     private Canvas _canvas;
@@ -22,6 +23,8 @@ public class CardSelectionHandler : MonoBehaviour, IBeginDragHandler, IDragHandl
     private Transform _originalParent;
     private int _originalSiblingIndex;
     private CardScaler _cardScaler;
+    private bool _isInSlot = false;
+    private float _slotScaleFactor = 1f;
 
     void Awake()
     {
@@ -42,6 +45,11 @@ public class CardSelectionHandler : MonoBehaviour, IBeginDragHandler, IDragHandl
             cardUI.DisplayCharacter(data);
         }
         SetSelection(SelectionMode.None);
+
+        // «бер≥гаЇмо початкову позиц≥ю в пол≥ драфту
+        _originalPosition = _rectTransform.anchoredPosition;
+        _originalParent = _rectTransform.parent;
+        _originalSiblingIndex = _rectTransform.GetSiblingIndex();
     }
 
     public void SetSelection(SelectionMode newMode)
@@ -53,12 +61,17 @@ public class CardSelectionHandler : MonoBehaviour, IBeginDragHandler, IDragHandl
     {
         if (!IsDraggable()) return;
 
-        _originalPosition = _rectTransform.anchoredPosition;
-        _originalParent = _rectTransform.parent;
-        _originalSiblingIndex = _rectTransform.GetSiblingIndex();
+        // «бер≥гаЇмо поточну позиц≥ю перед початком перет€гуванн€
+        if (!_isInSlot)
+        {
+            _originalPosition = _rectTransform.anchoredPosition;
+            _originalParent = _rectTransform.parent;
+            _originalSiblingIndex = _rectTransform.GetSiblingIndex();
+        }
 
         if (_cardScaler != null)
         {
+            // ѕри перет€гуванн≥ повертаЇмо нормальний масштаб
             _cardScaler.ForceScale(_cardScaler.InitialScale * DragScaleMultiplier);
         }
 
@@ -71,7 +84,6 @@ public class CardSelectionHandler : MonoBehaviour, IBeginDragHandler, IDragHandl
         _rectTransform.SetParent(_canvas.transform);
         _rectTransform.SetAsLastSibling();
 
-        Debug.Log($"Started dragging: {CardData.CharacterName}");
         OnCardBeginDrag?.Invoke(this);
     }
 
@@ -93,8 +105,6 @@ public class CardSelectionHandler : MonoBehaviour, IBeginDragHandler, IDragHandl
     {
         if (!IsDraggable()) return;
 
-        Debug.Log($"Ended dragging: {CardData.CharacterName}");
-
         // —кидаЇмо в≥зуальн≥ ефекти
         if (_cardScaler != null)
         {
@@ -107,29 +117,19 @@ public class CardSelectionHandler : MonoBehaviour, IBeginDragHandler, IDragHandl
             DragCanvasGroup.blocksRaycasts = true;
         }
 
-        // ЎукаЇмо DropSlot
+        // ЎукаЇмо DropSlot п≥д курсором
         DropSlot dropSlot = FindDropSlotUnderPointer(eventData);
 
         if (dropSlot != null)
         {
-            Debug.Log($"Found slot: {dropSlot.name}, calling CanAcceptCard...");
-            if (dropSlot.CanAcceptCard(this))
-            {
-                Debug.Log($"Slot accepted card, calling AcceptCard...");
-                dropSlot.AcceptCard(this);
-                OnCardDropped?.Invoke(this, dropSlot);
-                Debug.Log($"Card {CardData.CharacterName} successfully dropped in slot {dropSlot.name}");
-            }
-            else
-            {
-                Debug.Log($"Slot {dropSlot.name} rejected card");
-                ReturnToOriginalPosition();
-            }
+            // якщо знайшли слот - перем≥щуЇмо картку туди
+            dropSlot.AcceptCard(this);
+            OnCardDropped?.Invoke(this, dropSlot);
         }
         else
         {
-            Debug.Log("No DropSlot found under pointer");
-            ReturnToOriginalPosition();
+            // якщо слот не знайшли - повертаЇмо картку
+            ReturnToDraftArea();
         }
 
         OnCardEndDrag?.Invoke(this);
@@ -158,18 +158,49 @@ public class CardSelectionHandler : MonoBehaviour, IBeginDragHandler, IDragHandl
         _rectTransform.SetSiblingIndex(_originalSiblingIndex);
         _rectTransform.anchoredPosition = _originalPosition;
         _rectTransform.localScale = Vector3.one;
+        _isInSlot = false;
     }
 
-    public void MoveToSlot(Transform slotTransform)
+    public void ReturnToDraftArea()
+    {
+        _rectTransform.SetParent(_originalParent);
+        _rectTransform.SetSiblingIndex(_originalSiblingIndex);
+        _rectTransform.anchoredPosition = _originalPosition;
+        _rectTransform.localScale = Vector3.one;
+        _isInSlot = false;
+
+        SetSelection(SelectionMode.None);
+        OnCardReturnedToDraft?.Invoke(this);
+
+        Debug.Log($"Card {CardData.CharacterName} returned to draft area");
+    }
+
+    public void MoveToSlot(Transform slotTransform, float scaleFactor = 1f)
     {
         _rectTransform.SetParent(slotTransform);
         _rectTransform.anchoredPosition = Vector2.zero;
         _rectTransform.localPosition = Vector3.zero;
-        _rectTransform.localScale = Vector3.one;
+
+        // «астосовуЇмо масштаб слота
+        _slotScaleFactor = scaleFactor;
+        _rectTransform.localScale = Vector3.one * scaleFactor;
+
+        _isInSlot = true;
     }
 
     private bool IsDraggable()
     {
         return gameObject.activeInHierarchy && CardData != null && enabled;
+    }
+
+    // ƒодатков≥ методи дл€ управл≥нн€ станом
+    public bool IsInSlot()
+    {
+        return _isInSlot;
+    }
+
+    public void ForceReturnToDraft()
+    {
+        ReturnToDraftArea();
     }
 }

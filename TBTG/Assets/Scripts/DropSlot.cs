@@ -14,7 +14,10 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     public Color HighlightColor = new Color(0.5f, 0.8f, 0.5f, 0.7f);
     public Color OccupiedColor = new Color(0.8f, 0.2f, 0.2f, 0.7f);
 
-    // ЗМІНА: Робимо CurrentCard приватним і додаємо властивість
+    [Header("Scaling Settings")]
+    public bool AutoScaleCard = true;
+    public float CardScaleFactor = 0.8f; // Масштаб картки в слоті
+
     private CardSelectionHandler _currentCard;
     public CardSelectionHandler CurrentCard
     {
@@ -26,21 +29,20 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
         }
     }
 
+    private RectTransform _slotRectTransform;
+
     void Start()
     {
+        _slotRectTransform = GetComponent<RectTransform>();
         UpdateVisuals();
     }
 
     public void OnDrop(PointerEventData eventData)
     {
-        Debug.Log($"OnDrop called on {name}");
-
         CardSelectionHandler draggedCard = eventData.pointerDrag?.GetComponent<CardSelectionHandler>();
 
         if (draggedCard != null)
         {
-            Debug.Log($"Card {draggedCard.CardData.CharacterName} dropped on slot {name}. CurrentCard: {CurrentCard?.CardData?.CharacterName ?? "NULL"}");
-
             if (CanAcceptCard(draggedCard))
             {
                 AcceptCard(draggedCard);
@@ -68,57 +70,41 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
     public bool CanAcceptCard(CardSelectionHandler card)
     {
-        // ПЕРЕВІРКА: чи слот вільний
-        if (CurrentCard != null)
-        {
-            // Якщо це та сама картка, що вже в слоті - дозволяємо (для переміщення)
-            if (CurrentCard == card)
-            {
-                Debug.Log($"Slot {name} already contains this card, allowing move");
-                return true;
-            }
-
-            Debug.Log($"Slot {name} is occupied by {CurrentCard.CardData.CharacterName}");
-            return false;
-        }
-
-        Debug.Log($"Slot {name} can accept card {card.CardData.CharacterName}");
+        // Дозволяємо скидання навіть якщо слот зайнятий - картка буде замінена
         return true;
     }
 
     public void AcceptCard(CardSelectionHandler card)
     {
-        Debug.Log($"AcceptCard called for {card.CardData.CharacterName} in slot {name}");
-
-        // ВИДАЛЯЄМО картку з попереднього слота (якщо він є)
+        // Видаляємо картку з попереднього слота
         RemoveCardFromPreviousSlot(card);
 
-        // Очищаємо поточний слот (якщо потрібно)
+        // Якщо слот вже зайнятий - повертаємо стару картку на поле
         if (CurrentCard != null && CurrentCard != card)
         {
-            CurrentCard.ReturnToOriginalPosition();
+            CurrentCard.ReturnToDraftArea();
         }
 
         // Призначаємо нову картку
         CurrentCard = card;
-        card.MoveToSlot(transform);
+
+        // Переміщуємо картку в слот
+        card.MoveToSlot(transform, AutoScaleCard ? CardScaleFactor : 1f);
 
         // Оновлюємо режим вибору
         SelectionMode newMode = (SlotType == SlotType.Active) ? SelectionMode.Visible : SelectionMode.Hidden;
         card.SetSelection(newMode);
 
-        Debug.Log($"Card {card.CardData.CharacterName} successfully placed in {SlotType} slot of pair {PairIndex}");
+        Debug.Log($"Card {card.CardData.CharacterName} placed in {SlotType} slot");
     }
 
     private void RemoveCardFromPreviousSlot(CardSelectionHandler card)
     {
-        // Шукаємо всі слоти і видаляємо картку з них
         DropSlot[] allSlots = FindObjectsOfType<DropSlot>();
         foreach (DropSlot slot in allSlots)
         {
             if (slot != this && slot.CurrentCard == card)
             {
-                Debug.Log($"Removing card from previous slot: {slot.name}");
                 slot.ClearCardWithoutReturning();
             }
         }
@@ -128,9 +114,8 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     {
         if (CurrentCard != null)
         {
-            Debug.Log($"Removing card {CurrentCard.CardData.CharacterName} from slot {name}");
             CurrentCard.SetSelection(SelectionMode.None);
-            CurrentCard.ReturnToOriginalPosition();
+            CurrentCard.ReturnToDraftArea();
             CurrentCard = null;
         }
     }
@@ -139,7 +124,6 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     {
         if (CurrentCard != null)
         {
-            Debug.Log($"Clearing card {CurrentCard.CardData.CharacterName} from slot {name} without returning");
             CurrentCard.SetSelection(SelectionMode.None);
             CurrentCard = null;
         }

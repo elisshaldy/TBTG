@@ -157,6 +157,7 @@ public class GameDeckManager : MonoBehaviour
             cardHandler.OnCardBeginDrag += PairFormationManager.HandleCardBeginDrag;
             cardHandler.OnCardEndDrag += PairFormationManager.HandleCardEndDrag;
             cardHandler.OnCardDropped += PairFormationManager.HandleCardDropped;
+            cardHandler.OnCardReturnedToDraft += PairFormationManager.HandleCardReturnedToDraft;
         }
 
         // Увімкнути драг & дроп
