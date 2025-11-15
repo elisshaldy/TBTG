@@ -16,7 +16,7 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
     [Header("Scaling Settings")]
     public bool AutoScaleCard = true;
-    public float CardScaleFactor = 0.8f; // Масштаб картки в слоті
+    public float CardScaleFactor = 0.8f;
 
     private CardSelectionHandler _currentCard;
     public CardSelectionHandler CurrentCard
@@ -43,10 +43,7 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
         if (draggedCard != null)
         {
-            if (CanAcceptCard(draggedCard))
-            {
-                AcceptCard(draggedCard);
-            }
+            AcceptCard(draggedCard);
         }
     }
 
@@ -55,7 +52,7 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
         if (eventData.dragging)
         {
             CardSelectionHandler draggedCard = eventData.pointerDrag?.GetComponent<CardSelectionHandler>();
-            if (draggedCard != null && CanAcceptCard(draggedCard))
+            if (draggedCard != null)
             {
                 if (BackgroundImage != null)
                     BackgroundImage.color = HighlightColor;
@@ -70,16 +67,16 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
     public bool CanAcceptCard(CardSelectionHandler card)
     {
-        // Дозволяємо скидання навіть якщо слот зайнятий - картка буде замінена
+        // Завжди дозволяємо приймати картки (навіть якщо слот зайнятий)
         return true;
     }
 
     public void AcceptCard(CardSelectionHandler card)
     {
-        // Видаляємо картку з попереднього слота
+        // Видаляємо картку з попереднього слота (якщо вона вже десь є)
         RemoveCardFromPreviousSlot(card);
 
-        // Якщо слот вже зайнятий - повертаємо стару картку на поле
+        // Якщо слот вже зайнятий іншою карткою - повертаємо її на поле
         if (CurrentCard != null && CurrentCard != card)
         {
             CurrentCard.ReturnToDraftArea();
@@ -94,8 +91,6 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
         // Оновлюємо режим вибору
         SelectionMode newMode = (SlotType == SlotType.Active) ? SelectionMode.Visible : SelectionMode.Hidden;
         card.SetSelection(newMode);
-
-        Debug.Log($"Card {card.CardData.CharacterName} placed in {SlotType} slot");
     }
 
     private void RemoveCardFromPreviousSlot(CardSelectionHandler card)
