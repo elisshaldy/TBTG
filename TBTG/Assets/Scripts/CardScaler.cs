@@ -1,30 +1,26 @@
+// CardScaler.cs - ФІКСОВАНА ВЕРСІЯ
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
-using UnityEngine.UI; // Додано для роботи з Canvas
+using UnityEngine.UI;
 
-// Скрипт для плавного масштабування UI-елемента (картки) при наведенні миші.
 public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [Tooltip("Базовий розмір, до якого картка повертається після відведення курсору. Встановлюється PlayerCardManager.")]
-    public Vector3 InitialScale { get; private set; } = Vector3.one;
-
     [Header("Налаштування масштабування")]
-
-    [Tooltip("Розмір, до якого картка збільшується при наведенні курсору.")]
     public Vector3 HoverScale = new Vector3(1.2f, 1.2f, 1.2f);
-
-    [Tooltip("Тривалість анімації переходу в секундах.")]
     public float AnimationDuration = 0.2f;
 
     [Header("Налаштування сортування")]
-    [Tooltip("На скільки збільшити sort order при наведенні")]
     public int SortOrderIncrease = 10;
 
     private Coroutine _scaleCoroutine;
     private RectTransform _rectTransform;
     private Canvas _canvas;
     private int _originalSortOrder;
+    private Vector3 _initialScale = Vector3.one; // Приватна, керується через метод
+
+    // Публічна властивість тільки для читання
+    public Vector3 InitialScale { get; private set; } = Vector3.one;
 
     private bool _isDragging = false;
     private Vector3 _dragOffset;
@@ -34,7 +30,7 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         _rectTransform = GetComponent<RectTransform>();
         _canvas = GetComponent<Canvas>();
 
-        // !!! ОПТИМІЗАЦІЯ: Краще, щоб ці компоненти були на префабі, але залишаємо ваш код для динамічного додавання !!!
+        // ОРИГІНАЛЬНА ЛОГІКА З БАЗОВОГО КОДУ
         if (_canvas == null)
         {
             _canvas = gameObject.AddComponent<Canvas>();
@@ -45,33 +41,33 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             gameObject.AddComponent<GraphicRaycaster>();
         }
 
-        _canvas.overrideSorting = true; // Дозволяє контролювати сортування
+        _canvas.overrideSorting = true;
 
-        // Знаходимо батьківський Canvas, щоб успадкувати базовий порядок сортування (якщо він є)
+        // Знаходимо батьківський Canvas, щоб успадкувати базовий порядок сортування
         Canvas parentCanvas = transform.GetComponentInParent<Canvas>();
         if (parentCanvas != null && parentCanvas.overrideSorting)
         {
-            // Якщо батьківський Canvas перевизначає сортування, використовуємо його sortingOrder як базу
             _originalSortOrder = parentCanvas.sortingOrder;
         }
         else
         {
-            // Інакше використовуємо 0 або поточний порядок Canvas
             _originalSortOrder = _canvas.sortingOrder;
         }
 
-        // Встановлюємо початковий порядок сортування для новоствореного Canvas
         _canvas.sortingOrder = _originalSortOrder;
+
+        // Встановлюємо початковий масштаб
+        _rectTransform.localScale = InitialScale;
     }
 
     /// <summary>
     /// Встановлює початковий розмір, який розраховує PlayerCardManager.
     /// Цей метод викликається одразу після створення картки.
     /// </summary>
-    /// <param name="scale">Розрахований початковий масштаб.</param>
     public void SetInitialScale(Vector3 scale)
     {
         InitialScale = scale;
+        _initialScale = scale; // Зберігаємо копію
         // Застосовуємо початковий масштаб негайно
         _rectTransform.localScale = InitialScale;
     }
@@ -93,13 +89,11 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (_scaleCoroutine != null)
             StopCoroutine(_scaleCoroutine);
 
-        // !!! Ми НЕ скидаємо sort order тут, щоб велика картка не пішла під сусідні, 
-        // поки вона анімується назад до маленького розміру.
-
-        // Починаємо анімацію повернення до початкового масштабу, і скинемо order в кінці корутини.
+        // Починаємо анімацію повернення до початкового масштабу
         _scaleCoroutine = StartCoroutine(ScaleToTarget(InitialScale, false));
     }
 
+    // ОРИГІНАЛЬНІ МЕТОДИ DRAG З БАЗОВОГО КОДУ
     public void OnBeginDrag(PointerEventData eventData)
     {
         _isDragging = true;
@@ -123,9 +117,8 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     /// <summary>
     /// Корутина для плавного переходу масштабу.
+    /// ФІКСОВАНА ВЕРСІЯ - правильно скидає sort order
     /// </summary>
-    /// <param name="targetScale">Цільовий масштаб.</param>
-    /// <param name="isEntering">Чи відбувається анімація наведення (true) чи відведення (false).</param>
     private IEnumerator ScaleToTarget(Vector3 targetScale, bool isEntering)
     {
         float elapsedTime = 0;
@@ -145,10 +138,41 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         _rectTransform.localScale = targetScale;
         _scaleCoroutine = null;
 
-        // !!! КРИТИЧНО: Якщо це анімація повернення (Exit), скидаємо sort order !!!
+        // КРИТИЧНО ВАЖЛИВО: Якщо це анімація повернення (Exit), скидаємо sort order
         if (!isEntering)
         {
             _canvas.sortingOrder = _originalSortOrder;
         }
+    }
+
+    /// <summary>
+    /// Новий метод для примусового встановлення масштабу
+    /// БЕЗ оновлення InitialScale, щоб уникнути циклічного збільшення
+    /// </summary>
+    public void ForceScale(Vector3 scale)
+    {
+        if (_scaleCoroutine != null)
+        {
+            StopCoroutine(_scaleCoroutine);
+            _scaleCoroutine = null;
+        }
+
+        _rectTransform.localScale = scale;
+        // НЕ оновлюємо InitialScale тут, щоб уникнути проблеми
+    }
+
+    /// <summary>
+    /// Метод для примусового скидання до початкового масштабу
+    /// </summary>
+    public void ResetToInitialScale()
+    {
+        if (_scaleCoroutine != null)
+        {
+            StopCoroutine(_scaleCoroutine);
+            _scaleCoroutine = null;
+        }
+
+        _rectTransform.localScale = InitialScale;
+        _canvas.sortingOrder = _originalSortOrder;
     }
 }

@@ -36,9 +36,15 @@ public class PlayerCardManager : MonoBehaviour
     // Розрахований початковий масштаб
     private Vector3 _calculatedInitialScale = Vector3.one;
 
+    // Singleton для доступу з інших скриптів
+    public static PlayerCardManager Instance { get; private set; }
+
 
     void Awake()
     {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+
         Assert.IsNotNull(CharacterCardUIPrefab, "CharacterCardUIPrefab не призначено в PlayerCardManager.");
         Assert.IsNotNull(CardsContainer, "CardsContainer не призначено в PlayerCardManager.");
 
@@ -73,55 +79,44 @@ public class PlayerCardManager : MonoBehaviour
     }
 
     /// <summary>
-    /// !!! ВИПРАВЛЕННЯ CS1061: ДОДАНО МЕТОД LoadDraftCards !!!
     /// Створює UI-картки на сцені для фази драфту.
-    /// Повертає список CardSelectionHandler для підписки на події.
+    /// ФІКСОВАНА ВЕРСІЯ - коректно встановлює масштаб
     /// </summary>
     public List<CardSelectionHandler> LoadDraftCards(List<CharacterData> draftCharacters)
     {
-        // Очищаємо всі старі картки
         ClearCards();
 
         List<CardSelectionHandler> draftHandlers = new List<CardSelectionHandler>();
 
         foreach (CharacterData data in draftCharacters)
         {
-            // Створення об'єкта
             GameObject cardObject = Instantiate(CharacterCardUIPrefab, CardsContainer);
             cardObject.name = $"Card_Draft_{data.CharacterName}";
 
-            // Отримання компонентів
             CharacterCardUI cardUI = cardObject.GetComponent<CharacterCardUI>();
             CardSelectionHandler selectionHandler = cardObject.GetComponent<CardSelectionHandler>();
             CardScaler cardScaler = cardObject.GetComponent<CardScaler>();
 
             if (selectionHandler == null)
             {
-                Debug.LogError($"Префаб {CharacterCardUIPrefab.name} не має компонента CardSelectionHandler! Draft не працюватиме.");
+                Debug.LogError($"Префаб {CharacterCardUIPrefab.name} не має компонента CardSelectionHandler!");
                 Destroy(cardObject);
                 continue;
             }
 
-            // Ініціалізація Selection Handler (він внутрішньо викликає DisplayCharacter)
+            // ВАЖЛИВО: Спочатку встановлюємо початковий масштаб
+            if (cardScaler != null)
+            {
+                cardScaler.SetInitialScale(_calculatedInitialScale);
+            }
+
+            // Потім ініціалізуємо Selection Handler
             selectionHandler.Initialize(data);
             draftHandlers.Add(selectionHandler);
 
-            // Зберігаємо UI-компонент у список для майбутнього очищення
             if (cardUI != null)
             {
                 _spawnedCards.Add(cardUI);
-            }
-
-            // Застосовуємо розрахований масштаб
-            if (cardScaler != null)
-            {
-                // Для CardScaler, який не має публічного сеттера InitialScale,
-                // але має публічну властивість.
-                // Оскільки в CardScaler.cs вона: public Vector3 InitialScale { get; private set; } = Vector3.one;
-                // Ми можемо використовувати простий transform.localScale, якщо властивість приватна.
-                // Або змінити CardScaler, щоб він мав публічний метод.
-                // Припускаємо, що простий transform.localScale працює для початку.
-                cardObject.transform.localScale = _calculatedInitialScale;
             }
         }
 
@@ -129,6 +124,67 @@ public class PlayerCardManager : MonoBehaviour
         return draftHandlers;
     }
 
+    /// <summary>
+    /// Відображає сформовані пари в Player_Cards_Area
+    /// ФІКСОВАНА ВЕРСІЯ - коректно керує масштабом
+    /// </summary>
+    public void DisplayFormedPairs(List<CharacterPair> pairs)
+    {
+        ClearCards();
+
+        foreach (var pair in pairs)
+        {
+            CreatePairCard(pair);
+        }
+
+        Debug.Log($"Відображено {pairs.Count} пар у Player_Cards_Area");
+    }
+
+    private void CreatePairCard(CharacterPair pair)
+    {
+        // Створюємо контейнер для пари
+        GameObject pairContainer = new GameObject($"Pair_{pair.ActiveCharacter.CharacterName}");
+        pairContainer.transform.SetParent(CardsContainer, false);
+
+        // Додаємо RectTransform для правильного позиціонування
+        var rectTransform = pairContainer.AddComponent<RectTransform>();
+        rectTransform.sizeDelta = new Vector2(200, 300); // Налаштуйте розмір
+
+        // Створюємо картки пари
+        CreateCharacterCard(pair.ActiveCharacter, pairContainer.transform, "Active");
+        CreateCharacterCard(pair.HiddenCharacter, pairContainer.transform, "Hidden");
+    }
+
+    private void CreateCharacterCard(CharacterData data, Transform parent, string type)
+    {
+        GameObject cardObject = Instantiate(CharacterCardUIPrefab, parent);
+        cardObject.name = $"{type}_{data.CharacterName}";
+
+        CharacterCardUI cardUI = cardObject.GetComponent<CharacterCardUI>();
+        CardScaler cardScaler = cardObject.GetComponent<CardScaler>();
+        CardSelectionHandler selectionHandler = cardObject.GetComponent<CardSelectionHandler>();
+
+        if (cardUI != null)
+        {
+            cardUI.DisplayCharacter(data);
+        }
+
+        // ВАЖЛИВО: Встановлюємо правильний масштаб
+        if (cardScaler != null)
+        {
+            cardScaler.SetInitialScale(_calculatedInitialScale);
+            // Примусово скидаємо до початкового масштабу
+            cardScaler.ResetToInitialScale();
+        }
+
+        // Вимкнути можливість вибору для вже сформованих пар
+        if (selectionHandler != null)
+        {
+            selectionHandler.enabled = false;
+        }
+
+        _spawnedCards.Add(cardUI);
+    }
 
     /// <summary>
     /// Очищає контейнер карток.
@@ -150,5 +206,35 @@ public class PlayerCardManager : MonoBehaviour
     public void HighlightCard(CharacterData data, bool highlight)
     {
         // Логіка підсвічування тут
+        foreach (var cardUI in _spawnedCards)
+        {
+            if (cardUI != null && cardUI.GetCurrentData() == data)
+            {
+                // Тут можна додати логіку підсвічування
+                // Наприклад, змінити колір рамки тощо
+                break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Оновлює масштаб всіх карток (корисно при зміні розміру екрану)
+    /// </summary>
+    public void UpdateAllCardsScale()
+    {
+        CalculateInitialScale(); // Перераховуємо масштаб
+
+        foreach (var cardUI in _spawnedCards)
+        {
+            if (cardUI != null)
+            {
+                CardScaler cardScaler = cardUI.GetComponent<CardScaler>();
+                if (cardScaler != null)
+                {
+                    cardScaler.SetInitialScale(_calculatedInitialScale);
+                    cardScaler.ResetToInitialScale();
+                }
+            }
+        }
     }
 }

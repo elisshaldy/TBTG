@@ -1,109 +1,175 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using System; // Потрібно для System.Action
+using System;
 using UnityEngine.UI;
 
-// Компонент, який дозволяє картці бути обраною/виділеною на етапі драфту.
-// Реалізує IPointerClickHandler для обробки UI кліків.
-public class CardSelectionHandler : MonoBehaviour, IPointerClickHandler
+public class CardSelectionHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    // !!! ВИПРАВЛЕННЯ: ВНУТРІШНІЙ ENUM ВИДАЛЕНО !!!
-    // Тепер використовується ГЛОБАЛЬНИЙ enum SelectionMode (з окремого файлу SelectionMode.cs).
-
+    public CharacterData CardData { get; private set; }
     public SelectionMode CurrentMode { get; private set; } = SelectionMode.None;
 
-    // Подія, яка тепер передає також дані кліку (для визначення ЛКМ/ПКМ) до GameDeckManager.
-    public event Action<CardSelectionHandler, PointerEventData> OnCardClicked;
+    [Header("Drag & Drop Settings")]
+    public float DragScaleMultiplier = 1.1f;
+    public CanvasGroup DragCanvasGroup;
 
-    [Tooltip("Посилання на CharacterData, яку відображає ця картка.")]
-    public CharacterData CardData { get; private set; }
+    public event Action<CardSelectionHandler> OnCardBeginDrag;
+    public event Action<CardSelectionHandler> OnCardEndDrag;
+    public event Action<CardSelectionHandler, DropSlot> OnCardDropped;
 
-    [Header("Visuals")]
-    [Tooltip("Об'єкт або Image, який відображає виділення (наприклад, рамка або галочка).")]
-    public GameObject HighlightVisual;
-
-    // Посилання на UI-компонент для відображення даних.
-    private CharacterCardUI _cardUI;
-
+    private RectTransform _rectTransform;
+    private Canvas _canvas;
+    private Vector3 _originalPosition;
+    private Transform _originalParent;
+    private int _originalSiblingIndex;
+    private CardScaler _cardScaler;
 
     void Awake()
     {
-        // Отримуємо компонент, який відповідає за відображення даних на картці UI
-        _cardUI = GetComponent<CharacterCardUI>();
+        _rectTransform = GetComponent<RectTransform>();
+        _canvas = GetComponentInParent<Canvas>();
+        _cardScaler = GetComponent<CardScaler>();
 
-        // Переконуємося, що візуал вимкнений при старті
-        // !!! ОНОВЛЕНО: Використовуємо глобальний SelectionMode !!!
-        SetSelection(SelectionMode.None);
+        if (DragCanvasGroup == null)
+            DragCanvasGroup = GetComponent<CanvasGroup>();
     }
 
-    /// <summary>
-    /// Викликається GameDeckManager для ініціалізації картки даними.
-    /// </summary>
-    /// <param name="data">Дані персонажа.</param>
     public void Initialize(CharacterData data)
     {
         CardData = data;
-
-        // Відображаємо дані персонажа на UI-елементах картки.
-        if (_cardUI != null)
+        var cardUI = GetComponent<CharacterCardUI>();
+        if (cardUI != null)
         {
-            _cardUI.DisplayCharacter(data);
+            cardUI.DisplayCharacter(data);
         }
-
-        // Скидаємо стан виділення
-        // !!! ОНОВЛЕНО: Використовуємо глобальний SelectionMode !!!
         SetSelection(SelectionMode.None);
     }
 
-    /// <summary>
-    /// Змінює стан виділення та оновлює візуальне оформлення (Visible/Hidden/None).
-    /// </summary>
-    // !!! ОНОВЛЕНО: Тепер приймає глобальний SelectionMode, що вирішує CS1503 !!!
     public void SetSelection(SelectionMode newMode)
     {
         CurrentMode = newMode;
-        // !!! ОНОВЛЕНО: Використовуємо глобальний SelectionMode !!!
-        bool isSelected = newMode != SelectionMode.None;
+    }
 
-        if (HighlightVisual != null)
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        if (!IsDraggable()) return;
+
+        _originalPosition = _rectTransform.anchoredPosition;
+        _originalParent = _rectTransform.parent;
+        _originalSiblingIndex = _rectTransform.GetSiblingIndex();
+
+        if (_cardScaler != null)
         {
-            HighlightVisual.SetActive(isSelected);
-
-            // --- ДОДАТКОВА ЛОГІКА ДЛЯ ВІЗУАЛЬНОГО ВІДМІНЮВАННЯ ---
-            if (HighlightVisual.TryGetComponent<Image>(out var image))
-            {
-                // !!! ОНОВЛЕНО: Використовуємо глобальний SelectionMode !!!
-                if (newMode == SelectionMode.Visible)
-                {
-                    image.color = Color.yellow;
-                }
-                // !!! ОНОВЛЕНО: Використовуємо глобальний SelectionMode !!!
-                else if (newMode == SelectionMode.Hidden)
-                {
-                    image.color = Color.gray;
-                }
-                // else залишається коректним
-            }
-            // --------------------------------------------------------
+            _cardScaler.ForceScale(_cardScaler.InitialScale * DragScaleMultiplier);
         }
 
-        // Логіка для Debug.Log, якщо необхідно відслідковувати стан
-        // !!! ОНОВЛЕНО: Використовуємо глобальний SelectionMode !!!
-        if (newMode == SelectionMode.Visible)
+        if (DragCanvasGroup != null)
         {
-            Debug.Log($"Card {CardData.CharacterName} selected as VISIBLE (LKM).");
+            DragCanvasGroup.alpha = 0.8f;
+            DragCanvasGroup.blocksRaycasts = false;
         }
-        // !!! ОНОВЛЕНО: Використовуємо глобальний SelectionMode !!!
-        else if (newMode == SelectionMode.Hidden)
+
+        _rectTransform.SetParent(_canvas.transform);
+        _rectTransform.SetAsLastSibling();
+
+        Debug.Log($"Started dragging: {CardData.CharacterName}");
+        OnCardBeginDrag?.Invoke(this);
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (!IsDraggable()) return;
+
+        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
+            _rectTransform,
+            eventData.position,
+            eventData.pressEventCamera,
+            out Vector3 worldPoint))
         {
-            Debug.Log($"Card {CardData.CharacterName} selected as HIDDEN (PKM).");
+            _rectTransform.position = worldPoint;
         }
     }
 
-    // Обробка кліку: вимагається інтерфейсом IPointerClickHandler.
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnEndDrag(PointerEventData eventData)
     {
-        // Повідомляємо менеджеру, що картку було клікнуто, передаючи дані про тип кліку.
-        OnCardClicked?.Invoke(this, eventData);
+        if (!IsDraggable()) return;
+
+        Debug.Log($"Ended dragging: {CardData.CharacterName}");
+
+        // Скидаємо візуальні ефекти
+        if (_cardScaler != null)
+        {
+            _cardScaler.ResetToInitialScale();
+        }
+
+        if (DragCanvasGroup != null)
+        {
+            DragCanvasGroup.alpha = 1f;
+            DragCanvasGroup.blocksRaycasts = true;
+        }
+
+        // Шукаємо DropSlot
+        DropSlot dropSlot = FindDropSlotUnderPointer(eventData);
+
+        if (dropSlot != null)
+        {
+            Debug.Log($"Found slot: {dropSlot.name}, calling CanAcceptCard...");
+            if (dropSlot.CanAcceptCard(this))
+            {
+                Debug.Log($"Slot accepted card, calling AcceptCard...");
+                dropSlot.AcceptCard(this);
+                OnCardDropped?.Invoke(this, dropSlot);
+                Debug.Log($"Card {CardData.CharacterName} successfully dropped in slot {dropSlot.name}");
+            }
+            else
+            {
+                Debug.Log($"Slot {dropSlot.name} rejected card");
+                ReturnToOriginalPosition();
+            }
+        }
+        else
+        {
+            Debug.Log("No DropSlot found under pointer");
+            ReturnToOriginalPosition();
+        }
+
+        OnCardEndDrag?.Invoke(this);
+    }
+
+    private DropSlot FindDropSlotUnderPointer(PointerEventData eventData)
+    {
+        var results = new System.Collections.Generic.List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        foreach (var result in results)
+        {
+            DropSlot slot = result.gameObject.GetComponent<DropSlot>();
+            if (slot != null)
+            {
+                return slot;
+            }
+        }
+
+        return null;
+    }
+
+    public void ReturnToOriginalPosition()
+    {
+        _rectTransform.SetParent(_originalParent);
+        _rectTransform.SetSiblingIndex(_originalSiblingIndex);
+        _rectTransform.anchoredPosition = _originalPosition;
+        _rectTransform.localScale = Vector3.one;
+    }
+
+    public void MoveToSlot(Transform slotTransform)
+    {
+        _rectTransform.SetParent(slotTransform);
+        _rectTransform.anchoredPosition = Vector2.zero;
+        _rectTransform.localPosition = Vector3.zero;
+        _rectTransform.localScale = Vector3.one;
+    }
+
+    private bool IsDraggable()
+    {
+        return gameObject.activeInHierarchy && CardData != null && enabled;
     }
 }

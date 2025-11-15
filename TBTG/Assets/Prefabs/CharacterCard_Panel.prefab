@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 22570312782971482}
   - component: {fileID: 5363156144297383564}
   - component: {fileID: 1357405070760377012}
+  - component: {fileID: 9126072198534295289}
   m_Layer: 5
   m_Name: CharacterCard_Panel
   m_TagString: Untagged
@@ -42,9 +43,9 @@ RectTransform:
   - {fileID: 519129898961215380}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -128, y: -2}
   m_SizeDelta: {x: 256, y: 512}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &5157041330551293996
@@ -133,7 +134,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca887be19d9fa734f878f61801e5c378, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HighlightVisual: {fileID: 2961535217797016327}
+  DragScaleMultiplier: 1.1
+  DragCanvasGroup: {fileID: 9126072198534295289}
+--- !u!225 &9126072198534295289
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149393505435969762}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &2961535217797016327
 GameObject:
   m_ObjectHideFlags: 0

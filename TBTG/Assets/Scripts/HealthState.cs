@@ -1,9 +1,10 @@
-// HealthState.cs
 public enum HealthState
 {
     Dead = 0,
-    Critical = 1,
-    Heavy = 2,
-    Light = 3,
-    Unharmed = 4
+    Come = 1,       // Кома
+    Critical = 2,
+    Heavy = 3,
+    Light = 4,
+    Unharmed = 5,
+    Extra = 6       // Екстра стан
 }
