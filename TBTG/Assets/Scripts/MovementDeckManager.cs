@@ -7,15 +7,20 @@ public class MovementDeckManager : MonoBehaviour
 {
     [Header("Deck Settings")]
     public int MaxHandSize = 6;
-    public List<MovementCardData> MasterDeck; // Повна колода, з якої беремо карти
+    public List<MovementCardData> MasterDeck; // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
     [Header("Player State")]
     public List<MovementCardData> CurrentHand = new List<MovementCardData>();
     private List<MovementCardData> _discardPile = new List<MovementCardData>();
     private List<MovementCardData> _burnedCards = new List<MovementCardData>();
 
+    /// <summary>
+    /// РџРѕС‚РѕС‡РЅР° РєС–Р»СЊРєС–СЃС‚СЊ РєР°СЂС‚ Сѓ СЂСѓС†С– (РґР»СЏ РїРµСЂРµРІС–СЂРѕРє С€С‚СЂР°С„Сѓ Р·Р° РїР°СЃРёРІРЅС–СЃС‚СЊ).
+    /// </summary>
+    public int CurrentHandCount => CurrentHand.Count;
+
     // ----------------------------------------------------------------------
-    // ОСНОВНА ЛОГІКА ДОБОРА КАРТ
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅГІпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
     // ----------------------------------------------------------------------
 
     public void Start()
@@ -26,13 +31,13 @@ public class MovementDeckManager : MonoBehaviour
 
     public void DrawInitialHand()
     {
-        // На початку гри добираємо 6 карт
+        // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 6 пїЅпїЅпїЅпїЅ
         DrawCards(MaxHandSize);
     }
 
     public void ReplenishHand()
     {
-        // На початку раунду добираємо стільки, щоб досягти MaxHandSize (якщо немає штрафу)
+        // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ MaxHandSize (пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ)
         DrawCards(MaxHandSize - CurrentHand.Count);
     }
 
@@ -42,7 +47,7 @@ public class MovementDeckManager : MonoBehaviour
         {
             if (CurrentHand.Count >= MaxHandSize) return;
 
-            // Якщо колода порожня, перемішуємо відбій
+            // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             if (MasterDeck.Count == 0)
             {
                 if (_discardPile.Count == 0)
@@ -53,7 +58,7 @@ public class MovementDeckManager : MonoBehaviour
                 ShuffleDiscardIntoDeck();
             }
 
-            // Беремо верхню карту
+            // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             MovementCardData card = MasterDeck[0];
             MasterDeck.RemoveAt(0);
             CurrentHand.Add(card);
@@ -62,7 +67,7 @@ public class MovementDeckManager : MonoBehaviour
 
     private void ShuffleDiscardIntoDeck()
     {
-        // Перемішування Fisher-Yates
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Fisher-Yates
         MasterDeck.AddRange(_discardPile);
         _discardPile.Clear();
         MasterDeck = MasterDeck.OrderBy(x => Random.value).ToList();
@@ -70,7 +75,7 @@ public class MovementDeckManager : MonoBehaviour
     }
 
     // ----------------------------------------------------------------------
-    // ЛОГІКА ВИКОРИСТАННЯ
+    // пїЅпїЅГІпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     // ----------------------------------------------------------------------
 
     public void UseCard(MovementCardData card, bool burnCard)
@@ -81,20 +86,62 @@ public class MovementDeckManager : MonoBehaviour
 
             if (burnCard)
             {
-                // Для подвійного руху
+                // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
                 _burnedCards.Add(card);
                 Debug.Log($"Card {card.CardName} was BURNED and removed from game pool.");
             }
             else
             {
-                // Звичайне використання
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 _discardPile.Add(card);
             }
         }
     }
 
+    /// <summary>
+    /// РћС‚СЂРёРјР°С‚Рё РІРёРїР°РґРєРѕРІСѓ РєР°СЂС‚РєСѓ Р· СЂСѓРєРё (РІРёРєРѕСЂРёСЃС‚РѕРІСѓС”С‚СЊСЃСЏ РґР»СЏ С€С‚СЂР°С„Сѓ Р·Р° РїР°СЃРёРІРЅС–СЃС‚СЊ,
+    /// СЏРєС‰Рѕ РЅРµРјР°С” UI РґР»СЏ РІРёР±РѕСЂСѓ СЃСѓРїРµСЂРЅРёРєРѕРј РєРѕРЅРєСЂРµС‚РЅРѕС— РєР°СЂС‚РєРё).
+    /// </summary>
+    public MovementCardData GetRandomCardFromHand()
+    {
+        if (CurrentHand.Count == 0) return null;
+        int index = Random.Range(0, CurrentHand.Count);
+        return CurrentHand[index];
+    }
+
+    /// <summary>
+    /// Р’РёРґР°Р»РёС‚Рё РєРѕРЅРєСЂРµС‚РЅСѓ РєР°СЂС‚РєСѓ Р· СЂСѓРєРё Р±РµР· РґРѕРґР°С‚РєРѕРІРёС… РµС„РµРєС‚С–РІ.
+    /// </summary>
+    public void RemoveCardFromHand(MovementCardData card)
+    {
+        if (card != null && CurrentHand.Contains(card))
+        {
+            CurrentHand.Remove(card);
+        }
+    }
+
+    /// <summary>
+    /// РџСЂРёР№РЅСЏС‚Рё РєР°СЂС‚РєСѓ СЃСѓРїРµСЂРЅРёРєР° РІ СЂРµР·СѓР»СЊС‚Р°С‚С– С€С‚СЂР°С„Сѓ Р·Р° РїР°СЃРёРІРЅС–СЃС‚СЊ.
+    /// РЇРєС‰Рѕ С” РјС–СЃС†Рµ РІ СЂСѓС†С– вЂ” РґРѕРґР°С”РјРѕ РІ СЂСѓРєСѓ, С–РЅР°РєС€Рµ СЃРєРёРґР°С”РјРѕ Сѓ РІС–РґР±С–Р№.
+    /// </summary>
+    public void ReceivePenaltyCard(MovementCardData card)
+    {
+        if (card == null) return;
+
+        if (CurrentHand.Count < MaxHandSize)
+        {
+            CurrentHand.Add(card);
+            Debug.Log($"Received penalty card '{card.CardName}' into hand.");
+        }
+        else
+        {
+            _discardPile.Add(card);
+            Debug.Log($"Received penalty card '{card.CardName}' into discard (hand is full).");
+        }
+    }
+
     // ----------------------------------------------------------------------
-    // ЛОГІКА ШТРАФІВ ТА ПОВНОГО СКИНАННЯ
+    // пїЅпїЅГІпїЅпїЅ пїЅпїЅпїЅпїЅФІпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     // ----------------------------------------------------------------------
 
     public void ApplyInactivityPenalty(MovementCardData cardToLose)
@@ -102,7 +149,7 @@ public class MovementDeckManager : MonoBehaviour
         if (CurrentHand.Contains(cardToLose))
         {
             CurrentHand.Remove(cardToLose);
-            // Карта йде у відбій гравця (якщо опонент вирішив просто викинути)
+            // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
             _discardPile.Add(cardToLose);
             Debug.Log("Inactivity penalty applied. Card discarded.");
         }
@@ -110,14 +157,14 @@ public class MovementDeckManager : MonoBehaviour
 
     public void RestoreHandOnPairSwap(List<MovementCardData> newRandomCards)
     {
-        // Використовується при одноразовій рандомній заміні пари
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         CurrentHand.Clear();
-        _burnedCards.Clear(); // Обнулення вигорань
+        _burnedCards.Clear(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-        // Всі старі карти йдуть у відбій (для MasterDeck)
+        // пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ MasterDeck)
         _discardPile.AddRange(CurrentHand);
 
-        // Додаємо нові випадкові карти
+        // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         CurrentHand.AddRange(newRandomCards.Take(MaxHandSize));
 
         Debug.Log("Hand restored and Burned cards reset due to Random Pair Swap.");

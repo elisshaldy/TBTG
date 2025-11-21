@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     public PlayerController Player2;
 
     // --- UI REFERENCES ---
-    [Tooltip("Панель UI, що затемнює екран під час передачі ходу (для Hot-Seat).")]
+    [Tooltip("пїЅпїЅпїЅпїЅпїЅпїЅ UI, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ Hot-Seat).")]
     public GameObject HandoverPanel;
 
     // --- GAME STATE ---
@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        // Пошук залежностей, якщо не призначені
+        // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (GridManager == null) GridManager = FindObjectOfType<GridManager>();
         if (InitiativeManager == null) InitiativeManager = FindObjectOfType<InitiativeManager>();
     }
@@ -49,37 +49,37 @@ public class GameManager : MonoBehaviour
 
     private void InitializeGame()
     {
-        // Ініціалізація контролерів гравців
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         Player1.Initialize(1, this);
         Player2.Initialize(2, this);
 
-        // Переконайтеся, що панель прихована при старті
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         if (HandoverPanel != null) HandoverPanel.SetActive(false);
 
         Debug.Log("Game Initialized. Starting Draft Phase.");
-        // Тут має бути виклик StartDraftPhase() з GameDeckManager
+        // пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ StartDraftPhase() пїЅ GameDeckManager
 
-        // !!! ДЛЯ ТЕСТУВАННЯ: МОЖНА ЗАПУСТИТИ PLACEMENT PHASE ВІДРАЗУ !!!
+        // !!! пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ PLACEMENT PHASE ВІпїЅпїЅпїЅпїЅпїЅ !!!
         // StartPlacementPhase();
     }
 
     // ----------------------------------------------------------------------
-    // ФАЗА 1: Розміщення (Placement)
+    // пїЅпїЅпїЅпїЅ 1: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (Placement)
     // ----------------------------------------------------------------------
 
     /// <summary>
-    /// Починає фазу розміщення персонажів, визначаючи чергу.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
     /// </summary>
     public void StartPlacementPhase()
     {
         CurrentRound = 1;
-        _placementOrder = new Queue<PlayerController>(new[] { Player1, Player2 }); // По черзі
+        _placementOrder = new Queue<PlayerController>(new[] { Player1, Player2 }); // пїЅпїЅ пїЅпїЅпїЅпїЅ
 
-        // Приклад: Визначення зон розміщення (Тут мають бути реальні координати)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         List<Vector2Int> zone1 = new List<Vector2Int>();
         List<Vector2Int> zone2 = new List<Vector2Int>();
 
-        // Встановлюємо зони в PlayerController (ТЕПЕР ЦЕ ПРАЦЮЄ!)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ PlayerController (пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅЮЄ!)
         Player1.SetPlacementZone(zone1);
         Player2.SetPlacementZone(zone2);
 
@@ -87,16 +87,16 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Запускає хід розміщення для наступного гравця.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
     /// </summary>
-    public void StartNextPlacementTurn() // Зроблено публічним, щоб викликати з PlayerController
+    public void StartNextPlacementTurn() // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ PlayerController
     {
         if (_placementOrder.Count > 0)
         {
             PlayerController nextPlayer = _placementOrder.Dequeue();
 
-            // !!! ВИПРАВЛЕНО ВИКЛИК !!!
-            nextPlayer.StartPlacement(); // Викликаємо StartPlacement без передачі зони
+            // !!! пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ !!!
+            nextPlayer.StartPlacement(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ StartPlacement пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         }
         else
         {
@@ -106,86 +106,86 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Повертає зону розміщення для PlayerController (залежить від GridManager).
-    /// Цей метод був залишений для логічної повноти, хоча зони вже встановлені в SetPlacementZone.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ PlayerController (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ GridManager).
+    /// пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ SetPlacementZone.
     /// </summary>
     public List<Vector2Int> GetPlayerPlacementZone(int playerID)
     {
-        // Це спрощений код, який має бути реалізований на рівні GridManager
+        // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ GridManager
         if (playerID == 1)
         {
-            // Повернути зону гравця 1
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 1
             return new List<Vector2Int> { /* ... */ };
         }
         else if (playerID == 2)
         {
-            // Повернути зону гравця 2
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 2
             return new List<Vector2Int> { /* ... */ };
         }
         return new List<Vector2Int>();
     }
 
     // ----------------------------------------------------------------------
-    // ФАЗА 3: Виконання Ходу (З МОДИФІКАЦІЯМИ ДЛЯ HOT-SEAT)
+    // пїЅпїЅпїЅпїЅ 3: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (пїЅ пїЅпїЅпїЅпїЅФІпїЅпїЅЦІпїЅпїЅпїЅ пїЅпїЅпїЅ HOT-SEAT)
     // ----------------------------------------------------------------------
 
     /// <summary>
-    /// Викликається InitiativeManager, коли починається хід персонажа.
-    /// Перед початком ходу викликає Handover.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ InitiativeManager, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
+    /// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ Handover.
     /// </summary>
     public void StartCharacterTurn(InitiativeToken token)
     {
-        // Визначаємо активного гравця
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         _activePlayer = (token.PlayerID == Player1.PlayerID) ? Player1 : Player2;
 
         Debug.Log($"Hot Seat: Passing control to Player {_activePlayer.PlayerID} to move {token.CharacterReference.Data.CharacterName}.");
 
-        // !!! НОВЕ: ПОЧАТОК ЛОГІКИ ПЕРЕДАЧІ ХОДУ !!!
+        // !!! пїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅГІпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅЧІ пїЅпїЅпїЅпїЅ !!!
         StartHandover(_activePlayer, token.CharacterReference);
     }
 
     /// <summary>
-    /// Починає фазу затемнення екрана для передачі пристрою.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
     /// </summary>
     private void StartHandover(PlayerController nextPlayer, Character characterToMove)
     {
         if (HandoverPanel == null)
         {
-            Debug.LogError("HandoverPanel не призначено! Запускаємо хід негайно.");
+            Debug.LogError("HandoverPanel пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ! пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.");
             nextPlayer.StartTurn(characterToMove);
             return;
         }
 
-        // Відображаємо панель
+        // ВіпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         HandoverPanel.SetActive(true);
 
-        // Знаходимо кнопку на панелі, щоб прив'язати до неї логіку
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ'пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         Button continueButton = HandoverPanel.GetComponentInChildren<Button>();
         if (continueButton != null)
         {
-            // Очищаємо старі слухачі та додаємо новий
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             continueButton.onClick.RemoveAllListeners();
-            // Використовуємо функцію-обгортку для передачі контексту
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             continueButton.onClick.AddListener(() => CompleteHandover(nextPlayer, characterToMove));
         }
         else
         {
-            Debug.LogError("На HandoverPanel відсутній компонент Button! Додайте його, щоб гравець міг продовжити.");
-            // Якщо немає кнопки, ми не можемо автоматично продовжити. Хід заморозиться.
+            Debug.LogError("пїЅпїЅ HandoverPanel пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Button! пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.");
+            // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. ХіпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
         }
     }
 
     /// <summary>
-    /// Завершує фазу затемнення і починає хід гравця.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
     /// </summary>
     public void CompleteHandover(PlayerController nextPlayer, Character characterToMove)
     {
-        // Приховуємо панель
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         if (HandoverPanel != null)
         {
             HandoverPanel.SetActive(false);
 
-            // Очищаємо слухача кнопки
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             Button continueButton = HandoverPanel.GetComponentInChildren<Button>();
             if (continueButton != null)
             {
@@ -193,7 +193,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        // Починаємо фактичний хід гравця
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         nextPlayer.StartTurn(characterToMove);
 
         Debug.Log($"Handover completed. Player {nextPlayer.PlayerID} is now active.");
@@ -201,26 +201,86 @@ public class GameManager : MonoBehaviour
 
 
     /// <summary>
-    /// Викликається PlayerController, коли персонаж вичерпав свої дії.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ PlayerController, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ дії.
     /// </summary>
     public void EndCharacterTurn()
     {
-        // Повідомляємо InitiativeManager, що хід завершено
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ InitiativeManager, пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         InitiativeManager.CompleteTurn();
     }
 
     // ----------------------------------------------------------------------
-    // ФАЗА 4: Кінець Раунду
+    // пїЅпїЅпїЅпїЅ 4: КіпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     // ----------------------------------------------------------------------
     public void EndRound()
     {
-        // Логіка кінця раунду:
-        // 1. Обробка ефектів (Active Tiles)
-        // 2. Оновлення колод руху (MovementDeckManager.ReplenishHand)
-        // 3. Збільшення лічильника раундів
+        // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ:
+        // 1. пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (Active Tiles)
+        // 2. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (MovementDeckManager.ReplenishHand)
+        // 3. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+
+        // 1. РћР±СЂРѕР±РєР° РµС„РµРєС‚С–РІ Active Tiles, СЏРєС– Р»С–РєСѓСЋС‚СЊ / РїРѕРіС–СЂС€СѓСЋС‚СЊ СЃС‚Р°РЅ РїРµСЂСЃРѕРЅР°Р¶С–РІ
+        if (GridManager != null)
+        {
+            foreach (var coords in GridManager.GetAllRegisteredCoords())
+            {
+                Tile tile = GridManager.GetTile(coords);
+                if (tile == null || tile.Type != TileType.ActiveTile) continue;
+                if (tile.Occupant == null || tile.CurrentEffect == null) continue;
+
+                // Р›С–РєСѓРІР°РЅРЅСЏ / РїРѕРіС–СЂС€РµРЅРЅСЏ СЃС‚Р°РЅСѓ Р·РіС–РґРЅРѕ Р· РµС„РµРєС‚РѕРј РєР»С–С‚РёРЅРєРё
+                if (tile.CurrentEffect.HealOnRoundEnd)
+                {
+                    tile.Occupant.ApplyHealing(1);
+                }
+
+                if (tile.CurrentEffect.WorsenStateOnRoundEnd)
+                {
+                    tile.Occupant.ApplyDamage(1);
+                }
+            }
+        }
+
+        // 2. РЁС‚СЂР°С„ Р·Р° РїР°СЃРёРІРЅС–СЃС‚СЊ РґР»СЏ РєРѕР¶РЅРѕРіРѕ РіСЂР°РІС†СЏ (СЃРїСЂРѕС‰РµРЅР° СЂРµР°Р»С–Р·Р°С†С–СЏ Р±РµР· РІРёР±РѕСЂСѓ РєР°СЂС‚Рё С‡РµСЂРµР· UI):
+        // СЏРєС‰Рѕ РІ РєС–РЅС†С– СЂР°СѓРЅРґСѓ РєР°СЂС‚ Сѓ СЂСѓС†С– > 2, СЃСѓРїРµСЂРЅРёРє РІРёРїР°РґРєРѕРІРѕ "Р·Р°Р±РёСЂР°С”" РѕРґРЅСѓ РєР°СЂС‚РєСѓ
+        // (СЏРєС‰Рѕ РІ РЅСЊРѕРіРѕ С” РјС–СЃС†Рµ вЂ” РІ СЂСѓРєСѓ, С–РЅР°РєС€Рµ Сѓ РІС–РґР±С–Р№).
+        if (Player1 != null && Player2 != null)
+        {
+            ApplyInactivityPenaltyBetweenPlayers(Player1, Player2);
+            ApplyInactivityPenaltyBetweenPlayers(Player2, Player1);
+        }
+
+        // 3. Р”РѕР±С–СЂ РєР°СЂС‚ СЂСѓС…Сѓ РґРѕ РїРѕРІРЅРѕРіРѕ Р»С–РјС–С‚Сѓ (СЏРєС‰Рѕ РїРѕС‚СЂС–Р±РЅРѕ)
+        Player1?.DeckManager?.ReplenishHand();
+        Player2?.DeckManager?.ReplenishHand();
+
         CurrentRound++;
         Debug.Log($"Round {CurrentRound - 1} ended. Starting Round {CurrentRound} Initiative Phase.");
 
         // StartInitiativePhase();
+    }
+
+    /// <summary>
+    /// Р—Р°СЃС‚РѕСЃСѓРІР°С‚Рё С€С‚СЂР°С„ Р·Р° РїР°СЃРёРІРЅС–СЃС‚СЊ: СЏРєС‰Рѕ Сѓ РіСЂР°РІС†СЏ-Р±РµРЅРµС„С–С†С–Р°СЂР° (offender) РЅР°РїСЂРёРєС–РЅС†С– СЂР°СѓРЅРґСѓ
+    /// Р±С–Р»СЊС€Рµ 2 РєР°СЂС‚ СЂСѓС…Сѓ РІ СЂСѓС†С–, СЃСѓРїРµСЂРЅРёРє РІРёРїР°РґРєРѕРІРѕ Р·Р°Р±РёСЂР°С” РѕРґРЅСѓ РєР°СЂС‚РєСѓ.
+    /// </summary>
+    private void ApplyInactivityPenaltyBetweenPlayers(PlayerController offender, PlayerController opponent)
+    {
+        if (offender == null || opponent == null) return;
+        if (offender.DeckManager == null || opponent.DeckManager == null) return;
+
+        var offenderDeck = offender.DeckManager;
+        var opponentDeck = opponent.DeckManager;
+
+        if (offenderDeck.CurrentHandCount > 2)
+        {
+            MovementCardData cardToLose = offenderDeck.GetRandomCardFromHand();
+            if (cardToLose == null) return;
+
+            offenderDeck.RemoveCardFromHand(cardToLose);
+            opponentDeck.ReceivePenaltyCard(cardToLose);
+
+            Debug.Log($"Inactivity penalty: Player {offender.PlayerID} loses card '{cardToLose.CardName}' to Player {opponent.PlayerID}.");
+        }
     }
 }

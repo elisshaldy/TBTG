@@ -1,7 +1,7 @@
 // CombatManager.cs
 using UnityEngine;
 using System.Linq;
-using System.Collections.Generic; // Додано для використання Tile
+using System.Collections.Generic; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Tile
 
 public class CombatManager : MonoBehaviour
 {
@@ -15,10 +15,10 @@ public class CombatManager : MonoBehaviour
     }
 
     // ----------------------------------------------------------------------
-    // ОСНОВНА ФУНКЦІЯ АТАКИ
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅЦІпїЅ пїЅпїЅпїЅпїЅпїЅ
     // ----------------------------------------------------------------------
     /// <summary>
-    /// Виконує повний цикл атаки: розрахунок модифікаторів, кидок кубиків, обробка результату.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
     /// </summary>
     public void PerformAttack(Character attacker, Tile targetTile)
     {
@@ -26,40 +26,40 @@ public class CombatManager : MonoBehaviour
 
         Character target = targetTile.Occupant;
 
-        // 1. РОЗРАХУНОК МОДИФІКАТОРІВ
+        // 1. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅФІпїЅпїЅпїЅпїЅРІпїЅ
         int totalAdvantage = CalculateTotalAdvantage(attacker, target, targetTile);
 
-        // 2. КИДОК КУБИКІВ (3d6)
+        // 2. пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅКІпїЅ (3d6)
         int rollResult = Roll3D6();
 
-        // 3. ІНТЕРПРЕТАЦІЯ ТА ВПЛИВ
+        // 3. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅЦІпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         ProcessRollResult(rollResult, totalAdvantage, attacker, target);
     }
 
     /// <summary>
-    /// Імітує кидок 3 шестигранних кубиків (3d6).
+    /// пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ 3 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (3d6).
     /// </summary>
     private int Roll3D6()
     {
-        // Обчислює суму трьох випадкових чисел від 1 до 6
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 1 пїЅпїЅ 6
         return Random.Range(1, 7) + Random.Range(1, 7) + Random.Range(1, 7);
     }
 
     // ----------------------------------------------------------------------
-    // ЛОГІКА МОДИФІКАТОРІВ (Перевага/Перешкода)
+    // пїЅпїЅГІпїЅпїЅ пїЅпїЅпїЅпїЅФІпїЅпїЅпїЅпїЅРІпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
     // ----------------------------------------------------------------------
     /// <summary>
-    /// Обчислює загальний модифікатор Advantage/Obstacle.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Advantage/Obstacle.
     /// </summary>
-    /// <param name="attacker">Персонаж, що атакує.</param>
-    /// <param name="target">Персонаж, на якого націлена атака.</param>
-    /// <param name="targetTile">Клітинка цілі.</param>
-    /// <returns>Ціле число: -1 це Перевага (Advantage), +1 це Перешкода (Obstacle).</returns>
+    /// <param name="attacker">пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.</param>
+    /// <param name="target">пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.</param>
+    /// <param name="targetTile">пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ.</param>
+    /// <returns>ЦіпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ: -1 пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (Advantage), +1 пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (Obstacle).</returns>
     private int CalculateTotalAdvantage(Character attacker, Character target, Tile targetTile)
     {
         int advantage = 0;
 
-        // !!! ВИПРАВЛЕННЯ: Отримання клітинки атакувальника через GridManager !!!
+        // !!! пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ GridManager !!!
         Tile attackerTile = GridManager.Instance.GetTile(attacker.GridPosition);
         if (attackerTile == null)
         {
@@ -67,70 +67,86 @@ public class CombatManager : MonoBehaviour
             return 0;
         }
 
-        // 1. Вплив станів цілі (легке поранення дає Перевагу атакувальнику)
+        // 1. пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         if (target.CurrentState == HealthState.Light || target.CurrentState == HealthState.Heavy || target.CurrentState == HealthState.Critical)
         {
-            advantage -= 1; // -1 це Advantage
+            advantage -= 1; // -1 пїЅпїЅ Advantage
         }
 
-        // 2. Вплив клітинок (Attack-Side Advantage)
+        // 1.1. РЁС‚СЂР°С„ РґРѕ Р°С‚Р°РєРё РґР»СЏ РїРѕСЂР°РЅРµРЅРѕРіРѕ/РєСЂРёС‚РёС‡РЅРѕРіРѕ Р°С‚Р°РєСѓСЋС‡РѕРіРѕ (GDD: Heavy/Critical)
+        if (attacker.CurrentState == HealthState.Heavy || attacker.CurrentState == HealthState.Critical)
+        {
+            advantage += 1; // +1 пїЅпїЅ Obstacle (СѓСЃРєР»Р°РґРЅСЋС”РјРѕ РїРѕРїР°РґР°РЅРЅСЏ)
+        }
 
-        // Клітинки поля атакувальника
-        if (attackerTile.Type == TileType.Offensive) advantage -= 1; // Атакуюча клітинка -> Advantage
-        if (attackerTile.Type == TileType.Defensive) advantage += 1; // Захисна клітинка -> Obstacle
+        // 2. пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (Attack-Side Advantage)
 
-        // Клітинки поля цілі
-        if (targetTile.Type == TileType.Defensive) advantage += 1;   // Захисна клітинка -> Obstacle
-        if (targetTile.Type == TileType.Offensive) advantage -= 1;  // Атакуюча клітинка -> Advantage
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        if (attackerTile.Type == TileType.Offensive) advantage -= 1; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ -> Advantage
+        if (attackerTile.Type == TileType.Defensive) advantage += 1; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ -> Obstacle
 
-        // Вплив активних клітинок
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
+        if (targetTile.Type == TileType.Defensive) advantage += 1;   // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ -> Obstacle
+        if (targetTile.Type == TileType.Offensive) advantage -= 1;  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ -> Advantage
+
+        // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (attackerTile.Type == TileType.ActiveTile && attackerTile.CurrentEffect != null)
         {
-            // AttackAdvantageChange: -1 для переваги, +1 для перешкоди
+            // AttackAdvantageChange: -1 пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, +1 пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             advantage += attackerTile.CurrentEffect.AttackAdvantageChange;
         }
 
-        // ... Додати перевірку на риси та інші модифікатори ...
+        // ... пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ...
+
+        // GDD: СЃСѓРјР°СЂРЅРёР№ РјРѕРґРёС„С–РєР°С‚РѕСЂ РЅРµ РјРѕР¶Рµ РїРµСЂРµРІРёС‰СѓРІР°С‚Рё В±3
+        advantage = Mathf.Clamp(advantage, -3, 3);
 
         return advantage;
     }
 
     // ----------------------------------------------------------------------
-    // ІНТЕРПРЕТАЦІЯ РЕЗУЛЬТАТУ
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅЦІпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     // ----------------------------------------------------------------------
     /// <summary>
-    /// Обробляє результат кидка з урахуванням переваг/перешкод.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
     /// </summary>
     private void ProcessRollResult(int roll, int advantage, Character attacker, Character target)
     {
-        // Перевага (-1) зменшує поріг для успіху, Перешкода (+1) збільшує його.
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (-1) пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (+1) пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.
         int effectiveRoll = roll + advantage;
         int impacts = 0;
         bool activateReactive = false;
 
         Debug.Log($"Roll: {roll}, Advantage Modifier: {advantage}, Effective Roll: {effectiveRoll}");
 
-        if (effectiveRoll <= 3) // Критичний промах (Original Roll + Advantage <= 3)
+        // GDD 3d6:
+        // 3  - РєСЂРёС‚РёС‡РЅРёР№ РїСЂРѕРјР°С…
+        // 4вЂ“10 - РїСЂРѕРјР°С…
+        // 11вЂ“14 - Р·РІРёС‡Р°Р№РЅРµ РІР»СѓС‡РµРЅРЅСЏ (Impact 1, Р±РµР· СЂРµР°РєС‚РёРІРЅРёС… СЂРёСЃ)
+        // 15вЂ“17 - РїРѕСЃРёР»РµРЅРµ РІР»СѓС‡РµРЅРЅСЏ (Impact 1 + Reactive traits)
+        // 17вЂ“18 - РєСЂРёС‚ (Impact 2 + РїРѕСЃРёР»РµРЅС– Reactive traits)
+
+        if (effectiveRoll <= 3) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         {
             Debug.Log("Critical Miss: Self-Impact 1");
             attacker.ApplyDamage(1);
         }
-        else if (effectiveRoll >= 4 && effectiveRoll <= 8) // Промах (Original Roll + Advantage: 4-8)
+        else if (effectiveRoll >= 4 && effectiveRoll <= 10) // пїЅпїЅпїЅпїЅпїЅпїЅ
         {
             Debug.Log("Miss.");
         }
-        else if (effectiveRoll >= 9 && effectiveRoll <= 12) // Звичайне влучення (Impact 1)
+        else if (effectiveRoll >= 11 && effectiveRoll <= 14) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (Impact 1)
         {
             Debug.Log("Standard Hit: Impact 1");
             impacts = 1;
         }
-        else if (effectiveRoll >= 13 && effectiveRoll <= 16) // Посилене влучення (Impact 1 + Traits)
+        else if (effectiveRoll >= 15 && effectiveRoll <= 17) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (Impact 1 + Traits)
         {
             Debug.Log("Reinforced Hit: Impact 1 + Reactive Traits");
             impacts = 1;
             activateReactive = true;
         }
-        else if (effectiveRoll >= 17) // Критичне влучення (Impact 2 + Посилені Traits)
+        else if (effectiveRoll >= 18) // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (Impact 2 + пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Traits)
         {
             Debug.Log("Critical Hit: Impact 2 + Enhanced Reactive Traits");
             impacts = 2;
@@ -144,7 +160,7 @@ public class CombatManager : MonoBehaviour
 
         if (activateReactive)
         {
-            // Тут потрібна логіка активації Reactive Traits цілі (наприклад, викликати метод на Character)
+            // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Reactive Traits пїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ Character)
             // target.ActivateReactiveTraits();
         }
     }

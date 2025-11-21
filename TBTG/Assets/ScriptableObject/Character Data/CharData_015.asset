@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: CharData_015
   m_EditorClassIdentifier: 
   CharacterName: "\u0413\u0430\u0440\u043F\u0456\u044F"
-  CharacterSprite: {fileID: 21300000, guid: 153f2b7da26d4ae489b41ba0115f2802, type: 3}
+  CharacterSprite: {fileID: 21300000, guid: b98c79d35158c8143937914ce44b6f90, type: 3}
+  MaxHealth: 100
+  MovementRange: 3
   AttackRollDice: 3
   AttackRollSides: 6
   BaseAttackBonus: 0

@@ -7,10 +7,10 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Configuration")]
     public int PlayerID;
-    public PlacementInputHandler InputHandler; // Призначити в Інспекторі
+    public PlacementInputHandler InputHandler; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
     [Header("Placement State")]
-    // Заповнити цей список в Інспекторі на початку гри
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
     public List<Character> CharactersToPlaceList;
     private Queue<Character> _charactersToPlaceQueue;
 
@@ -23,7 +23,11 @@ public class PlayerController : MonoBehaviour
     public Character CurrentCharacter;
     private int _actionsRemaining = 2;
     private GameManager _gameManager;
-    private List<Vector2Int> _currentPlacementZone; // Зона, встановлена GameManager
+    private List<Vector2Int> _currentPlacementZone; // пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ GameManager
+
+    // РЎР»СѓР¶Р±РѕРІС– РїСЂР°РїРѕСЂС†С– РґР»СЏ Р»РѕРіС–РєРё С…РѕРґСѓ
+    private bool _hasMovedOnceThisTurn = false;
+    private bool _lastActionWasAttack = false;
 
     public void Initialize(int id, GameManager manager)
     {
@@ -37,11 +41,11 @@ public class PlayerController : MonoBehaviour
     }
 
     // ----------------------------------------------------------------------
-    // !!! ВИПРАВЛЕННЯ CS1061: ДОДАНО МЕТОД !!!
+    // !!! пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ CS1061: пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ !!!
     // ----------------------------------------------------------------------
     /// <summary>
-    /// Встановлює дозволену зону розміщення для гравця.
-    /// Викликається GameManager на початку Placement Phase.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ GameManager пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ Placement Phase.
     /// </summary>
     public void SetPlacementZone(List<Vector2Int> zone)
     {
@@ -49,58 +53,58 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"Player {PlayerID} placement zone set. Zone size: {zone.Count}");
     }
     // ----------------------------------------------------------------------
-    // КІНЕЦЬ ВИПРАВЛЕННЯ
+    // КІпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     // ----------------------------------------------------------------------
 
     // ----------------------------------------------------------------------
-    // ФАЗА 1.1: Розміщення персонажа
+    // пїЅпїЅпїЅпїЅ 1.1: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     // ----------------------------------------------------------------------
     /// <summary>
-    /// Починає хід розміщення для цього гравця.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
     /// </summary>
-    public void StartPlacement() // Оновлено: прибрано List<Vector2Int> availableZone з аргументів
+    public void StartPlacement() // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ List<Vector2Int> availableZone пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     {
         if (!_charactersToPlaceQueue.Any())
         {
             Debug.Log($"Player {PlayerID} finished placement. Calling EndPlacementPhase.");
-            // Тут має бути виклик методу на GameManager для переходу до наступного гравця
-            // Або для виклику EndPlacementPhase
+            // пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ GameManager пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+            // пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ EndPlacementPhase
             return;
         }
 
-        Character characterToPlace = _charactersToPlaceQueue.Peek(); // Просто беремо наступного, але не видаляємо
+        Character characterToPlace = _charactersToPlaceQueue.Peek(); // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
         Debug.Log($"Player {PlayerID} must place {characterToPlace.Data.CharacterName}.");
 
-        // Активуємо InputHandler, передаємо йому PlayerController
-        // InputHandler повинен знати, що йому тепер потрібно перевіряти _currentPlacementZone
-        // Примітка: Ви можете додати _currentPlacementZone в StartListening, якщо хочете
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ InputHandler, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ PlayerController
+        // InputHandler пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ _currentPlacementZone
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ _currentPlacementZone пїЅ StartListening, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         InputHandler.StartListening(this);
     }
 
     /// <summary>
-    /// Фактичне розміщення персонажа на клітинці. Викликається InputHandler.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ InputHandler.
     /// </summary>
     public void PlaceCharacter(Character character, Vector2Int coords)
     {
         if (_charactersToPlaceQueue.Peek() != character)
         {
-            Debug.LogWarning("Спроба розмістити не того персонажа. Видаліть це в фінальній версії.");
+            Debug.LogWarning("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.");
             return;
         }
 
-        _charactersToPlaceQueue.Dequeue(); // Видаляємо з черги
+        _charactersToPlaceQueue.Dequeue(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ
 
-        // Фізичне розміщення на полі
-        // 1. Оновлення позиції Character
+        // ФіпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ
+        // 1. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ Character
         character.GridPosition = coords;
 
-        // 2. Оновлення клітинки (Tile)
+        // 2. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (Tile)
         Tile tile = _gameManager.GridManager.GetTile(coords);
         if (tile != null)
         {
             tile.SetOccupant(character);
-            character.transform.position = tile.transform.position; // Переміщення об'єкта
+            character.transform.position = tile.transform.position; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ'пїЅпїЅпїЅпїЅ
         }
 
         ActiveCharacters.Add(character);
@@ -108,33 +112,70 @@ public class PlayerController : MonoBehaviour
 
         InputHandler.StopListening();
 
-        // Переходимо до розміщення наступного персонажа
-        // _gameManager.StartNextPlacementTurn(); // Це має бути викликано GameManager
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        // _gameManager.StartNextPlacementTurn(); // пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ GameManager
     }
 
     // ----------------------------------------------------------------------
-    // ФАЗА 3: Виконання Ходу
+    // пїЅпїЅпїЅпїЅ 3: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
     // ----------------------------------------------------------------------
 
     public void StartTurn(Character character)
     {
         CurrentCharacter = character;
-        _actionsRemaining = 2; // Кожному персонажу 2 дії
+        _actionsRemaining = 2; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 2 дії
 
-        // Тут має бути логіка підсвічування цього персонажа, оновлення UI тощо.
+        // РЎРєРёРґР°С”РјРѕ СЃР»СѓР¶Р±РѕРІС– РїСЂР°РїРѕСЂС†С– РЅР° РїРѕС‡Р°С‚РєСѓ С…РѕРґСѓ
+        _hasMovedOnceThisTurn = false;
+        _lastActionWasAttack = false;
+
+        // пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ UI пїЅпїЅпїЅпїЅ.
 
         Debug.Log($"P{PlayerID} turn started with {CurrentCharacter.Data.CharacterName}. Actions left: {_actionsRemaining}");
     }
 
-    // Приклад: Рух персонажа
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     public void PerformMoveAction(MovementCardData card, Vector2Int destination)
     {
         if (_actionsRemaining <= 0 || CurrentCharacter == null) return;
 
-        // Потрібен MovementSystem на персонажі
-        // CurrentCharacter.GetComponent<MovementSystem>().MoveCharacter(
-        //     destination, card, DeckManager, false
-        // );
+        // РћР±РјРµР¶РµРЅРЅСЏ Р·Р° СЃС‚Р°РЅР°РјРё:
+        // Critical: РЅРµРјРѕР¶Р»РёРІС–СЃС‚СЊ СЂСѓС…Сѓ
+        if (CurrentCharacter.CurrentState == HealthState.Critical)
+        {
+            Debug.LogWarning($"[{CurrentCharacter.Data.CharacterName}] is in Critical state and cannot move.");
+            return;
+        }
+
+        // Come: РїРµСЂСЃРѕРЅР°Р¶ РјРѕР¶Рµ Р»РёС€Рµ Р·Р°РјС–РЅРёС‚РёСЃСЊ Р°Р±Рѕ РїСЂРѕРїСѓСЃС‚РёС‚Рё С…С–Рґ (GDD),
+        // СЂСѓС… Сѓ С‚Р°РєРѕРјСѓ СЃС‚Р°РЅС– Р±Р»РѕРєСѓС”РјРѕ.
+        if (CurrentCharacter.CurrentState == HealthState.Come)
+        {
+            Debug.LogWarning($"[{CurrentCharacter.Data.CharacterName}] is in Come state and may only swap or skip the turn.");
+            return;
+        }
+
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ MovementSystem пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        var movementSystem = CurrentCharacter.GetComponent<MovementSystem>();
+        if (movementSystem == null)
+        {
+            Debug.LogError("MovementSystem component is missing on CurrentCharacter.");
+            return;
+        }
+
+        // РЇРєС‰Рѕ С†Рµ РґСЂСѓРіР° РґС–СЏ СЂСѓС…Сѓ РїС–РґСЂСЏРґ Р·Р° С…С–Рґ вЂ” РІРІР°Р¶Р°С”РјРѕ С†Рµ double-move (GDD)
+        bool isDoubleMove = _hasMovedOnceThisTurn;
+
+        movementSystem.MoveCharacter(
+            destination,
+            card,
+            DeckManager,
+            isDoubleMove
+        );
+
+        // РџС–СЃР»СЏ double-move СЃРєРёРґР°С”РјРѕ РїСЂР°РїРѕСЂРµС†СЊ, С‰РѕР± РЅРµ Р±СѓР»Рѕ triple-move
+        _hasMovedOnceThisTurn = !isDoubleMove;
+        _lastActionWasAttack = false;
 
         _actionsRemaining--;
         Debug.Log($"Action used: Move. Actions left: {_actionsRemaining}");
@@ -142,20 +183,46 @@ public class PlayerController : MonoBehaviour
         CheckEndTurn();
     }
 
-    // Приклад: Атака
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅ
     public void PerformAttackAction(Tile targetTile)
     {
         if (_actionsRemaining <= 0 || CurrentCharacter == null) return;
+
+        // GDD: Р·Р°Р±РѕСЂРѕРЅР° РґРІРѕС… Р°С‚Р°Рє РїРѕСЃРїС–Р»СЊ Р·Р° РѕРґРёРЅ С…С–Рґ
+        if (_lastActionWasAttack)
+        {
+            Debug.LogWarning($"[{CurrentCharacter.Data.CharacterName}] cannot perform two attacks in a row in a single turn.");
+            return;
+        }
+
+        // Come: Сѓ СЃС‚Р°РЅС– РєРѕРјРё РїРµСЂСЃРѕРЅР°Р¶ РЅРµ РјРѕР¶Рµ Р°С‚Р°РєСѓРІР°С‚Рё (GDD)
+        if (CurrentCharacter.CurrentState == HealthState.Come)
+        {
+            Debug.LogWarning($"[{CurrentCharacter.Data.CharacterName}] is in Come state and cannot attack. Use swap or skip instead.");
+            return;
+        }
+
+        // Dead: РґРѕРґР°С‚РєРѕРІР° РїРµСЂРµРІС–СЂРєР° Р±РµР·РїРµРєРё
+        if (CurrentCharacter.CurrentState == HealthState.Dead)
+        {
+            Debug.LogWarning($"[{CurrentCharacter.Data.CharacterName}] is Dead and cannot act.");
+            return;
+        }
 
         CombatManager.Instance.PerformAttack(CurrentCharacter, targetTile);
 
         _actionsRemaining--;
         Debug.Log($"Action used: Attack. Actions left: {_actionsRemaining}");
 
+        // РџС–СЃР»СЏ Р°С‚Р°РєРё С„С–РєСЃСѓС”РјРѕ, С‰Рѕ РѕСЃС‚Р°РЅРЅСЏ РґС–СЏ Р±СѓР»Р° Р°С‚Р°РєРѕСЋ
+        _lastActionWasAttack = true;
+        // Р‘СѓРґСЊ-СЏРєР° Р°С‚Р°РєР° СЂРѕР·Р±РёРІР°С” Р»Р°РЅС†СЋР¶РѕРє double-move
+        _hasMovedOnceThisTurn = false;
+
         CheckEndTurn();
     }
 
-    // Викликається UI-кнопкою або після вичерпання дій
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ UI-пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ
     public void EndCharacterTurnManually()
     {
         if (CurrentCharacter != null)

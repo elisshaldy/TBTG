@@ -18,6 +18,9 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     public bool AutoScaleCard = true;
     public float CardScaleFactor = 0.8f;
 
+    [Header("Additional Visual Feedback")]
+    public GameObject DropIndicator;
+
     private CardSelectionHandler _currentCard;
     public CardSelectionHandler CurrentCard
     {
@@ -29,11 +32,14 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
         }
     }
 
-    private RectTransform _slotRectTransform;
+    private VerticalLayoutGroup _layoutGroup;
+    private bool _hasLayoutGroup;
 
     void Start()
     {
-        _slotRectTransform = GetComponent<RectTransform>();
+        _layoutGroup = GetComponent<VerticalLayoutGroup>();
+        _hasLayoutGroup = (_layoutGroup != null);
+
         UpdateVisuals();
     }
 
@@ -52,10 +58,13 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
         if (eventData.dragging)
         {
             CardSelectionHandler draggedCard = eventData.pointerDrag?.GetComponent<CardSelectionHandler>();
-            if (draggedCard != null)
+            if (draggedCard != null && CanAcceptCard(draggedCard))
             {
-                if (BackgroundImage != null)
-                    BackgroundImage.color = HighlightColor;
+                ShowCanDropFeedback();
+            }
+            else
+            {
+                ShowCannotDropFeedback();
             }
         }
     }
@@ -65,62 +74,137 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
         UpdateVisuals();
     }
 
-    public bool CanAcceptCard(CardSelectionHandler card)
+    public void AcceptCard(CardSelectionHandler newCard)
     {
-        // Завжди дозволяємо приймати картки (навіть якщо слот зайнятий)
+        Debug.Log($"AcceptCard called for {newCard.CardData.CharacterName} in slot {name}");
+
+        // Якщо це та сама картка, що вже в слоті - нічого не робимо
+        if (CurrentCard == newCard)
+        {
+            Debug.Log("Same card, no replacement needed");
+            return;
+        }
+
+        // Перевірка, чи можемо прийняти картку
+        if (!CanAcceptCard(newCard))
+        {
+            Debug.Log($"Cannot accept card {newCard.CardData.CharacterName} in slot {name}");
+            return;
+        }
+
+        // Зберігаємо посилання на стару картку
+        CardSelectionHandler oldCard = CurrentCard;
+
+        // Видаляємо нову картку з попереднього слота
+        RemoveCardFromPreviousSlot(newCard);
+
+        // ТИМЧАСОВО ВИМИКАЄМО LAYOUT GROUP для уникнення артефактів
+        bool wasLayoutEnabled = false;
+        if (_hasLayoutGroup && _layoutGroup.enabled)
+        {
+            wasLayoutEnabled = true;
+            _layoutGroup.enabled = false;
+        }
+
+        try
+        {
+            // Призначаємо нову картку в поточний слот
+            CurrentCard = newCard;
+            newCard.MoveToSlot(transform, this, AutoScaleCard ? CardScaleFactor : 1f);
+            newCard.OnPlacedInSlot(this);
+
+            // Якщо була стара картка - повертаємо її на поле вибору
+            if (oldCard != null)
+            {
+                Debug.Log($"Replacing old card {oldCard.CardData.CharacterName} with new card {newCard.CardData.CharacterName}");
+                oldCard.ReturnToDraftArea();
+            }
+
+            Debug.Log($"Card {newCard.CardData.CharacterName} successfully placed in slot {name}");
+        }
+        finally
+        {
+            // ЗАВЖДИ увімкнути Layout Group знову
+            if (_hasLayoutGroup && wasLayoutEnabled)
+            {
+                _layoutGroup.enabled = true;
+                LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
+            }
+        }
+
+        UpdateVisuals();
+    }
+
+    /// <summary>
+    /// Перевіряє, чи може слот прийняти картку
+    /// </summary>
+    private bool CanAcceptCard(CardSelectionHandler card)
+    {
+        if (card == null) return false;
+        if (card == CurrentCard) return false;
+
+        // Тут можна додати додаткові умови (наприклад, перевірка типу картки)
         return true;
     }
 
-    public void AcceptCard(CardSelectionHandler card)
-    {
-        // Видаляємо картку з попереднього слота (якщо вона вже десь є)
-        RemoveCardFromPreviousSlot(card);
-
-        // Якщо слот вже зайнятий іншою карткою - повертаємо її на поле
-        if (CurrentCard != null && CurrentCard != card)
-        {
-            CurrentCard.ReturnToDraftArea();
-        }
-
-        // Призначаємо нову картку
-        CurrentCard = card;
-
-        // Переміщуємо картку в слот
-        card.MoveToSlot(transform, AutoScaleCard ? CardScaleFactor : 1f);
-
-        // Оновлюємо режим вибору
-        SelectionMode newMode = (SlotType == SlotType.Active) ? SelectionMode.Visible : SelectionMode.Hidden;
-        card.SetSelection(newMode);
-    }
-
+    /// <summary>
+    /// Видаляє картку з попереднього слота
+    /// </summary>
     private void RemoveCardFromPreviousSlot(CardSelectionHandler card)
     {
+        if (card == null) return;
+
+        // Шукаємо всі слоти на сцені
         DropSlot[] allSlots = FindObjectsOfType<DropSlot>();
         foreach (DropSlot slot in allSlots)
         {
             if (slot != this && slot.CurrentCard == card)
             {
+                Debug.Log($"Removing card {card.CardData.CharacterName} from previous slot: {slot.name}");
                 slot.ClearCardWithoutReturning();
+                break; // Картка може бути тільки в одному слоті
             }
         }
     }
 
+    /// <summary>
+    /// Видаляє картку зі слота і повертає її на поле вибору
+    /// </summary>
     public void RemoveCard()
     {
         if (CurrentCard != null)
         {
-            CurrentCard.SetSelection(SelectionMode.None);
+            Debug.Log($"Removing card {CurrentCard.CardData.CharacterName} from slot {name}");
+            CurrentCard.OnRemovedFromSlot();
             CurrentCard.ReturnToDraftArea();
             CurrentCard = null;
+
+            // УВІМКНУТИ LAYOUT GROUP знову
+            if (_hasLayoutGroup)
+            {
+                _layoutGroup.enabled = true;
+                LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
+            }
         }
     }
 
+    /// <summary>
+    /// Очищає слот без повернення картки на поле вибору
+    /// </summary>
     public void ClearCardWithoutReturning()
     {
         if (CurrentCard != null)
         {
-            CurrentCard.SetSelection(SelectionMode.None);
+            Debug.Log($"Clearing card {CurrentCard.CardData.CharacterName} from slot {name} without returning");
+            CurrentCard.OnRemovedFromSlot();
             CurrentCard = null;
+
+            // УВІМКНУТИ LAYOUT GROUP знову
+            if (_hasLayoutGroup)
+            {
+                _layoutGroup.enabled = true;
+                LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
+            }
         }
     }
 
@@ -137,6 +221,24 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                 BackgroundImage.color = NormalColor;
             }
         }
+
+        // Індикатор можливості дропу
+        if (DropIndicator != null)
+        {
+            DropIndicator.SetActive(CurrentCard == null);
+        }
+    }
+
+    public void ShowCanDropFeedback()
+    {
+        if (BackgroundImage != null)
+            BackgroundImage.color = HighlightColor;
+    }
+
+    public void ShowCannotDropFeedback()
+    {
+        if (BackgroundImage != null)
+            BackgroundImage.color = OccupiedColor;
     }
 
     public bool IsOccupied()

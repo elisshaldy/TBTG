@@ -8,13 +8,13 @@ using UnityEngine.EventSystems;
 public class GameDeckManager : MonoBehaviour
 {
     [Header("Deck Data")]
-    [Tooltip("Головна колода (пул) усіх доступних карт.")]
+    [Tooltip("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ) пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.")]
     public MasterDeckData MasterDeck;
 
-    [Tooltip("Рука гравця 1, куди ми зберігаємо обрані карти.")]
+    [Tooltip("пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 1, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.")]
     public PlayerHandData Player1Hand;
 
-    [Tooltip("Рука гравця 2, куди ми зберігаємо обрані карти.")]
+    [Tooltip("пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 2, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.")]
     public PlayerHandData Player2Hand;
 
     [Header("Draft UI")]
@@ -23,10 +23,10 @@ public class GameDeckManager : MonoBehaviour
     public int CardsToShow = 10;
 
     [Header("UI References")]
-    [Tooltip("RawImage що має бути вимкнено під час драфту")]
+    [Tooltip("RawImage пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ")]
     public RawImage GameFieldRawImage;
 
-    [Tooltip("CanvasGroup для контролю інтерактивності всієї сцени драфту")]
+    [Tooltip("CanvasGroup пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅсієї пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ")]
     public CanvasGroup DraftCanvasGroup;
 
     [Header("Drag & Drop References")]
@@ -34,7 +34,7 @@ public class GameDeckManager : MonoBehaviour
 
     [Header("Manager References")]
     public PlayerCardManager CardManager;
-    [Tooltip("Менеджер, який обробляє наступну фазу - купівлю рис.")]
+    [Tooltip("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ.")]
     public TraitPurchaseManager TraitPurchaseManager;
 
     private GameManager _gameManager;
@@ -48,41 +48,48 @@ public class GameDeckManager : MonoBehaviour
 
     void Awake()
     {
-        // Переконайтеся, що всі необхідні посилання встановлені
-        Assert.IsNotNull(MasterDeck, "MasterDeckData не призначено в GameDeckManager.");
-        Assert.IsNotNull(Player1Hand, "Player1HandData не призначено в GameDeckManager.");
-        Assert.IsNotNull(Player2Hand, "Player2HandData не призначено в GameDeckManager.");
-        Assert.IsNotNull(CardManager, "CardManager не призначено в GameDeckManager.");
-        Assert.IsNotNull(TraitPurchaseManager, "TraitPurchaseManager не призначено в GameDeckManager.");
-        Assert.IsNotNull(PairFormationManager, "PairFormationManager не призначено в GameDeckManager.");
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        Assert.IsNotNull(MasterDeck, "MasterDeckData пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ GameDeckManager.");
+        Assert.IsNotNull(Player1Hand, "Player1HandData пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ GameDeckManager.");
+        Assert.IsNotNull(Player2Hand, "Player2HandData пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ GameDeckManager.");
+        Assert.IsNotNull(CardManager, "CardManager пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ GameDeckManager.");
+        Assert.IsNotNull(TraitPurchaseManager, "TraitPurchaseManager пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ GameDeckManager.");
+        Assert.IsNotNull(PairFormationManager, "PairFormationManager пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ GameDeckManager.");
 
-        // Знаходимо GameManager, якщо він не призначений
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ GameManager, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (_gameManager == null) _gameManager = FindObjectOfType<GameManager>();
+
+        // РџС–РґРїРёСЃСѓС”РјРѕСЃСЏ РЅР° РїРѕРґС–СЋ РѕРЅРѕРІР»РµРЅРЅСЏ РїР°СЂ, С‰РѕР± РєРЅРѕРїРєР° "Р—Р°РІРµСЂС€РёС‚Рё РІРёР±С–СЂ"
+        // РѕРЅРѕРІР»СЋРІР°Р»Р° СЃРІС–Р№ СЃС‚Р°РЅ РѕРґСЂР°Р·Сѓ, РєРѕР»Рё РІСЃС– 8 РєР°СЂС‚РѕРє СЂРѕР·РєР»Р°РґРµРЅС– РІ РїР°СЂРё.
+        if (PairFormationManager != null)
+        {
+            PairFormationManager.OnPairsUpdated.AddListener(OnPairsUpdated);
+        }
 
         if (ConfirmSelectionButton != null) ConfirmSelectionButton.SetActive(false);
 
-        // Спочатку вимикаємо RawImage
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ RawImage
         SetGameFieldRawImageActive(false);
     }
 
     void Start()
     {
-        // Починаємо драфт для першого гравця.
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
         StartDraftPhase();
     }
 
     /// <summary>
-    /// Контролює активність RawImage та інших UI елементів
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ RawImage пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ UI пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     /// </summary>
     private void SetGameFieldRawImageActive(bool isActive)
     {
         if (GameFieldRawImage != null)
         {
             GameFieldRawImage.gameObject.SetActive(isActive);
-            Debug.Log($"GameFieldRawImage активність: {isActive}");
+            Debug.Log($"GameFieldRawImage пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: {isActive}");
         }
 
-        // Додатково контролюємо інтерактивність всієї сцени драфту
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅсієї пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         if (DraftCanvasGroup != null)
         {
             DraftCanvasGroup.interactable = isActive;
@@ -91,28 +98,28 @@ public class GameDeckManager : MonoBehaviour
     }
 
     // ----------------------------------------------------------------------
-    // ФАЗА ДРАФТУ З DRAG & DROP
+    // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ DRAG & DROP
     // ----------------------------------------------------------------------
 
     public void StartDraftPhase()
     {
-        // ВИМИКАЄМО RawImage на початку драфту
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ RawImage пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         SetGameFieldRawImageActive(false);
 
-        // Скидаємо систему пар
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
         PairFormationManager.ResetAllPairs();
 
-        // 1. Увімкнення батьківського контейнера, щоб відобразити картки
+        // 1. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         if (CardManager != null && CardManager.CardsContainer != null)
         {
             CardManager.CardsContainer.gameObject.SetActive(true);
         }
 
-        // Визначаємо, чий хід зараз (P1 або P2)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (P1 пїЅпїЅпїЅ P2)
         PlayerHandData opponentHand = (_activePlayerID == 1) ? Player2Hand : Player1Hand;
         _activePlayerHand = (_activePlayerID == 1) ? Player1Hand : Player2Hand;
 
-        // Очищаємо тимчасові списки вибору
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         _selectedCharacters.Clear();
         _selectedCardsInfo.Clear();
         _isDraftPhaseActive = true;
@@ -120,7 +127,7 @@ public class GameDeckManager : MonoBehaviour
         _activePlayerHand.ClearHand();
         Debug.Log($"P{_activePlayerID}: Starting Draft Phase. Hand cleared.");
 
-        // 1. Визначаємо пул карт для показу
+        // 1. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         List<CharacterData> availablePool = MasterDeck.AllAvailableCharacters
             .Except(Player1Hand.SelectedCharacters)
             .Except(Player2Hand.SelectedCharacters)
@@ -128,47 +135,47 @@ public class GameDeckManager : MonoBehaviour
             .Except(Player2Hand.DiscardedCharacters)
             .ToList();
 
-        // 2. Рандомізуємо та обираємо CardsToShow карт
+        // 2. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ CardsToShow пїЅпїЅпїЅпїЅ
         List<CharacterData> draftPool = availablePool
             .OrderBy(x => Random.value)
             .Take(CardsToShow)
             .ToList();
 
-        // 3. Створюємо картки на сцені
+        // 3. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         _activeDraftCards.Clear();
         _activeDraftCards = CardManager.LoadDraftCards(draftPool);
 
-        // 4. Ініціалізуємо drag & drop систему
+        // 4. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ drag & drop пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         InitializeDragDropSystem(_activeDraftCards);
 
         UpdateConfirmButtonState();
 
-        Debug.Log($"Драфт фаза для гравця {_activePlayerID} розпочата. Drag & Drop активний.");
+        Debug.Log($"пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ {_activePlayerID} пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. Drag & Drop пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.");
     }
 
     /// <summary>
-    /// Ініціалізує drag & drop систему для карток драфту
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ drag & drop пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     /// </summary>
     private void InitializeDragDropSystem(List<CardSelectionHandler> draftHandlers)
     {
         foreach (var cardHandler in draftHandlers)
         {
-            // Підписка на події драг & дроп
+            // ПіпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅдії пїЅпїЅпїЅпїЅ & пїЅпїЅпїЅпїЅ
             cardHandler.OnCardBeginDrag += PairFormationManager.HandleCardBeginDrag;
             cardHandler.OnCardEndDrag += PairFormationManager.HandleCardEndDrag;
             cardHandler.OnCardDropped += PairFormationManager.HandleCardDropped;
             cardHandler.OnCardReturnedToDraft += PairFormationManager.HandleCardReturnedToDraft;
         }
 
-        // Увімкнути драг & дроп
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ & пїЅпїЅпїЅпїЅ
         PairFormationManager.SetDragDropEnabled(true);
 
-        // Підписка на події завершення пар
-        // Можна додати через UnityEvent в PairFormationManager
+        // ПіпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅдії пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
+        // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ UnityEvent пїЅ PairFormationManager
     }
 
     /// <summary>
-    /// Оновлює стан кнопки підтвердження на основі завершених пар
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
     /// </summary>
     private void UpdateConfirmButtonState()
     {
@@ -185,18 +192,18 @@ public class GameDeckManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Викликається при зміні стану пар (можна підписатися через UnityEvent)
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ UnityEvent)
     /// </summary>
     public void OnPairsUpdated()
     {
         UpdateConfirmButtonState();
 
-        // Оновлюємо список обраних карток з пар
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ
         UpdateSelectedCharactersFromPairs();
     }
 
     /// <summary>
-    /// Оновлює список обраних карток на основі сформованих пар
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
     /// </summary>
     private void UpdateSelectedCharactersFromPairs()
     {
@@ -209,7 +216,7 @@ public class GameDeckManager : MonoBehaviour
             if (pair.ActiveCharacter != null)
             {
                 _selectedCharacters.Add(pair.ActiveCharacter);
-                // Знаходимо handler для активної картки
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ handler пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                 var activeHandler = _activeDraftCards.FirstOrDefault(h => h.CardData == pair.ActiveCharacter);
                 if (activeHandler != null)
                 {
@@ -220,7 +227,7 @@ public class GameDeckManager : MonoBehaviour
             if (pair.HiddenCharacter != null)
             {
                 _selectedCharacters.Add(pair.HiddenCharacter);
-                // Знаходимо handler для прихованої картки
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ handler пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                 var hiddenHandler = _activeDraftCards.FirstOrDefault(h => h.CardData == pair.HiddenCharacter);
                 if (hiddenHandler != null)
                 {
@@ -233,58 +240,58 @@ public class GameDeckManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Викликається при натисканні кнопки "Підтвердити Вибір".
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ "ПіпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ".
     /// </summary>
     public void ConfirmSelection()
     {
         if (PairFormationManager.GetCompletedPairsCount() != 4)
         {
-            Debug.LogWarning("Не всі пари сформовані! Потрібно 4 повних пар.");
+            Debug.LogWarning("пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ! пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 4 пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ.");
             return;
         }
 
         _isDraftPhaseActive = false;
 
-        // Фіналізуємо драфт фазу
+        // ФіпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         FinalizeDraftPhase();
 
         if (_activePlayerID == 1)
         {
-            // Переходимо до P2
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ P2
             _activePlayerID = 2;
             Debug.Log("Draft P1 Completed. Initiating Draft for Player 2.");
 
-            // ЗАЛИШАЄМО RawImage ВИМКНЕНИМ для другого гравця
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ RawImage пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             StartDraftPhase();
         }
         else
         {
-            // Обидва гравці завершили драфт
+            // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             Debug.Log("Draft Phase Completed for both players.");
 
-            // УСІ ГРАВЦІ ЗАВЕРШИЛИ ДРАФТ - УВІМКНУТИ RAWIMAGE
+            // пїЅСІ пїЅпїЅпїЅпїЅЦІ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ - пїЅВІпїЅпїЅпїЅпїЅпїЅпїЅ RAWIMAGE
             SetGameFieldRawImageActive(true);
 
-            // 5. Починаємо фазу купівлі рис (Trait Purchase)
+            // 5. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ (Trait Purchase)
             StartTraitPurchasePhase();
         }
     }
 
     /// <summary>
-    /// Фіналізує драфт фазу та готує дані для наступної фази
+    /// ФіпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
     /// </summary>
     private void FinalizeDraftPhase()
     {
-        // Вимкнути драг & дроп
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ & пїЅпїЅпїЅпїЅ
         PairFormationManager.SetDragDropEnabled(false);
 
-        // Отримати сформовані пари
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         var formedPairs = PairFormationManager.GetFormedPairs();
 
-        // Оновлюємо список обраних карток
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         UpdateSelectedCharactersFromPairs();
 
-        // --- ЛОГІКА: Визначення невибраних карт (які підуть у відкинуті) ---
+        // --- пїЅпїЅГІпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ) ---
         List<CharacterData> unselectedCharacters =
             _activeDraftCards
                 .Select(csh => csh.CardData)
@@ -292,21 +299,21 @@ public class GameDeckManager : MonoBehaviour
                 .ToList();
         // ------------------------------------------
 
-        // 1. Зберігаємо обрані карти в активну руку
+        // 1. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         _activePlayerHand.SelectedCharacters.Clear();
         _activePlayerHand.SelectedCharacters.AddRange(_selectedCharacters);
 
-        // 2. Зберігаємо невибрані карти (які більше не будуть доступні)
+        // 2. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ (пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
         _activePlayerHand.DiscardedCharacters.Clear();
         _activePlayerHand.DiscardedCharacters.AddRange(unselectedCharacters);
 
         Debug.Log($"P{_activePlayerID}: Draft confirmed. {_selectedCharacters.Count} selected, {unselectedCharacters.Count} discarded.");
 
-        // !!! ЗБЕРІГАННЯ РЕЖИМІВ ВИБОРУ (Visible/Hidden) !!!
+        // !!! пїЅпїЅпїЅРІпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅМІпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (Visible/Hidden) !!!
         _activePlayerHand.SetSelectionModes(_selectedCardsInfo.Select(i => (i.data, i.mode)).ToList());
         // ------------------------------------------
 
-        // 3. Очищаємо сцену та UI елементи
+        // 3. пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ UI пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         CardManager.ClearCards();
         if (CardManager.CardsContainer != null)
         {
@@ -319,30 +326,30 @@ public class GameDeckManager : MonoBehaviour
     }
 
     // ----------------------------------------------------------------------
-    // ФАЗА ПОКУПКИ РИС
+    // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
     // ----------------------------------------------------------------------
 
     private void StartTraitPurchasePhase()
     {
-        Debug.Log("Draft Phase Completed. Starting Trait Purchase Phase. RawImage активний.");
+        Debug.Log("Draft Phase Completed. Starting Trait Purchase Phase. RawImage пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.");
 
         if (TraitPurchaseManager != null)
         {
-            // Передаємо обидві руки менеджеру для початку фази
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             TraitPurchaseManager.StartPurchasePhase(Player1Hand, Player2Hand);
         }
         else
         {
-            Debug.LogError("TraitPurchaseManager не призначено. Неможливо перейти до наступної фази.");
+            Debug.LogError("TraitPurchaseManager пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.");
         }
     }
 
     // ----------------------------------------------------------------------
-    // ДОДАТКОВІ ПУБЛІЧНІ МЕТОДИ ДЛЯ КОНТРОЛЮ
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅВІ пїЅпїЅпїЅЛІпїЅНІ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     // ----------------------------------------------------------------------
 
     /// <summary>
-    /// Публічний метод для примусового вмикання/вимикання RawImage
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ RawImage
     /// </summary>
     public void SetRawImageActive(bool active)
     {
@@ -350,7 +357,7 @@ public class GameDeckManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Перевірити чи завершено драфт фазу
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
     /// </summary>
     public bool IsDraftPhaseComplete()
     {
@@ -358,7 +365,7 @@ public class GameDeckManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Отримати поточний прогрес драфту
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     /// </summary>
     public (int currentPlayer, int completedPairs, int totalPairs) GetDraftProgress()
     {
@@ -366,7 +373,7 @@ public class GameDeckManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Скинути драфт систему (для рестарту гри)
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ)
     /// </summary>
     public void ResetDraftSystem()
     {
@@ -376,21 +383,21 @@ public class GameDeckManager : MonoBehaviour
         _selectedCardsInfo.Clear();
         _activeDraftCards.Clear();
 
-        // Очищаємо руки гравців
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         Player1Hand.ClearHand();
         Player2Hand.ClearHand();
 
-        // Скидаємо систему пар
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
         PairFormationManager.ResetAllPairs();
 
-        // Вимикаємо RawImage при рестарті
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ RawImage пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         SetGameFieldRawImageActive(false);
 
         Debug.Log("Draft system reset complete.");
     }
 
     /// <summary>
-    /// Примусово завершити драфт поточного гравця (для тестування)
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
     /// </summary>
     public void ForceCompleteDraft()
     {

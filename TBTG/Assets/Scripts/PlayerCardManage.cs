@@ -1,54 +1,52 @@
-using UnityEngine;
+п»їusing UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 using System.Linq;
 
-// Цей скрипт відповідає за динамічне створення та відображення всіх 
-// карток персонажів гравця у відповідному контейнері UI.
 public class PlayerCardManager : MonoBehaviour
 {
     [Header("UI References")]
-    [Tooltip("Префаб CharacterCard_Panel (з прикріпленим CharacterCardUI та CardScaler), який ми будемо клонувати.")]
+    [Tooltip("РџСЂРµС„Р°Р± CharacterCard_Panel (Р· РїСЂРёРєСЂС–РїР»РµРЅРёРј CharacterCardUI С‚Р° CardScaler), СЏРєРёР№ РјРё Р±СѓРґРµРјРѕ РєР»РѕРЅСѓРІР°С‚Рё.")]
     public GameObject CharacterCardUIPrefab;
 
-    [Tooltip("Контейнер UI, де будуть розміщені картки (Player_Cards_Area).")]
+    [Tooltip("РљРѕРЅС‚РµР№РЅРµСЂ UI, РґРµ Р±СѓРґСѓС‚СЊ СЂРѕР·РјС–С‰РµРЅС– РєР°СЂС‚РєРё (Player_Cards_Area).")]
     public Transform CardsContainer;
 
     [Header("Data")]
-    [Tooltip("Ассет, що містить список CharacterData, обраних гравцем.")]
-    public PlayerHandData PlayerHand; // Посилання на PlayerHandData
+    [Tooltip("РђСЃСЃРµС‚, С‰Рѕ РјС–СЃС‚РёС‚СЊ СЃРїРёСЃРѕРє CharacterData, РѕР±СЂР°РЅРёС… РіСЂР°РІС†РµРј.")]
+    public PlayerHandData PlayerHand;
 
     [Header("Scaling Settings")]
-    [Tooltip("Кількість місць для карток. Використовується для розрахунку початкового масштабу.")]
+    [Tooltip("РљС–Р»СЊРєС–СЃС‚СЊ РјС–СЃС†СЊ РґР»СЏ РєР°СЂС‚РѕРє. Р’РёРєРѕСЂРёСЃС‚РѕРІСѓС”С‚СЊСЃСЏ РґР»СЏ СЂРѕР·СЂР°С…СѓРЅРєСѓ РїРѕС‡Р°С‚РєРѕРІРѕРіРѕ РјР°СЃС€С‚Р°Р±Сѓ.")]
     public int MaxCards = 8;
 
-    [Tooltip("Коефіцієнт безпеки для гарантії, що картки помістяться. Наприклад, 0.95 зменшить розмір на 5%.")]
+    [Tooltip("РљРѕРµС„С–С†С–С”РЅС‚ Р±РµР·РїРµРєРё РґР»СЏ РіР°СЂР°РЅС‚С–С—, С‰Рѕ РєР°СЂС‚РєРё РїРѕРјС–СЃС‚СЏС‚СЊСЃСЏ.")]
     [Range(0.8f, 1.0f)]
     public float ScaleSafetyMargin = 0.90f;
 
-    [Tooltip("Базова ширина префаба. Візьміть значення Width з RectTransform префаба.")]
+    [Tooltip("Р‘Р°Р·РѕРІР° С€РёСЂРёРЅР° РїСЂРµС„Р°Р±Р°. Р’С–Р·СЊРјС–С‚СЊ Р·РЅР°С‡РµРЅРЅСЏ Width Р· RectTransform РїСЂРµС„Р°Р±Р°.")]
     public float BaseCardWidth = 300f;
 
-    // Список усіх створених UI-карток на сцені.
+    // РЎРїРёСЃРѕРє СѓСЃС–С… СЃС‚РІРѕСЂРµРЅРёС… UI-РєР°СЂС‚РѕРє РЅР° СЃС†РµРЅС–.
     private List<CharacterCardUI> _spawnedCards = new List<CharacterCardUI>();
+    private List<CardSelectionHandler> _cardHandlers = new List<CardSelectionHandler>();
 
-    // Розрахований початковий масштаб
+    // Р РѕР·СЂР°С…РѕРІР°РЅРёР№ РїРѕС‡Р°С‚РєРѕРІРёР№ РјР°СЃС€С‚Р°Р±
     private Vector3 _calculatedInitialScale = Vector3.one;
 
-    // Singleton для доступу з інших скриптів
+    // Singleton РґР»СЏ РґРѕСЃС‚СѓРїСѓ Р· С–РЅС€РёС… СЃРєСЂРёРїС‚С–РІ
     public static PlayerCardManager Instance { get; private set; }
-
 
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        Assert.IsNotNull(CharacterCardUIPrefab, "CharacterCardUIPrefab не призначено в PlayerCardManager.");
-        Assert.IsNotNull(CardsContainer, "CardsContainer не призначено в PlayerCardManager.");
+        Assert.IsNotNull(CharacterCardUIPrefab, "CharacterCardUIPrefab РЅРµ РїСЂРёР·РЅР°С‡РµРЅРѕ РІ PlayerCardManager.");
+        Assert.IsNotNull(CardsContainer, "CardsContainer РЅРµ РїСЂРёР·РЅР°С‡РµРЅРѕ РІ PlayerCardManager.");
 
-        // Розрахунок масштабу робимо один раз при старті
+        // Р РѕР·СЂР°С…СѓРЅРѕРє РјР°СЃС€С‚Р°Р±Сѓ СЂРѕР±РёРјРѕ РѕРґРёРЅ СЂР°Р· РїСЂРё СЃС‚Р°СЂС‚С–
         CalculateInitialScale();
     }
 
@@ -57,17 +55,17 @@ public class PlayerCardManager : MonoBehaviour
         RectTransform containerRect = CardsContainer.GetComponent<RectTransform>();
         if (containerRect == null)
         {
-            Debug.LogError("CardsContainer не має компонента RectTransform. Неможливо розрахувати масштаб.");
+            Debug.LogError("CardsContainer РЅРµ РјР°С” РєРѕРјРїРѕРЅРµРЅС‚Р° RectTransform. РќРµРјРѕР¶Р»РёРІРѕ СЂРѕР·СЂР°С…СѓРІР°С‚Рё РјР°СЃС€С‚Р°Р±.");
             return;
         }
 
-        // 1. Ширина контейнера
+        // 1. РЁРёСЂРёРЅР° РєРѕРЅС‚РµР№РЅРµСЂР°
         float containerWidth = containerRect.rect.width;
 
-        // 2. Ширина, потрібна для розміщення MaxCards (враховуючи невеликий запас)
+        // 2. РЁРёСЂРёРЅР°, РїРѕС‚СЂС–Р±РЅР° РґР»СЏ СЂРѕР·РјС–С‰РµРЅРЅСЏ MaxCards (РІСЂР°С…РѕРІСѓСЋС‡Рё РЅРµРІРµР»РёРєРёР№ Р·Р°РїР°СЃ)
         float totalRequiredWidth = BaseCardWidth * MaxCards;
 
-        // 3. Коефіцієнт масштабування
+        // 3. РљРѕРµС„С–С†С–С”РЅС‚ РјР°СЃС€С‚Р°Р±СѓРІР°РЅРЅСЏ
         float scaleFactor = 1f;
         if (totalRequiredWidth > containerWidth)
         {
@@ -79,8 +77,7 @@ public class PlayerCardManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Створює UI-картки на сцені для фази драфту.
-    /// ФІКСОВАНА ВЕРСІЯ - коректно встановлює масштаб
+    /// РЎС‚РІРѕСЂСЋС” UI-РєР°СЂС‚РєРё РЅР° СЃС†РµРЅС– РґР»СЏ С„Р°Р·Рё РґСЂР°С„С‚Сѓ.
     /// </summary>
     public List<CardSelectionHandler> LoadDraftCards(List<CharacterData> draftCharacters)
     {
@@ -99,20 +96,25 @@ public class PlayerCardManager : MonoBehaviour
 
             if (selectionHandler == null)
             {
-                Debug.LogError($"Префаб {CharacterCardUIPrefab.name} не має компонента CardSelectionHandler!");
+                Debug.LogError($"РџСЂРµС„Р°Р± {CharacterCardUIPrefab.name} РЅРµ РјР°С” РєРѕРјРїРѕРЅРµРЅС‚Р° CardSelectionHandler!");
                 Destroy(cardObject);
                 continue;
             }
 
-            // ВАЖЛИВО: Спочатку встановлюємо початковий масштаб
+            // Р’РђР–Р›РР’Рћ: РЎРїРѕС‡Р°С‚РєСѓ РІСЃС‚Р°РЅРѕРІР»СЋС”РјРѕ РїРѕС‡Р°С‚РєРѕРІРёР№ РјР°СЃС€С‚Р°Р±
             if (cardScaler != null)
             {
                 cardScaler.SetInitialScale(_calculatedInitialScale);
             }
 
-            // Потім ініціалізуємо Selection Handler
+            // РџРѕС‚С–Рј С–РЅС–С†С–Р°Р»С–Р·СѓС”РјРѕ Selection Handler
             selectionHandler.Initialize(data);
             draftHandlers.Add(selectionHandler);
+            _cardHandlers.Add(selectionHandler);
+
+            // РџС–РґРїРёСЃСѓС”РјРѕСЃСЊ РЅР° РїРѕРґС–С— РєР°СЂС‚РєРё
+            selectionHandler.OnCardDropped += OnCardDropped;
+            selectionHandler.OnCardReturnedToDraft += OnCardReturnedToDraft;
 
             if (cardUI != null)
             {
@@ -120,13 +122,33 @@ public class PlayerCardManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"Успішно завантажено {draftHandlers.Count} карток для драфту.");
+        Debug.Log($"РЈСЃРїС–С€РЅРѕ Р·Р°РІР°РЅС‚Р°Р¶РµРЅРѕ {draftHandlers.Count} РєР°СЂС‚РѕРє РґР»СЏ РґСЂР°С„С‚Сѓ.");
         return draftHandlers;
     }
 
     /// <summary>
-    /// Відображає сформовані пари в Player_Cards_Area
-    /// ФІКСОВАНА ВЕРСІЯ - коректно керує масштабом
+    /// РћР±СЂРѕР±РєР° РїРѕРґС–С—, РєРѕР»Рё РєР°СЂС‚РєР° СЂРѕР·РјС–С‰РµРЅР° РІ СЃР»РѕС‚С–
+    /// </summary>
+    private void OnCardDropped(CardSelectionHandler card, DropSlot slot)
+    {
+        Debug.Log($"Card {card.CardData.CharacterName} dropped into slot {slot.name}");
+
+        // РўСѓС‚ РјРѕР¶РЅР° РґРѕРґР°С‚Рё РґРѕРґР°С‚РєРѕРІСѓ Р»РѕРіС–РєСѓ РїСЂРё СЂРѕР·РјС–С‰РµРЅРЅС– РєР°СЂС‚РєРё РІ СЃР»РѕС‚
+        // РќР°РїСЂРёРєР»Р°Рґ, РѕРЅРѕРІР»РµРЅРЅСЏ СЃС‚Р°С‚РёСЃС‚РёРєРё РіСЂР°РІС†СЏ С‚РѕС‰Рѕ
+    }
+
+    /// <summary>
+    /// РћР±СЂРѕР±РєР° РїРѕРґС–С—, РєРѕР»Рё РєР°СЂС‚РєР° РїРѕРІРµСЂРЅСѓС‚Р° РЅР° РїРѕР»Рµ РІРёР±РѕСЂСѓ
+    /// </summary>
+    private void OnCardReturnedToDraft(CardSelectionHandler card)
+    {
+        Debug.Log($"Card {card.CardData.CharacterName} returned to draft area");
+
+        // РўСѓС‚ РјРѕР¶РЅР° РґРѕРґР°С‚Рё Р»РѕРіС–РєСѓ РїСЂРё РїРѕРІРµСЂРЅРµРЅРЅС– РєР°СЂС‚РєРё РЅР° РїРѕР»Рµ
+    }
+
+    /// <summary>
+    /// Р’С–РґРѕР±СЂР°Р¶Р°С” СЃС„РѕСЂРјРѕРІР°РЅС– РїР°СЂРё РІ Player_Cards_Area
     /// </summary>
     public void DisplayFormedPairs(List<CharacterPair> pairs)
     {
@@ -137,20 +159,20 @@ public class PlayerCardManager : MonoBehaviour
             CreatePairCard(pair);
         }
 
-        Debug.Log($"Відображено {pairs.Count} пар у Player_Cards_Area");
+        Debug.Log($"Р’С–РґРѕР±СЂР°Р¶РµРЅРѕ {pairs.Count} РїР°СЂ Сѓ Player_Cards_Area");
     }
 
     private void CreatePairCard(CharacterPair pair)
     {
-        // Створюємо контейнер для пари
+        // РЎС‚РІРѕСЂСЋС”РјРѕ РєРѕРЅС‚РµР№РЅРµСЂ РґР»СЏ РїР°СЂРё
         GameObject pairContainer = new GameObject($"Pair_{pair.ActiveCharacter.CharacterName}");
         pairContainer.transform.SetParent(CardsContainer, false);
 
-        // Додаємо RectTransform для правильного позиціонування
+        // Р”РѕРґР°С”РјРѕ RectTransform РґР»СЏ РїСЂР°РІРёР»СЊРЅРѕРіРѕ РїРѕР·РёС†С–РѕРЅСѓРІР°РЅРЅСЏ
         var rectTransform = pairContainer.AddComponent<RectTransform>();
-        rectTransform.sizeDelta = new Vector2(200, 300); // Налаштуйте розмір
+        rectTransform.sizeDelta = new Vector2(200, 300);
 
-        // Створюємо картки пари
+        // РЎС‚РІРѕСЂСЋС”РјРѕ РєР°СЂС‚РєРё РїР°СЂРё
         CreateCharacterCard(pair.ActiveCharacter, pairContainer.transform, "Active");
         CreateCharacterCard(pair.HiddenCharacter, pairContainer.transform, "Hidden");
     }
@@ -169,15 +191,14 @@ public class PlayerCardManager : MonoBehaviour
             cardUI.DisplayCharacter(data);
         }
 
-        // ВАЖЛИВО: Встановлюємо правильний масштаб
+        // Р’РђР–Р›РР’Рћ: Р’СЃС‚Р°РЅРѕРІР»СЋС”РјРѕ РїСЂР°РІРёР»СЊРЅРёР№ РјР°СЃС€С‚Р°Р±
         if (cardScaler != null)
         {
             cardScaler.SetInitialScale(_calculatedInitialScale);
-            // Примусово скидаємо до початкового масштабу
             cardScaler.ResetToInitialScale();
         }
 
-        // Вимкнути можливість вибору для вже сформованих пар
+        // Р’РёРјРєРЅСѓС‚Рё РјРѕР¶Р»РёРІС–СЃС‚СЊ РІРёР±РѕСЂСѓ РґР»СЏ РІР¶Рµ СЃС„РѕСЂРјРѕРІР°РЅРёС… РїР°СЂ
         if (selectionHandler != null)
         {
             selectionHandler.enabled = false;
@@ -187,10 +208,22 @@ public class PlayerCardManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Очищає контейнер карток.
+    /// РћС‡РёС‰Р°С” РєРѕРЅС‚РµР№РЅРµСЂ РєР°СЂС‚РѕРє.
     /// </summary>
     public void ClearCards()
     {
+        // Р’С–РґРїРёСЃСѓС”РјРѕСЃСЊ РІС–Рґ РїРѕРґС–Р№
+        foreach (var handler in _cardHandlers)
+        {
+            if (handler != null)
+            {
+                handler.OnCardDropped -= OnCardDropped;
+                handler.OnCardReturnedToDraft -= OnCardReturnedToDraft;
+            }
+        }
+        _cardHandlers.Clear();
+
+        // Р’РёРґР°Р»СЏС”РјРѕ РєР°СЂС‚РєРё
         foreach (CharacterCardUI cardUI in _spawnedCards)
         {
             if (cardUI != null && cardUI.gameObject != null)
@@ -199,30 +232,16 @@ public class PlayerCardManager : MonoBehaviour
             }
         }
         _spawnedCards.Clear();
+
         Debug.Log("PlayerCardManager: All cards cleared from scene.");
     }
 
-    // ПУБЛІЧНИЙ МЕТОД: для виділення активної картки (якщо буде потрібно)
-    public void HighlightCard(CharacterData data, bool highlight)
-    {
-        // Логіка підсвічування тут
-        foreach (var cardUI in _spawnedCards)
-        {
-            if (cardUI != null && cardUI.GetCurrentData() == data)
-            {
-                // Тут можна додати логіку підсвічування
-                // Наприклад, змінити колір рамки тощо
-                break;
-            }
-        }
-    }
-
     /// <summary>
-    /// Оновлює масштаб всіх карток (корисно при зміні розміру екрану)
+    /// РћРЅРѕРІР»СЋС” РјР°СЃС€С‚Р°Р± РІСЃС–С… РєР°СЂС‚РѕРє
     /// </summary>
     public void UpdateAllCardsScale()
     {
-        CalculateInitialScale(); // Перераховуємо масштаб
+        CalculateInitialScale();
 
         foreach (var cardUI in _spawnedCards)
         {
@@ -234,6 +253,40 @@ public class PlayerCardManager : MonoBehaviour
                     cardScaler.SetInitialScale(_calculatedInitialScale);
                     cardScaler.ResetToInitialScale();
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// РџРѕРІРµСЂС‚Р°С” РєР°СЂС‚РєСѓ РЅР° РїРѕР»Рµ РІРёР±РѕСЂСѓ (РєРѕСЂРёСЃРЅРѕ РґР»СЏ С‚РµСЃС‚СѓРІР°РЅРЅСЏ)
+    /// </summary>
+    public void ReturnCardToDraft(CharacterData data)
+    {
+        foreach (var handler in _cardHandlers)
+        {
+            if (handler != null && handler.CardData == data && handler.IsInSlot())
+            {
+                handler.ReturnToDraftArea();
+                break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Р›РѕРіСѓС” СЃС‚Р°С‚СѓСЃ РІСЃС–С… РєР°СЂС‚РѕРє (РґР»СЏ РґРµР±Р°РіСѓ)
+    /// </summary>
+    public void LogAllCardsStatus()
+    {
+        Debug.Log($"=== CARDS STATUS ({_cardHandlers.Count} cards) ===");
+
+        foreach (var handler in _cardHandlers)
+        {
+            if (handler != null)
+            {
+                string status = handler.IsInSlot() ?
+                    $"IN SLOT {handler.GetCurrentSlot()?.name}" :
+                    "IN DRAFT AREA";
+                Debug.Log($"Card '{handler.CardData.CharacterName}': {status}");
             }
         }
     }

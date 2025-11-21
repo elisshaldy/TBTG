@@ -941,6 +941,7 @@ MonoBehaviour:
   OccupiedColor: {r: 0.8, g: 0.2, b: 0.2, a: 0}
   AutoScaleCard: 1
   CardScaleFactor: 0.5
+  DropIndicator: {fileID: 0}
 --- !u!225 &198826535
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1437,6 +1438,7 @@ MonoBehaviour:
   OccupiedColor: {r: 0.8, g: 0.2, b: 0.2, a: 0}
   AutoScaleCard: 1
   CardScaleFactor: 0.5
+  DropIndicator: {fileID: 0}
 --- !u!225 &562916093
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2059,6 +2061,7 @@ MonoBehaviour:
   OccupiedColor: {r: 0.8, g: 0.2, b: 0.2, a: 0}
   AutoScaleCard: 1
   CardScaleFactor: 0.5
+  DropIndicator: {fileID: 0}
 --- !u!225 &707173580
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3307,6 +3310,7 @@ MonoBehaviour:
   OccupiedColor: {r: 0.8, g: 0.2, b: 0.2, a: 0}
   AutoScaleCard: 1
   CardScaleFactor: 0.5
+  DropIndicator: {fileID: 0}
 --- !u!225 &1163938318
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4222,6 +4226,7 @@ MonoBehaviour:
   OccupiedColor: {r: 0.8, g: 0.2, b: 0.2, a: 0}
   AutoScaleCard: 1
   CardScaleFactor: 0.5
+  DropIndicator: {fileID: 0}
 --- !u!225 &1530799819
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4574,6 +4579,7 @@ MonoBehaviour:
   OccupiedColor: {r: 0.8, g: 0.2, b: 0.2, a: 0}
   AutoScaleCard: 1
   CardScaleFactor: 0.5
+  DropIndicator: {fileID: 0}
 --- !u!225 &1723366238
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4710,6 +4716,7 @@ MonoBehaviour:
   OccupiedColor: {r: 0.8, g: 0.2, b: 0.2, a: 0}
   AutoScaleCard: 1
   CardScaleFactor: 0.5
+  DropIndicator: {fileID: 0}
 --- !u!225 &1727677489
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4890,6 +4897,7 @@ MonoBehaviour:
   OccupiedColor: {r: 0.8, g: 0.2, b: 0.2, a: 0}
   AutoScaleCard: 1
   CardScaleFactor: 0.5
+  DropIndicator: {fileID: 0}
 --- !u!225 &1750021291
 CanvasGroup:
   m_ObjectHideFlags: 0

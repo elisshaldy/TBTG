@@ -11,9 +11,9 @@ public class Character : MonoBehaviour
     public HealthState CurrentState = HealthState.Unharmed;
     public Vector2Int GridPosition;
 
-    // Фактичний список рис, які можуть бути відкритими або прихованими
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     private List<TraitData> _activeTraits = new List<TraitData>();
-    private bool _isAttacker = false; // Використовується для логіки ініціативи
+    private bool _isAttacker = false; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
     public void Initialize(CharacterData data)
     {
@@ -22,10 +22,12 @@ public class Character : MonoBehaviour
         CurrentState = HealthState.Unharmed;
     }
 
-    // Логіка трансформації стану
+    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     public void ApplyDamage(int impacts)
     {
-        // Це спрощений код. У реальності потрібна перевірка на Dead
+        if (impacts <= 0) return;
+
+        // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ. пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ Dead
         int newStateValue = (int)CurrentState - impacts;
         CurrentState = (HealthState)Mathf.Max(newStateValue, (int)HealthState.Dead);
 
@@ -33,10 +35,36 @@ public class Character : MonoBehaviour
 
         if (CurrentState == HealthState.Dead)
         {
-            // Викликати подію загибелі
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             gameObject.SetActive(false);
         }
     }
 
-    // ... Методи руху, використання рис тощо
+    /// <summary>
+    /// Р›С–РєСѓРІР°РЅРЅСЏ РїРµСЂСЃРѕРЅР°Р¶Р° РЅР° Р·Р°РґР°РЅСѓ РєС–Р»СЊРєС–СЃС‚СЊ impact-С–РІ.
+    /// Р’С–РґРїРѕРІС–РґР°С” РїСЂР°РІРёР»Сѓ РїС–РґРЅСЏС‚С‚СЏ СЃС‚Р°РЅСѓ (1 impact = +1 СЂС–РІРµРЅСЊ).
+    /// </summary>
+    /// <param name="impacts">РЎРєС–Р»СЊРєРё "СЃС…РѕРґРёРЅРѕРє" РІРіРѕСЂСѓ РїС–РґРЅСЏС‚Рё СЃС‚Р°РЅ.</param>
+    public void ApplyHealing(int impacts)
+    {
+        if (impacts <= 0) return;
+
+        // Р—Р° GDD РїРµСЂСЃРѕРЅР°Р¶С– Сѓ СЃС‚Р°РЅС– Death РІРёРґР°Р»СЏСЋС‚СЊСЃСЏ Р· РїРѕР»СЏ, С‚РѕР¶ РЅРµ Р»С–РєСѓС”РјРѕ РјРµСЂС‚РІРёС…
+        if (CurrentState == HealthState.Dead)
+        {
+            Debug.LogWarning($"{Data.CharacterName} is Dead and cannot be healed.");
+            return;
+        }
+
+        int newStateValue = (int)CurrentState + impacts;
+
+        // Р—Р° Р·Р°РјРѕРІС‡СѓРІР°РЅРЅСЏРј РѕР±РјРµР¶СѓС”РјРѕ Р»С–РєСѓРІР°РЅРЅСЏ СЃС‚Р°РЅРѕРј Unharmed,
+        // Extra Р»РёС€Р°С”РјРѕ РґР»СЏ СЃРїРµС†С–Р°Р»СЊРЅРёС… РµС„РµРєС‚С–РІ (traits С‚РѕС‰Рѕ).
+        newStateValue = Mathf.Min(newStateValue, (int)HealthState.Unharmed);
+
+        CurrentState = (HealthState)newStateValue;
+        Debug.Log($"{Data.CharacterName} healed by {impacts} impact(s). New State: {CurrentState}");
+    }
+
+    // ... пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 }
