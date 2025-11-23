@@ -98,6 +98,10 @@ public class CombatManager : MonoBehaviour
 
         // ... ������ �������� �� ���� �� ���� ������������ ...
 
+        // 3. Модифікатори від пасивних рис (атакера та цілі)
+        int traitDelta = TraitSystem.GetAdvantageModifier(attacker, target);
+        advantage += traitDelta;
+
         // GDD: сумарний модифікатор не може перевищувати ±3
         advantage = Mathf.Clamp(advantage, -3, 3);
 
@@ -126,31 +130,38 @@ public class CombatManager : MonoBehaviour
         // 15–17 - посилене влучення (Impact 1 + Reactive traits)
         // 17–18 - крит (Impact 2 + посилені Reactive traits)
 
+        HitResultCategory hitCategory = HitResultCategory.None;
+
         if (effectiveRoll <= 3) // ��������� ������
         {
             Debug.Log("Critical Miss: Self-Impact 1");
             attacker.ApplyDamage(1);
+            hitCategory = HitResultCategory.Miss;
         }
         else if (effectiveRoll >= 4 && effectiveRoll <= 10) // ������
         {
             Debug.Log("Miss.");
+            hitCategory = HitResultCategory.Miss;
         }
         else if (effectiveRoll >= 11 && effectiveRoll <= 14) // �������� �������� (Impact 1)
         {
             Debug.Log("Standard Hit: Impact 1");
             impacts = 1;
+            hitCategory = HitResultCategory.NormalHit;
         }
         else if (effectiveRoll >= 15 && effectiveRoll <= 17) // �������� �������� (Impact 1 + Traits)
         {
             Debug.Log("Reinforced Hit: Impact 1 + Reactive Traits");
             impacts = 1;
             activateReactive = true;
+            hitCategory = HitResultCategory.EnhancedHit;
         }
         else if (effectiveRoll >= 18) // �������� �������� (Impact 2 + �������� Traits)
         {
             Debug.Log("Critical Hit: Impact 2 + Enhanced Reactive Traits");
             impacts = 2;
             activateReactive = true;
+             hitCategory = HitResultCategory.CriticalHit;
         }
 
         if (impacts > 0)
@@ -158,10 +169,29 @@ public class CombatManager : MonoBehaviour
             target.ApplyDamage(impacts);
         }
 
-        if (activateReactive)
+        // Обробка реактивних рис (як атакуючого, так і цілі)
+        int extraToAttacker;
+        int extraToTarget;
+        TraitSystem.OnAttackRollResolved(
+            attacker,
+            target,
+            roll,
+            effectiveRoll,
+            hitCategory,
+            impacts,
+            out extraToAttacker,
+            out extraToTarget);
+
+        if (extraToAttacker != 0)
         {
-            // ��� ������� ����� ��������� Reactive Traits ��� (���������, ��������� ����� �� Character)
-            // target.ActivateReactiveTraits();
+            if (extraToAttacker > 0) attacker.ApplyDamage(extraToAttacker);
+            else attacker.ApplyHealing(-extraToAttacker);
+        }
+
+        if (extraToTarget != 0)
+        {
+            if (extraToTarget > 0) target.ApplyDamage(extraToTarget);
+            else target.ApplyHealing(-extraToTarget);
         }
     }
 }

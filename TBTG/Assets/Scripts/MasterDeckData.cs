@@ -1,10 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-// ScriptableObject, що зберігає посилання на ВСІ доступні карти персонажів у грі.
+// ScriptableObject, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅСІ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ.
 [CreateAssetMenu(fileName = "MasterDeck", menuName = "Custom/Master Deck")]
 public class MasterDeckData : ScriptableObject
 {
-    [Tooltip("Список усіх доступних персонажів у грі.")]
+    [Tooltip("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ.")]
     public List<CharacterData> AllAvailableCharacters = new List<CharacterData>();
+
+    [Tooltip("РЎРїРёСЃРѕРє РІСЃС–С… РґРѕСЃС‚СѓРїРЅРёС… СЂРёСЃ Сѓ РіСЂС– (Р· РЅРёС… РіРµРЅРµСЂСѓС”С‚СЊСЃСЏ РїСѓР» Р· 35 РґР»СЏ РєСѓРїС–РІР»С–).")]
+    public List<TraitData> AllAvailableTraits = new List<TraitData>();
 }

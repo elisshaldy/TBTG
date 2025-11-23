@@ -7,6 +7,8 @@ using UnityEngine.EventSystems;
 
 public class GameDeckManager : MonoBehaviour
 {
+    public static GameDeckManager Instance;
+
     [Header("Deck Data")]
     [Tooltip("������� ������ (���) ��� ��������� ����.")]
     public MasterDeckData MasterDeck;
