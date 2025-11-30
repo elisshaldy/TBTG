@@ -46,6 +46,14 @@ public class Character : MonoBehaviour
         {
             // ��������� ���� �������
             gameObject.SetActive(false);
+            
+            // GDD: якщо один з пари загинув, вся пара йде у відбій
+            // Сповіщаємо PairSystem про смерть персонажа
+            PairSystem pairSystem = FindObjectOfType<PairSystem>();
+            if (pairSystem != null)
+            {
+                pairSystem.HandleCharacterDeath(this);
+            }
         }
     }
 

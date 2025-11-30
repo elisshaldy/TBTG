@@ -10,29 +10,31 @@ public class GridManager : MonoBehaviour
     public int MapWidth = 9;
     public int MapHeight = 9;
 
-    // Словник для швидкого пошуку клітинки за координатами (X, Y)
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (X, Y)
     private Dictionary<Vector2Int, Tile> _tiles = new Dictionary<Vector2Int, Tile>();
 
-    // Публічний метод для отримання всіх зареєстрованих координат
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     public IEnumerable<Vector2Int> GetAllRegisteredCoords()
     {
-        // Повертає колекцію ключів (координат) зі словника _tiles
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ) пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ _tiles
         return _tiles.Keys;
     }
 
     private void Awake()
     {
-        if (Instance == null)
+        // Singleton pattern: СЏРєС‰Рѕ РІР¶Рµ С” Instance, РІРёРґР°Р»СЏС”РјРѕ РїРѕС‚РѕС‡РЅРёР№ GameObject
+        if (Instance != null && Instance != this)
         {
-            Instance = this;
-        }
-        else
-        {
+            Debug.LogWarning($"GridManager instance already exists. Destroying duplicate: {gameObject.name}");
             Destroy(gameObject);
+            return;
         }
+        
+        Instance = this;
+        Debug.Log($"GridManager initialized on {gameObject.name}");
     }
 
-    // Метод для реєстрації клітинок при старті гри/генерації поля
+    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
     public void RegisterTile(Vector2Int coords, Tile tile)
     {
         if (!_tiles.ContainsKey(coords))
@@ -41,14 +43,14 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    // Публічний метод для CombatManager, щоб отримати клітинку за позицією
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ CombatManager, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     public Tile GetTile(Vector2Int coords)
     {
         if (_tiles.TryGetValue(coords, out Tile tile))
         {
             return tile;
         }
-        // Повертаємо null або кидаємо виняток, якщо клітинка не знайдена
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ null пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         return null;
     }
 }

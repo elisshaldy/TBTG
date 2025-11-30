@@ -189,6 +189,7 @@ public static class TraitSystem
 
                     ApplyReactiveEffect(
                         effect,
+                        ctx,
                         baseImpacts,
                         ref extraImpactsToOwner,
                         ref extraImpactsToOther);
@@ -199,6 +200,7 @@ public static class TraitSystem
 
     private static void ApplyReactiveEffect(
         TraitEffect effect,
+        TraitContext ctx,
         int baseImpacts,
         ref int extraImpactsToOwner,
         ref int extraImpactsToOther)
@@ -238,10 +240,162 @@ public static class TraitSystem
                 extraImpactsToOther += baseImpacts;
                 break;
 
+            case TraitEffectType.BlockMove:
+                // Блокування руху через статус
+                if (effect.TargetSide == TraitTargetSide.Self || effect.TargetSide == TraitTargetSide.Both)
+                {
+                    ApplyStatusToCharacter(ctx.Self, TraitStatusType.BlockMove, effect.Duration);
+                }
+                if (effect.TargetSide == TraitTargetSide.Opponent || effect.TargetSide == TraitTargetSide.Both)
+                {
+                    ApplyStatusToCharacter(ctx.Other, TraitStatusType.BlockMove, effect.Duration);
+                }
+                break;
+
+            case TraitEffectType.BlockAttack:
+                // Блокування атаки через статус
+                if (effect.TargetSide == TraitTargetSide.Self || effect.TargetSide == TraitTargetSide.Both)
+                {
+                    ApplyStatusToCharacter(ctx.Self, TraitStatusType.BlockAttack, effect.Duration);
+                }
+                if (effect.TargetSide == TraitTargetSide.Opponent || effect.TargetSide == TraitTargetSide.Both)
+                {
+                    ApplyStatusToCharacter(ctx.Other, TraitStatusType.BlockAttack, effect.Duration);
+                }
+                break;
+
+            case TraitEffectType.ApplyStatus:
+                // Застосування статусу (IntValue1 = TraitStatusType як enum value)
+                TraitStatusType statusToApply = (TraitStatusType)effect.IntValue1;
+                if (statusToApply != TraitStatusType.None)
+                {
+                    if (effect.TargetSide == TraitTargetSide.Self || effect.TargetSide == TraitTargetSide.Both)
+                    {
+                        ApplyStatusToCharacter(ctx.Self, statusToApply, effect.Duration);
+                    }
+                    if (effect.TargetSide == TraitTargetSide.Opponent || effect.TargetSide == TraitTargetSide.Both)
+                    {
+                        ApplyStatusToCharacter(ctx.Other, statusToApply, effect.Duration);
+                    }
+                }
+                break;
+
+            case TraitEffectType.RemoveStatus:
+                // Зняття статусу
+                TraitStatusType statusToRemove = (TraitStatusType)effect.IntValue1;
+                if (statusToRemove != TraitStatusType.None)
+                {
+                    if (effect.TargetSide == TraitTargetSide.Self || effect.TargetSide == TraitTargetSide.Both)
+                    {
+                        RemoveStatusFromCharacter(ctx.Self, statusToRemove);
+                    }
+                    if (effect.TargetSide == TraitTargetSide.Opponent || effect.TargetSide == TraitTargetSide.Both)
+                    {
+                        RemoveStatusFromCharacter(ctx.Other, statusToRemove);
+                    }
+                }
+                break;
+
+            case TraitEffectType.SwapPositions:
+                // Обмін позиціями між персонажами
+                if (ctx.Self != null && ctx.Other != null)
+                {
+                    SwapCharacterPositions(ctx.Self, ctx.Other);
+                }
+                break;
+
             // Інші типи ефектів будуть реалізовані поступово.
             default:
+                Debug.LogWarning($"TraitEffectType {effect.EffectType} is not yet implemented.");
                 break;
         }
+    }
+
+    // ----------------------------------------------------------------------
+    // ДОПОМІЖНІ МЕТОДИ ДЛЯ ЕФЕКТІВ
+    // ----------------------------------------------------------------------
+
+    /// <summary>
+    /// Застосувати статус до персонажа на задану тривалість.
+    /// </summary>
+    private static void ApplyStatusToCharacter(Character character, TraitStatusType status, TraitEffectDuration duration)
+    {
+        if (character == null || status == TraitStatusType.None) return;
+
+        character.AddStatus(status);
+        Debug.Log($"[TraitSystem] Applied status {status} to {character.Data.CharacterName} (duration: {duration})");
+
+        // TODO: Реалізувати систему тривалості статусів (якщо duration != Permanent)
+        // Наразі всі статуси застосовуються постійно до ручного зняття
+    }
+
+    /// <summary>
+    /// Зняти статус з персонажа.
+    /// </summary>
+    private static void RemoveStatusFromCharacter(Character character, TraitStatusType status)
+    {
+        if (character == null || status == TraitStatusType.None) return;
+
+        character.RemoveStatus(status);
+        Debug.Log($"[TraitSystem] Removed status {status} from {character.Data.CharacterName}");
+    }
+
+    /// <summary>
+    /// Обміняти позиції двох персонажів на полі.
+    /// </summary>
+    private static void SwapCharacterPositions(Character char1, Character char2)
+    {
+        if (char1 == null || char2 == null) return;
+
+        Vector2Int pos1 = char1.GridPosition;
+        Vector2Int pos2 = char2.GridPosition;
+
+        Tile tile1 = GridManager.Instance.GetTile(pos1);
+        Tile tile2 = GridManager.Instance.GetTile(pos2);
+
+        if (tile1 == null || tile2 == null)
+        {
+            Debug.LogError("[TraitSystem] Cannot swap positions: tiles not found.");
+            return;
+        }
+
+        // Оновлюємо позиції персонажів
+        char1.GridPosition = pos2;
+        char2.GridPosition = pos1;
+
+        // Оновлюємо візуальні позиції
+        char1.transform.position = tile2.transform.position;
+        char2.transform.position = tile1.transform.position;
+
+        // Оновлюємо зайнятість тайлів
+        tile1.RemoveOccupant();
+        tile2.RemoveOccupant();
+        tile1.SetOccupant(char2);
+        tile2.SetOccupant(char1);
+
+        Debug.Log($"[TraitSystem] Swapped positions: {char1.Data.CharacterName} <-> {char2.Data.CharacterName}");
+    }
+
+    // ----------------------------------------------------------------------
+    // ПЕРЕВІРКИ БЛОКУВАННЯ ДІЙ
+    // ----------------------------------------------------------------------
+
+    /// <summary>
+    /// Перевіряє, чи заблокований рух для персонажа через риси (статус BlockMove).
+    /// </summary>
+    public static bool IsMoveBlocked(Character character)
+    {
+        if (character == null) return false;
+        return character.HasStatus(TraitStatusType.BlockMove);
+    }
+
+    /// <summary>
+    /// Перевіряє, чи заблокована атака для персонажа через риси (статус BlockAttack).
+    /// </summary>
+    public static bool IsAttackBlocked(Character character)
+    {
+        if (character == null) return false;
+        return character.HasStatus(TraitStatusType.BlockAttack);
     }
 
     // ----------------------------------------------------------------------
@@ -280,5 +434,3 @@ public static class TraitSystem
         }
     }
 }
-
-

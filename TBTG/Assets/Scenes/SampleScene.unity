@@ -2339,6 +2339,7 @@ GameObject:
   - component: {fileID: 825228816}
   - component: {fileID: 825228818}
   - component: {fileID: 825228819}
+  - component: {fileID: 825228820}
   m_Layer: 0
   m_Name: _GAME_MANAGEMENT
   m_TagString: Untagged
@@ -2516,6 +2517,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 122dbc3012e7cef44ac36806b688e529, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MasterDeck: {fileID: 0}
+  TraitsContainerPanel: {fileID: 0}
+  TraitCardPrefab: {fileID: 0}
+  ConfirmTraitsButton: {fileID: 0}
+  UPBalanceText: {fileID: 0}
+  TotalTeamUP: 24
+  MaxUPPerCharacter: 5
+  Traits5UP: 3
+  Traits4UP: 6
+  Traits3UP: 9
+  Traits2UP: 12
+  Traits1UP: 15
 --- !u!114 &825228819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2555,6 +2568,30 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &825228820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 825228808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 122dbc3012e7cef44ac36806b688e529, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MasterDeck: {fileID: 0}
+  TraitsContainerPanel: {fileID: 1286351401}
+  TraitCardPrefab: {fileID: 0}
+  ConfirmTraitsButton: {fileID: 2057048021}
+  UPBalanceText: {fileID: 0}
+  TotalTeamUP: 24
+  MaxUPPerCharacter: 5
+  Traits5UP: 3
+  Traits4UP: 6
+  Traits3UP: 9
+  Traits2UP: 12
+  Traits1UP: 15
 --- !u!1 &847567013
 GameObject:
   m_ObjectHideFlags: 0

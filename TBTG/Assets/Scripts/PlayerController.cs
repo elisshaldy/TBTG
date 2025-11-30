@@ -209,6 +209,13 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        // Перевірка блокування атаки через риси (статус BlockAttack)
+        if (TraitSystem.IsAttackBlocked(CurrentCharacter))
+        {
+            Debug.LogWarning($"[{CurrentCharacter.Data.CharacterName}] cannot attack: attack is blocked by trait.");
+            return;
+        }
+
         CombatManager.Instance.PerformAttack(CurrentCharacter, targetTile);
 
         _actionsRemaining--;

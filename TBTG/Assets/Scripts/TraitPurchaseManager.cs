@@ -374,10 +374,16 @@ public class TraitPurchaseManager : MonoBehaviour
         if (_currentPlayerID == 1)
         {
             _currentPlayerID = 2;
-            _currentPlayerHand = GameDeckManager.Instance?.Player2Hand;
-            if (_currentPlayerHand != null)
+            // Знаходимо GameDeckManager для доступу до Player2Hand
+            GameDeckManager deckManager = FindObjectOfType<GameDeckManager>();
+            if (deckManager != null && deckManager.Player2Hand != null)
             {
+                _currentPlayerHand = deckManager.Player2Hand;
                 StartPlayerPurchasePhase(_currentPlayerHand);
+            }
+            else
+            {
+                Debug.LogError("GameDeckManager or Player2Hand not found!");
             }
         }
         else
@@ -427,10 +433,9 @@ public class TraitPurchaseManager : MonoBehaviour
         {
             if (card != null)
             {
-                //if (card.OnTraitDropped != null)
-                    card.OnTraitDropped -= OnTraitDropped;
-                //if (card.OnTraitReturnedToPool != null)
-                    card.OnTraitReturnedToPool -= OnTraitReturnedToPool;
+                // Відписуємось від подій (події в C# не можна перевіряти на null, просто відписуємось)
+                card.OnTraitDropped -= OnTraitDropped;
+                card.OnTraitReturnedToPool -= OnTraitReturnedToPool;
 
                 Destroy(card.gameObject);
             }

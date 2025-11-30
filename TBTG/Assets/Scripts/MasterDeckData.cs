@@ -10,4 +10,7 @@ public class MasterDeckData : ScriptableObject
 
     [Tooltip("Список всіх доступних рис у грі (з них генерується пул з 35 для купівлі).")]
     public List<TraitData> AllAvailableTraits = new List<TraitData>();
+
+    [Tooltip("Список всіх доступних ефектів для активних клітинок (з них випадково обираються нові Active Tiles в кінці раунду).")]
+    public List<TileEffectData> AllAvailableTileEffects = new List<TileEffectData>();
 }

@@ -7,8 +7,6 @@ using UnityEngine.EventSystems;
 
 public class GameDeckManager : MonoBehaviour
 {
-    public static GameDeckManager Instance;
-
     [Header("Deck Data")]
     [Tooltip("������� ������ (���) ��� ��������� ����.")]
     public MasterDeckData MasterDeck;
@@ -129,13 +127,46 @@ public class GameDeckManager : MonoBehaviour
         _activePlayerHand.ClearHand();
         Debug.Log($"P{_activePlayerID}: Starting Draft Phase. Hand cleared.");
 
+        // Перевірка наявності MasterDeck
+        if (MasterDeck == null)
+        {
+            Debug.LogError("=== ERROR: MasterDeck is NULL! Cannot start draft phase. ===");
+            return;
+        }
+        
+        if (MasterDeck.AllAvailableCharacters == null)
+        {
+            Debug.LogError("=== ERROR: MasterDeck.AllAvailableCharacters is NULL! ===");
+            return;
+        }
+        
+        if (MasterDeck.AllAvailableCharacters.Count == 0)
+        {
+            Debug.LogError("=== ERROR: MasterDeck.AllAvailableCharacters is EMPTY! ===");
+            return;
+        }
+        
+        Debug.Log($"=== MasterDeck contains {MasterDeck.AllAvailableCharacters.Count} characters ===");
+
         // 1. ��������� ��� ���� ��� ������
         List<CharacterData> availablePool = MasterDeck.AllAvailableCharacters
-            .Except(Player1Hand.SelectedCharacters)
-            .Except(Player2Hand.SelectedCharacters)
-            .Except(Player1Hand.DiscardedCharacters)
-            .Except(Player2Hand.DiscardedCharacters)
+            .Where(c => c != null)
+            .Except(Player1Hand?.SelectedCharacters ?? new List<CharacterData>())
+            .Except(Player2Hand?.SelectedCharacters ?? new List<CharacterData>())
+            .Except(Player1Hand?.DiscardedCharacters ?? new List<CharacterData>())
+            .Except(Player2Hand?.DiscardedCharacters ?? new List<CharacterData>())
             .ToList();
+
+        Debug.Log($"Available pool after filtering: {availablePool.Count} characters.");
+
+        if (availablePool.Count == 0 && _activePlayerID == 1)
+        {
+            Debug.LogWarning("No available characters! Resetting player hands.");
+            Player1Hand?.ClearHand();
+            Player2Hand?.ClearHand();
+            availablePool = MasterDeck.AllAvailableCharacters.Where(c => c != null).ToList();
+            Debug.Log($"Reset hands. Available pool now: {availablePool.Count} characters.");
+        }
 
         // 2. ���������� �� ������� CardsToShow ����
         List<CharacterData> draftPool = availablePool
@@ -145,7 +176,29 @@ public class GameDeckManager : MonoBehaviour
 
         // 3. ��������� ������ �� �����
         _activeDraftCards.Clear();
+        Debug.Log($"Draft pool selected: {draftPool.Count} characters to show.");
+
+        if (draftPool.Count == 0)
+        {
+            Debug.LogError("Draft pool is empty! Cannot create cards.");
+            return;
+        }
+
+        if (CardManager == null)
+        {
+            Debug.LogError("CardManager is null! Cannot create draft cards.");
+            return;
+        }
+
         _activeDraftCards = CardManager.LoadDraftCards(draftPool);
+
+        if (_activeDraftCards == null || _activeDraftCards.Count == 0)
+        {
+            Debug.LogError("Failed to create draft cards! LoadDraftCards returned empty list.");
+            return;
+        }
+
+        Debug.Log($"Successfully created {_activeDraftCards.Count} draft cards.");
 
         // 4. ����������� drag & drop �������
         InitializeDragDropSystem(_activeDraftCards);
