@@ -13,6 +13,10 @@ public class PlayerCardManager : MonoBehaviour
     [Tooltip("Контейнер UI, де будуть розміщені картки (Player_Cards_Area).")]
     public Transform CardsContainer;
 
+    [Header("3D Model Prefab")]
+    [Tooltip("Префаб 3D моделі персонажа для відображення під час перетягування пари на поле. Якщо не встановлено, буде створено простий маркер.")]
+    public GameObject Character3DPrefab;
+
     [Header("Data")]
     [Tooltip("Ассет, що містить список CharacterData, обраних гравцем.")]
     public PlayerHandData PlayerHand;
@@ -171,6 +175,22 @@ public class PlayerCardManager : MonoBehaviour
         // Додаємо RectTransform для правильного позиціонування
         var rectTransform = pairContainer.AddComponent<RectTransform>();
         rectTransform.sizeDelta = new Vector2(200, 300);
+
+        // Додаємо Image компонент для обробки UI подій (raycast target)
+        var image = pairContainer.AddComponent<UnityEngine.UI.Image>();
+        image.color = new Color(1f, 1f, 1f, 0f); // Прозорий, але все ще клікабельний
+
+        // Додаємо компонент для перетягування пари
+        PairCardDragHandler dragHandler = pairContainer.AddComponent<PairCardDragHandler>();
+        dragHandler.PairData = pair;
+        dragHandler.PairContainer = pairContainer.transform;
+        dragHandler.Character3DPrefab = Character3DPrefab; // Встановлюємо префаб 3D моделі
+        
+        // Підписуємось на події перетягування
+        dragHandler.OnPairDroppedOnTile += (handler, coords) =>
+        {
+            Debug.Log($"Pair {pair.ActiveCharacter.CharacterName} dropped on tile {coords}");
+        };
 
         // Створюємо картки пари
         CreateCharacterCard(pair.ActiveCharacter, pairContainer.transform, "Active");

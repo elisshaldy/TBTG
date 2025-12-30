@@ -87,7 +87,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void PlaceCharacter(Character character, Vector2Int coords)
     {
-        if (_charactersToPlaceQueue.Peek() != character)
+        if (_charactersToPlaceQueue.Count == 0 || _charactersToPlaceQueue.Peek() != character)
         {
             Debug.LogWarning("������ ��������� �� ���� ���������. ������� �� � ��������� ����.");
             return;

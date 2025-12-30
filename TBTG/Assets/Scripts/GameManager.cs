@@ -102,7 +102,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void StartNextPlacementTurn() // �������� ��������, ��� ��������� � PlayerController
     {
-        if (_placementOrder.Count > 0)
+        if (_placementOrder != null && _placementOrder.Count > 0)
         {
             PlayerController nextPlayer = _placementOrder.Dequeue();
 
@@ -126,14 +126,93 @@ public class GameManager : MonoBehaviour
         if (playerID == 1)
         {
             // ��������� ���� ������ 1
-            return new List<Vector2Int> { /* ... */ };
+            List<Vector2Int> zone = new List<Vector2Int>();
+            if (GridManager == null)
+            {
+                Debug.LogError("GridManager is null! Cannot calculate placement zone.");
+                return zone;
+            }
+            int mapWidth = GridManager.MapWidth;
+            int mapHeight = GridManager.MapHeight;
+            // Гравець 1: трикутник у лівому нижньому куті
+            for (int row = 0; row < 4; row++)
+            {
+                for (int col = 0; col <= row; col++)
+                {
+                    Vector2Int coords = new Vector2Int(col, row);
+                    if (coords.x >= 0 && coords.x < mapWidth && coords.y >= 0 && coords.y < mapHeight)
+                    {
+                        zone.Add(coords);
+                    }
+                }
+            }
+            Debug.Log($"Player {playerID} placement zone calculated: {zone.Count} tiles.");
+            return zone;
         }
         else if (playerID == 2)
         {
             // ��������� ���� ������ 2
-            return new List<Vector2Int> { /* ... */ };
+            List<Vector2Int> zone = new List<Vector2Int>();
+            if (GridManager == null)
+            {
+                Debug.LogError("GridManager is null! Cannot calculate placement zone.");
+                return zone;
+            }
+            int mapWidth = GridManager.MapWidth;
+            int mapHeight = GridManager.MapHeight;
+            // Гравець 2: трикутник у правому верхньому куті
+            // Трикутник зі стороною 4: 4 клітинки на рядку mapHeight-4, 3 на mapHeight-3, 2 на mapHeight-2, 1 на mapHeight-1
+            int startRow = mapHeight - 4;
+            int startCol = mapWidth - 4;
+            for (int row = 0; row < 4; row++)
+            {
+                for (int col = 0; col <= (3 - row); col++)
+                {
+                    Vector2Int coords = new Vector2Int(startCol + col, startRow + row);
+                    if (coords.x >= 0 && coords.x < mapWidth && coords.y >= 0 && coords.y < mapHeight)
+                    {
+                        zone.Add(coords);
+                    }
+                }
+            }
+            Debug.Log($"Player {playerID} placement zone calculated: {zone.Count} tiles.");
+            return zone;
         }
         return new List<Vector2Int>();
+    }
+
+    /// <summary>
+    /// Викликається PlayerController, коли гравець завершив розміщення всіх своїх персонажів.
+    /// </summary>
+    public void OnPlayerPlacementCompleted(int playerID)
+    {
+        Debug.Log($"Player {playerID} completed placement. Checking if all players are done...");
+
+        bool player1Done = false;
+        bool player2Done = false;
+
+        if (Player1 != null && Player1.ActiveCharacters != null && Player1.CharactersToPlaceList != null)
+        {
+            player1Done = Player1.ActiveCharacters.Count == Player1.CharactersToPlaceList.Count;
+        }
+
+        if (Player2 != null && Player2.ActiveCharacters != null && Player2.CharactersToPlaceList != null)
+        {
+            player2Done = Player2.ActiveCharacters.Count == Player2.CharactersToPlaceList.Count;
+        }
+
+        if (player1Done && player2Done)
+        {
+            Debug.Log("All players completed placement. Placement Phase finished. Starting Initiative Phase.");
+            // TODO: StartInitiativePhase();
+        }
+        else
+        {
+            if (_placementOrder != null && _placementOrder.Count > 0)
+            {
+                StartNextPlacementTurn();
+            }
+        }
     }
 
     // ----------------------------------------------------------------------

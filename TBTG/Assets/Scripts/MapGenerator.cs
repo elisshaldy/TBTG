@@ -1,7 +1,9 @@
-// MapGenerator.cs (ФІНАЛЬНА ВЕРСІЯ З ФІКСОВАНИМ ПУЛОМ)
-using UnityEngine;
+п»ї// MapGenerator.cs (Р¤Р†РќРђР›Р¬РќРђ Р’Р•Р РЎР†РЇ Р— Р¤Р†РљРЎРћР’РђРќРРњ РџРЈР›РћРњ)
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -12,14 +14,20 @@ public class MapGenerator : MonoBehaviour
     [Header("Tile Definitions (Active Tiles)")]
     public List<TileEffectData> ActiveTileEffectsPool;
 
-    // Фіксована кількість клітинок відповідно до GDD (Сума: 81)
+    // Р¤С–РєСЃРѕРІР°РЅР° РєС–Р»СЊРєС–СЃС‚СЊ РєР»С–С‚РёРЅРѕРє РІС–РґРїРѕРІС–РґРЅРѕ РґРѕ GDD (РЎСѓРјР°: 81)
+    [Header("Map Settings")]
+    public int MapWidth = 12;
+    public int MapHeight = 12;
+
     [Header("Fixed Tile Counts")]
-    public int Count_Plain = 37;
-    public int Count_Impassable = 16;
-    public int Count_AttackableOnly = 11;
-    public int Count_Offensive = 7;
-    public int Count_Defensive = 7;
-    public int Count_ActiveTile = 3; // Всього 3 активні клітинки
+    public int Count_Plain = 69;
+    public int Count_Impassable = 25;
+    public int Count_AttackableOnly = 19;
+    public int Count_Offensive = 13;
+    public int Count_Defensive = 13;
+    public int Count_ActiveTile = 5; // Р’СЃСЊРѕРіРѕ 3 Р°РєС‚РёРІРЅС– РєР»С–С‚РёРЅРєРё
+
+    public int minDistance = 3; // РњС–РЅС–РјР°Р»СЊРЅР° РІС–РґСЃС‚Р°РЅСЊ РјС–Р¶ Р°РєС‚РёРІРЅРёРјРё С‚Р°Р№Р»Р°РјРё
 
     private GridManager _gridManager;
     private List<Vector2Int> _allCoordinates;
@@ -33,43 +41,43 @@ public class MapGenerator : MonoBehaviour
             return;
         }
 
-        // Встановлення розміру карти 9x9
-        _gridManager.MapWidth = 9;
-        _gridManager.MapHeight = 9;
+        // Р’СЃС‚Р°РЅРѕРІР»РµРЅРЅСЏ СЂРѕР·РјС–СЂСѓ РєР°СЂС‚Рё 9x9
+        _gridManager.MapWidth = MapWidth;
+        _gridManager.MapHeight = MapHeight;
 
-        // Генерація
+        // Р“РµРЅРµСЂР°С†С–СЏ
         GenerateFullMap();
     }
 
     private void GenerateFullMap()
     {
-        // 1. Створення пулу всіх координат (0,0 до 8,8)
+        // 1. РЎС‚РІРѕСЂРµРЅРЅСЏ РїСѓР»Сѓ РІСЃС–С… РєРѕРѕСЂРґРёРЅР°С‚ (0,0 РґРѕ 8,8)
         _allCoordinates = new List<Vector2Int>();
-        for (int x = 0; x < 9; x++)
+        for (int x = 0; x < MapWidth; x++)
         {
-            for (int y = 0; y < 9; y++)
+            for (int y = 0; y < MapHeight; y++)
             {
                 _allCoordinates.Add(new Vector2Int(x, y));
             }
         }
 
-        // 2. Створення фіксованого пулу типів клітинок (81 шт)
+        // 2. РЎС‚РІРѕСЂРµРЅРЅСЏ С„С–РєСЃРѕРІР°РЅРѕРіРѕ РїСѓР»Сѓ С‚РёРїС–РІ РєР»С–С‚РёРЅРѕРє (81 С€С‚)
         List<TileType> tilePool = CreateFixedTilePool();
 
-        // 3. Розміщення Active Tiles (центральний регіон)
+        // 3. Р РѕР·РјС–С‰РµРЅРЅСЏ Active Tiles (С†РµРЅС‚СЂР°Р»СЊРЅРёР№ СЂРµРіС–РѕРЅ)
         PlaceActiveTiles(tilePool);
 
-        // 4. Розміщення решти клітинок, з перевіркою зв'язності для Impassable
+        // 4. Р РѕР·РјС–С‰РµРЅРЅСЏ СЂРµС€С‚Рё РєР»С–С‚РёРЅРѕРє, Р· РїРµСЂРµРІС–СЂРєРѕСЋ Р·РІ'СЏР·РЅРѕСЃС‚С– РґР»СЏ Impassable
         PlaceRemainingTiles(tilePool);
 
-        // 5. Фінальна перевірка (якщо потрібно)
+        // 5. Р¤С–РЅР°Р»СЊРЅР° РїРµСЂРµРІС–СЂРєР° (СЏРєС‰Рѕ РїРѕС‚СЂС–Р±РЅРѕ)
         // CheckConnectivity(); 
 
         Debug.Log("Map generation complete with fixed tile counts and central Active Tiles.");
     }
 
     // ----------------------------------------------------------------------
-    // 1. Створення пулу фіксованої кількості клітинок
+    // 1. РЎС‚РІРѕСЂРµРЅРЅСЏ РїСѓР»Сѓ С„С–РєСЃРѕРІР°РЅРѕС— РєС–Р»СЊРєРѕСЃС‚С– РєР»С–С‚РёРЅРѕРє
     // ----------------------------------------------------------------------
     private List<TileType> CreateFixedTilePool()
     {
@@ -80,9 +88,9 @@ public class MapGenerator : MonoBehaviour
         AddTilesToPool(pool, TileType.AttackableOnly, Count_AttackableOnly);
         AddTilesToPool(pool, TileType.Offensive, Count_Offensive);
         AddTilesToPool(pool, TileType.Defensive, Count_Defensive);
-        AddTilesToPool(pool, TileType.ActiveTile, Count_ActiveTile); // Активні поки в загальному пулі
+        AddTilesToPool(pool, TileType.ActiveTile, Count_ActiveTile); // РђРєС‚РёРІРЅС– РїРѕРєРё РІ Р·Р°РіР°Р»СЊРЅРѕРјСѓ РїСѓР»С–
 
-        // Перевірка на всяк випадок
+        // РџРµСЂРµРІС–СЂРєР° РЅР° РІСЃСЏРє РІРёРїР°РґРѕРє
         if (pool.Count != 81)
         {
             Debug.LogError($"Tile pool count is incorrect: {pool.Count}. Expected 81.");
@@ -93,24 +101,24 @@ public class MapGenerator : MonoBehaviour
     private float CalculateProximityPenalty(Vector2Int coords, TileType type, Dictionary<Vector2Int, TileType> placedTiles)
     {
         float penalty = 0f;
-        // Шукаємо вже розміщені клітинки того ж типу
+        // РЁСѓРєР°С”РјРѕ РІР¶Рµ СЂРѕР·РјС–С‰РµРЅС– РєР»С–С‚РёРЅРєРё С‚РѕРіРѕ Р¶ С‚РёРїСѓ
         var sameTypeNeighbors = placedTiles.Where(kv => kv.Value == type);
 
         if (!sameTypeNeighbors.Any())
         {
-            return 0f; // Штрафу немає, якщо це перша клітинка такого типу
+            return 0f; // РЁС‚СЂР°С„Сѓ РЅРµРјР°С”, СЏРєС‰Рѕ С†Рµ РїРµСЂС€Р° РєР»С–С‚РёРЅРєР° С‚Р°РєРѕРіРѕ С‚РёРїСѓ
         }
 
-        // Для забезпечення максимальної віддаленості, ми хочемо МІНІМІЗУВАТИ цей штраф.
-        // Штраф вищий, якщо клітинка ближче до існуючої.
-        // Використовуємо 1 / Distance, щоб ближчі клітинки давали більший "штраф".
+        // Р”Р»СЏ Р·Р°Р±РµР·РїРµС‡РµРЅРЅСЏ РјР°РєСЃРёРјР°Р»СЊРЅРѕС— РІС–РґРґР°Р»РµРЅРѕСЃС‚С–, РјРё С…РѕС‡РµРјРѕ РњР†РќР†РњР†Р—РЈР’РђРўР С†РµР№ С€С‚СЂР°С„.
+        // РЁС‚СЂР°С„ РІРёС‰РёР№, СЏРєС‰Рѕ РєР»С–С‚РёРЅРєР° Р±Р»РёР¶С‡Рµ РґРѕ С–СЃРЅСѓСЋС‡РѕС—.
+        // Р’РёРєРѕСЂРёСЃС‚РѕРІСѓС”РјРѕ 1 / Distance, С‰РѕР± Р±Р»РёР¶С‡С– РєР»С–С‚РёРЅРєРё РґР°РІР°Р»Рё Р±С–Р»СЊС€РёР№ "С€С‚СЂР°С„".
 
         foreach (var neighbor in sameTypeNeighbors)
         {
             float distance = Vector2Int.Distance(coords, neighbor.Key);
 
-            // Додаємо інверсію відстані. Чим менша відстань (distance), тим більший штраф (penalty).
-            // Додамо невелике зміщення (+0.1f), щоб уникнути ділення на нуль, якщо distance = 0.
+            // Р”РѕРґР°С”РјРѕ С–РЅРІРµСЂСЃС–СЋ РІС–РґСЃС‚Р°РЅС–. Р§РёРј РјРµРЅС€Р° РІС–РґСЃС‚Р°РЅСЊ (distance), С‚РёРј Р±С–Р»СЊС€РёР№ С€С‚СЂР°С„ (penalty).
+            // Р”РѕРґР°РјРѕ РЅРµРІРµР»РёРєРµ Р·РјС–С‰РµРЅРЅСЏ (+0.1f), С‰РѕР± СѓРЅРёРєРЅСѓС‚Рё РґС–Р»РµРЅРЅСЏ РЅР° РЅСѓР»СЊ, СЏРєС‰Рѕ distance = 0.
             penalty += 1f / (distance + 0.1f);
         }
 
@@ -119,27 +127,27 @@ public class MapGenerator : MonoBehaviour
 
 
     // ***************************************************************
-    // ОНОВЛЕНИЙ МЕТОД: Розміщення решти клітинок
+    // РћРќРћР’Р›Р•РќРР™ РњР•РўРћР”: Р РѕР·РјС–С‰РµРЅРЅСЏ СЂРµС€С‚Рё РєР»С–С‚РёРЅРѕРє
     // ***************************************************************
     private void PlaceRemainingTiles(List<TileType> tilePool)
     {
-        // Словник для відстеження всіх розміщених клітинок (для розрахунку штрафу)
-        // Включає ActiveTiles, які вже були розміщені.
+        // РЎР»РѕРІРЅРёРє РґР»СЏ РІС–РґСЃС‚РµР¶РµРЅРЅСЏ РІСЃС–С… СЂРѕР·РјС–С‰РµРЅРёС… РєР»С–С‚РёРЅРѕРє (РґР»СЏ СЂРѕР·СЂР°С…СѓРЅРєСѓ С€С‚СЂР°С„Сѓ)
+        // Р’РєР»СЋС‡Р°С” ActiveTiles, СЏРєС– РІР¶Рµ Р±СѓР»Рё СЂРѕР·РјС–С‰РµРЅС–.
         Dictionary<Vector2Int, TileType> placedTiles = _gridManager.GetAllRegisteredCoords()
             .ToDictionary(coord => coord, coord => _gridManager.GetTile(coord).Type);
 
-        // Перемішуємо пул типів, які залишилися, щоб не було пріоритету
+        // РџРµСЂРµРјС–С€СѓС”РјРѕ РїСѓР» С‚РёРїС–РІ, СЏРєС– Р·Р°Р»РёС€РёР»РёСЃСЏ, С‰РѕР± РЅРµ Р±СѓР»Рѕ РїСЂС–РѕСЂРёС‚РµС‚Сѓ
         List<TileType> remainingTypes = tilePool.OrderBy(x => Random.value).ToList();
 
         foreach (TileType typeToPlace in remainingTypes)
         {
-            // 1. Створюємо список "потенційних" координат та розраховуємо для них штраф
-            // Використовуємо _allCoordinates, оскільки в ньому залишилися тільки вільні місця.
+            // 1. РЎС‚РІРѕСЂСЋС”РјРѕ СЃРїРёСЃРѕРє "РїРѕС‚РµРЅС†С–Р№РЅРёС…" РєРѕРѕСЂРґРёРЅР°С‚ С‚Р° СЂРѕР·СЂР°С…РѕРІСѓС”РјРѕ РґР»СЏ РЅРёС… С€С‚СЂР°С„
+            // Р’РёРєРѕСЂРёСЃС‚РѕРІСѓС”РјРѕ _allCoordinates, РѕСЃРєС–Р»СЊРєРё РІ РЅСЊРѕРјСѓ Р·Р°Р»РёС€РёР»РёСЃСЏ С‚С–Р»СЊРєРё РІС–Р»СЊРЅС– РјС–СЃС†СЏ.
 
             Vector2Int bestCoord = Vector2Int.zero;
             float minPenalty = float.MaxValue;
 
-            // Попередньо перемішуємо, щоб випадковий вибір був, якщо штрафи рівні
+            // РџРѕРїРµСЂРµРґРЅСЊРѕ РїРµСЂРµРјС–С€СѓС”РјРѕ, С‰РѕР± РІРёРїР°РґРєРѕРІРёР№ РІРёР±С–СЂ Р±СѓРІ, СЏРєС‰Рѕ С€С‚СЂР°С„Рё СЂС–РІРЅС–
             List<Vector2Int> availableCoords = _allCoordinates.OrderBy(x => Random.value).ToList();
 
             foreach (Vector2Int potentialCoord in availableCoords)
@@ -153,22 +161,22 @@ public class MapGenerator : MonoBehaviour
                 }
             }
 
-            // 2. Логіка запобігання закритим просторам (залишається)
+            // 2. Р›РѕРіС–РєР° Р·Р°РїРѕР±С–РіР°РЅРЅСЏ Р·Р°РєСЂРёС‚РёРј РїСЂРѕСЃС‚РѕСЂР°Рј (Р·Р°Р»РёС€Р°С”С‚СЊСЃСЏ)
             TileType finalType = typeToPlace;
             if (typeToPlace == TileType.Impassable || typeToPlace == TileType.AttackableOnly)
             {
                 if (!IsConnectivityMaintained(bestCoord, typeToPlace))
                 {
-                    finalType = TileType.Plain; // Замінюємо на Plain, якщо ізолює
+                    finalType = TileType.Plain; // Р—Р°РјС–РЅСЋС”РјРѕ РЅР° Plain, СЏРєС‰Рѕ С–Р·РѕР»СЋС”
                 }
             }
 
-            // 3. Розміщення та реєстрація
+            // 3. Р РѕР·РјС–С‰РµРЅРЅСЏ С‚Р° СЂРµС”СЃС‚СЂР°С†С–СЏ
             CreateAndRegisterTile(bestCoord, finalType);
 
-            // 4. Оновлення списків для наступної ітерації
-            _allCoordinates.Remove(bestCoord); // Видаляємо з доступних
-            placedTiles.Add(bestCoord, finalType); // Додаємо до розміщених для розрахунку штрафу
+            // 4. РћРЅРѕРІР»РµРЅРЅСЏ СЃРїРёСЃРєС–РІ РґР»СЏ РЅР°СЃС‚СѓРїРЅРѕС— С–С‚РµСЂР°С†С–С—
+            _allCoordinates.Remove(bestCoord); // Р’РёРґР°Р»СЏС”РјРѕ Р· РґРѕСЃС‚СѓРїРЅРёС…
+            placedTiles.Add(bestCoord, finalType); // Р”РѕРґР°С”РјРѕ РґРѕ СЂРѕР·РјС–С‰РµРЅРёС… РґР»СЏ СЂРѕР·СЂР°С…СѓРЅРєСѓ С€С‚СЂР°С„Сѓ
         }
     }
 
@@ -181,33 +189,79 @@ public class MapGenerator : MonoBehaviour
     }
 
     // ----------------------------------------------------------------------
-    // 2. Розміщення Active Tiles (Центральний регіон)
+    // 2. Р РѕР·РјС–С‰РµРЅРЅСЏ Active Tiles (Р¦РµРЅС‚СЂР°Р»СЊРЅРёР№ СЂРµРіС–РѕРЅ)
     // ----------------------------------------------------------------------
     private void PlaceActiveTiles(List<TileType> tilePool)
     {
-        // Центральний регіон 5x5 (від (2,2) до (6,6))
+        // Р¦РµРЅС‚СЂР°Р»СЊРЅРёР№ СЂРµРіС–РѕРЅ 8x8 (РІС–Рґ (2,2) РґРѕ (9,9))
         List<Vector2Int> centralCoords = _allCoordinates.Where(
-            c => c.x >= 2 && c.x <= 6 && c.y >= 2 && c.y <= 6
+            c => c.x >= 2 && c.x <= MapWidth-3 && c.y >= 2 && c.y <= MapHeight- 3
         ).ToList();
 
-        // Рандомізація та вибір місць для 3 активних клітинок
+        // РЎРїРёСЃРѕРє РґР»СЏ Р·Р±РµСЂРµР¶РµРЅРЅСЏ СЂРѕР·РјС–С‰РµРЅРёС… Р°РєС‚РёРІРЅРёС… С‚Р°Р№Р»С–РІ
+        List<Vector2Int> placedActiveTiles = new List<Vector2Int>();
+
+        // РЎРїРµС†С–Р°Р»СЊРЅР° С„СѓРЅРєС†С–СЏ РґР»СЏ РїРµСЂРµРІС–СЂРєРё РІС–РґСЃС‚Р°РЅС–
+        bool IsFarEnough(Vector2Int coords, List<Vector2Int> placedTiles, int minDist)
+        {
+            foreach (var placed in placedTiles)
+            {
+                int dx = Math.Abs(coords.x - placed.x);
+                int dy = Math.Abs(coords.y - placed.y);
+
+                // РњРѕР¶РЅР° РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё СЂС–Р·РЅС– РІРёРґРё РІС–РґСЃС‚Р°РЅС–:
+                // 1. РњР°РЅС…РµС‚С‚РµРЅСЃСЊРєР° РІС–РґСЃС‚Р°РЅСЊ (С€РІРёРґС€Рµ РѕР±С‡РёСЃР»СЋС”С‚СЊСЃСЏ)
+                if (dx + dy < minDist) return false;
+
+                // 2. Р§РµР±РёС€РµРІСЃСЊРєР° РІС–РґСЃС‚Р°РЅСЊ (РєРІР°РґСЂР°С‚РЅР° Р·РѕРЅР°)
+                // if (Math.Max(dx, dy) < minDist) return false;
+
+                // 3. Р„РІРєР»С–РґРѕРІР° РІС–РґСЃС‚Р°РЅСЊ (РґС–Р°РіРѕРЅР°Р»СЊ РІС–РґСЃС‚Р°РЅСЊ)
+                // if (Math.Sqrt(dx*dx + dy*dy) < minDist) return false;
+            }
+            return true;
+        }
+
+        // Р¤С–Р»СЊС‚СЂСѓС”РјРѕ РєРѕРѕСЂРґРёРЅР°С‚Рё, С‰РѕР± РІРѕРЅРё Р±СѓР»Рё РЅР° РґРѕСЃС‚Р°С‚РЅС–Р№ РІС–РґСЃС‚Р°РЅС–
+        List<Vector2Int> availableCoords = new List<Vector2Int>();
+
+        // Р‘РµСЂРµРјРѕ РІРёРїР°РґРєРѕРІСѓ РєРѕРѕСЂРґРёРЅР°С‚Сѓ РґР»СЏ РїРµСЂС€РѕРіРѕ С‚Р°Р№Р»Р°
         centralCoords = centralCoords.OrderBy(x => Random.value).ToList();
 
-        for (int i = 0; i < Count_ActiveTile && i < centralCoords.Count; i++)
+        for (int i = 0; i < Count_ActiveTile && centralCoords.Count > 0; i++)
         {
-            Vector2Int coords = centralCoords[i];
+            Vector2Int selectedCoords = Vector2Int.zero;
+            bool found = false;
 
-            // Створення та реєстрація Active Tile
-            CreateAndRegisterTile(coords, TileType.ActiveTile);
+            // РЁСѓРєР°С”РјРѕ РєРѕРѕСЂРґРёРЅР°С‚Сѓ, СЏРєР° Р·РЅР°С…РѕРґРёС‚СЊСЃСЏ РЅР° РґРѕСЃС‚Р°С‚РЅС–Р№ РІС–РґСЃС‚Р°РЅС–
+            for (int j = 0; j < centralCoords.Count; j++)
+            {
+                if (IsFarEnough(centralCoords[j], placedActiveTiles, minDistance))
+                {
+                    selectedCoords = centralCoords[j];
+                    found = true;
 
-            // Видалення використаної клітинки з пулу та координат
-            tilePool.Remove(TileType.ActiveTile);
-            _allCoordinates.Remove(coords);
+                    // РЎС‚РІРѕСЂРµРЅРЅСЏ С‚Р° СЂРµС”СЃС‚СЂР°С†С–СЏ Active Tile
+                    CreateAndRegisterTile(selectedCoords, TileType.ActiveTile);
+                    placedActiveTiles.Add(selectedCoords);
+                    tilePool.Remove(TileType.ActiveTile);
+                    _allCoordinates.Remove(selectedCoords);
+
+                    break;
+                }
+            }
+
+            // РЇРєС‰Рѕ РЅРµ Р·РЅР°Р№С€Р»Рё РІС–РґРїРѕРІС–РґРЅСѓ РєРѕРѕСЂРґРёРЅР°С‚Сѓ, РїРµСЂРµСЂРёРІР°С”РјРѕ
+            if (!found)
+            {
+                Debug.LogWarning($"РќРµ РІРґР°Р»РѕСЃСЏ Р·РЅР°Р№С‚Рё РєРѕРѕСЂРґРёРЅР°С‚Сѓ РґР»СЏ Р°РєС‚РёРІРЅРѕРіРѕ С‚Р°Р№Р»Р° {i + 1} Р· РјС–РЅС–РјР°Р»СЊРЅРѕСЋ РІС–РґСЃС‚Р°РЅРЅСЋ {minDistance}");
+                break;
+            }
         }
     }
 
     // ----------------------------------------------------------------------
-    // 3. Розміщення решти клітинок з перевіркою
+    // 3. Р РѕР·РјС–С‰РµРЅРЅСЏ СЂРµС€С‚Рё РєР»С–С‚РёРЅРѕРє Р· РїРµСЂРµРІС–СЂРєРѕСЋ
     // ----------------------------------------------------------------------
 
     private void CreateAndRegisterTile(Vector2Int coords, TileType type)
@@ -230,42 +284,42 @@ public class MapGenerator : MonoBehaviour
     }
 
     // ----------------------------------------------------------------------
-    // 4. Перевірка Зв'язності (Connectivity Check)
+    // 4. РџРµСЂРµРІС–СЂРєР° Р—РІ'СЏР·РЅРѕСЃС‚С– (Connectivity Check)
     // ----------------------------------------------------------------------
-    // Цей метод використовує алгоритм Flood Fill (або BFS/DFS)
-    // щоб переконатися, що всі проходимі клітинки (ті, які не Impassable/AttackableOnly)
-    // можуть бути досягнуті з однієї початкової точки.
+    // Р¦РµР№ РјРµС‚РѕРґ РІРёРєРѕСЂРёСЃС‚РѕРІСѓС” Р°Р»РіРѕСЂРёС‚Рј Flood Fill (Р°Р±Рѕ BFS/DFS)
+    // С‰РѕР± РїРµСЂРµРєРѕРЅР°С‚РёСЃСЏ, С‰Рѕ РІСЃС– РїСЂРѕС…РѕРґРёРјС– РєР»С–С‚РёРЅРєРё (С‚С–, СЏРєС– РЅРµ Impassable/AttackableOnly)
+    // РјРѕР¶СѓС‚СЊ Р±СѓС‚Рё РґРѕСЃСЏРіРЅСѓС‚С– Р· РѕРґРЅС–С”С— РїРѕС‡Р°С‚РєРѕРІРѕС— С‚РѕС‡РєРё.
     private bool IsConnectivityMaintained(Vector2Int potentialBlock, TileType newType)
     {
-        // Створюємо тимчасову модель поля для перевірки
+        // РЎС‚РІРѕСЂСЋС”РјРѕ С‚РёРјС‡Р°СЃРѕРІСѓ РјРѕРґРµР»СЊ РїРѕР»СЏ РґР»СЏ РїРµСЂРµРІС–СЂРєРё
         Dictionary<Vector2Int, TileType> tempGrid = new Dictionary<Vector2Int, TileType>();
 
-        // Заповнюємо тимчасову сітку вже створеними клітинками
+        // Р—Р°РїРѕРІРЅСЋС”РјРѕ С‚РёРјС‡Р°СЃРѕРІСѓ СЃС–С‚РєСѓ РІР¶Рµ СЃС‚РІРѕСЂРµРЅРёРјРё РєР»С–С‚РёРЅРєР°РјРё
         foreach (var coord in _gridManager.GetAllRegisteredCoords())
         {
             Tile tile = _gridManager.GetTile(coord);
             if (tile != null) tempGrid[coord] = tile.Type;
         }
 
-        // Додаємо клітинки, які ми збираємося розмістити
+        // Р”РѕРґР°С”РјРѕ РєР»С–С‚РёРЅРєРё, СЏРєС– РјРё Р·Р±РёСЂР°С”РјРѕСЃСЏ СЂРѕР·РјС–СЃС‚РёС‚Рё
         foreach (var coord in _allCoordinates)
         {
-            // Якщо координати співпадають з поточною потенційною стіною
+            // РЇРєС‰Рѕ РєРѕРѕСЂРґРёРЅР°С‚Рё СЃРїС–РІРїР°РґР°СЋС‚СЊ Р· РїРѕС‚РѕС‡РЅРѕСЋ РїРѕС‚РµРЅС†С–Р№РЅРѕСЋ СЃС‚С–РЅРѕСЋ
             if (coord == potentialBlock)
             {
                 tempGrid[coord] = newType;
             }
-            // Інакше ми поки що припускаємо, що це Plain (найбільш нейтральний тип)
+            // Р†РЅР°РєС€Рµ РјРё РїРѕРєРё С‰Рѕ РїСЂРёРїСѓСЃРєР°С”РјРѕ, С‰Рѕ С†Рµ Plain (РЅР°Р№Р±С–Р»СЊС€ РЅРµР№С‚СЂР°Р»СЊРЅРёР№ С‚РёРї)
             else if (!tempGrid.ContainsKey(coord))
             {
                 tempGrid[coord] = TileType.Plain;
             }
         }
 
-        // Вибираємо початкову точку для Flood Fill (наприклад, (0,0))
+        // Р’РёР±РёСЂР°С”РјРѕ РїРѕС‡Р°С‚РєРѕРІСѓ С‚РѕС‡РєСѓ РґР»СЏ Flood Fill (РЅР°РїСЂРёРєР»Р°Рґ, (0,0))
         Vector2Int startPoint = new Vector2Int(0, 0);
         if (tempGrid[startPoint] == TileType.Impassable || tempGrid[startPoint] == TileType.AttackableOnly)
-            return true; // Якщо стартова точка вже заблокована (що малоймовірно), пропускаємо
+            return true; // РЇРєС‰Рѕ СЃС‚Р°СЂС‚РѕРІР° С‚РѕС‡РєР° РІР¶Рµ Р·Р°Р±Р»РѕРєРѕРІР°РЅР° (С‰Рѕ РјР°Р»РѕР№РјРѕРІС–СЂРЅРѕ), РїСЂРѕРїСѓСЃРєР°С”РјРѕ
 
         HashSet<Vector2Int> reachableTiles = new HashSet<Vector2Int>();
         Queue<Vector2Int> queue = new Queue<Vector2Int>();
@@ -276,7 +330,7 @@ public class MapGenerator : MonoBehaviour
         {
             Vector2Int current = queue.Dequeue();
 
-            // Перевірка 4 напрямків
+            // РџРµСЂРµРІС–СЂРєР° 4 РЅР°РїСЂСЏРјРєС–РІ
             Vector2Int[] neighbors = {
                 current + new Vector2Int(1, 0), current + new Vector2Int(-1, 0),
                 current + new Vector2Int(0, 1), current + new Vector2Int(0, -1)
@@ -284,12 +338,12 @@ public class MapGenerator : MonoBehaviour
 
             foreach (var neighbor in neighbors)
             {
-                if (neighbor.x >= 0 && neighbor.x < 9 && neighbor.y >= 0 && neighbor.y < 9 &&
+                if (neighbor.x >= 0 && neighbor.x < MapWidth && neighbor.y >= 0 && neighbor.y < MapHeight &&
                     !reachableTiles.Contains(neighbor) && tempGrid.ContainsKey(neighbor))
                 {
                     TileType neighborType = tempGrid[neighbor];
 
-                    // Умова прохідності: ми не повинні блокувати шлях
+                    // РЈРјРѕРІР° РїСЂРѕС…С–РґРЅРѕСЃС‚С–: РјРё РЅРµ РїРѕРІРёРЅРЅС– Р±Р»РѕРєСѓРІР°С‚Рё С€Р»СЏС…
                     if (neighborType != TileType.Impassable && neighborType != TileType.AttackableOnly)
                     {
                         reachableTiles.Add(neighbor);
@@ -299,34 +353,34 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
-        // Перевіряємо, чи всі 'прохідні' клітинки (не Impassable та не AttackableOnly) були досягнуті
+        // РџРµСЂРµРІС–СЂСЏС”РјРѕ, С‡Рё РІСЃС– 'РїСЂРѕС…С–РґРЅС–' РєР»С–С‚РёРЅРєРё (РЅРµ Impassable С‚Р° РЅРµ AttackableOnly) Р±СѓР»Рё РґРѕСЃСЏРіРЅСѓС‚С–
         int totalWalkable = tempGrid.Count(
             kv => kv.Value != TileType.Impassable && kv.Value != TileType.AttackableOnly
         );
 
-        // Якщо кількість досяжних клітинок менша за загальну кількість прохідних,
-        // це означає, що ми ізолювали частину поля.
+        // РЇРєС‰Рѕ РєС–Р»СЊРєС–СЃС‚СЊ РґРѕСЃСЏР¶РЅРёС… РєР»С–С‚РёРЅРѕРє РјРµРЅС€Р° Р·Р° Р·Р°РіР°Р»СЊРЅСѓ РєС–Р»СЊРєС–СЃС‚СЊ РїСЂРѕС…С–РґРЅРёС…,
+        // С†Рµ РѕР·РЅР°С‡Р°С”, С‰Рѕ РјРё С–Р·РѕР»СЋРІР°Р»Рё С‡Р°СЃС‚РёРЅСѓ РїРѕР»СЏ.
         return reachableTiles.Count == totalWalkable;
     }
 
-    // ... (Метод ApplyVisuals залишається без змін) ...
+    // ... (РњРµС‚РѕРґ ApplyVisuals Р·Р°Р»РёС€Р°С”С‚СЊСЃСЏ Р±РµР· Р·РјС–РЅ) ...
     private void ApplyVisuals(GameObject tileObj, TileType type)
     {
-        // Шукаємо компонент Renderer на об'єкті або його дочірніх елементах
+        // РЁСѓРєР°С”РјРѕ РєРѕРјРїРѕРЅРµРЅС‚ Renderer РЅР° РѕР±'С”РєС‚С– Р°Р±Рѕ Р№РѕРіРѕ РґРѕС‡С–СЂРЅС–С… РµР»РµРјРµРЅС‚Р°С…
         if (tileObj.TryGetComponent<Renderer>(out var renderer))
         {
             Color color;
             switch (type)
             {
-                case TileType.Plain: color = Color.gray; break;         // Нейтральна
-                case TileType.Impassable: color = Color.black; break;   // Непрохідна
-                case TileType.Defensive: color = Color.green; break;    // Захисна (Бонус до захисту)
-                case TileType.Offensive: color = Color.red; break;      // Атакуюча (Бонус до атаки)
-                case TileType.ActiveTile: color = Color.yellow; break;  // Активна
-                case TileType.AttackableOnly: color = Color.blue; break; // Тільки для атаки (Вода/Провалля)
+                case TileType.Plain: color = Color.gray; break;         // РќРµР№С‚СЂР°Р»СЊРЅР°
+                case TileType.Impassable: color = Color.black; break;   // РќРµРїСЂРѕС…С–РґРЅР°
+                case TileType.Defensive: color = Color.green; break;    // Р—Р°С…РёСЃРЅР° (Р‘РѕРЅСѓСЃ РґРѕ Р·Р°С…РёСЃС‚Сѓ)
+                case TileType.Offensive: color = Color.red; break;      // РђС‚Р°РєСѓСЋС‡Р° (Р‘РѕРЅСѓСЃ РґРѕ Р°С‚Р°РєРё)
+                case TileType.ActiveTile: color = Color.yellow; break;  // РђРєС‚РёРІРЅР°
+                case TileType.AttackableOnly: color = Color.blue; break; // РўС–Р»СЊРєРё РґР»СЏ Р°С‚Р°РєРё (Р’РѕРґР°/РџСЂРѕРІР°Р»Р»СЏ)
                 default: color = Color.white; break;
             }
-            // Застосовуємо колір до матеріалу
+            // Р—Р°СЃС‚РѕСЃРѕРІСѓС”РјРѕ РєРѕР»С–СЂ РґРѕ РјР°С‚РµСЂС–Р°Р»Сѓ
             renderer.material.color = color;
         }
     }

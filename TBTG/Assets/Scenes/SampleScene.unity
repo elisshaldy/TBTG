@@ -1769,7 +1769,7 @@ Transform:
   m_GameObject: {fileID: 638640591}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4, y: 1, z: 4}
+  m_LocalPosition: {x: 4.5, y: 1, z: 4.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2339,7 +2339,6 @@ GameObject:
   - component: {fileID: 825228816}
   - component: {fileID: 825228818}
   - component: {fileID: 825228819}
-  - component: {fileID: 825228820}
   m_Layer: 0
   m_Name: _GAME_MANAGEMENT
   m_TagString: Untagged
@@ -2362,12 +2361,15 @@ MonoBehaviour:
   TilePrefab: {fileID: 1733741896200809712, guid: 9280ccf8f3c5085418591c3bc198d7af, type: 3}
   TileSize: 1
   ActiveTileEffectsPool: []
-  Count_Plain: 37
-  Count_Impassable: 16
-  Count_AttackableOnly: 11
-  Count_Offensive: 7
-  Count_Defensive: 7
-  Count_ActiveTile: 3
+  MapWidth: 10
+  MapHeight: 10
+  Count_Plain: 48
+  Count_Impassable: 17
+  Count_AttackableOnly: 13
+  Count_Offensive: 9
+  Count_Defensive: 9
+  Count_ActiveTile: 4
+  minDistance: 2
 --- !u!114 &825228810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2460,6 +2462,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GridManager: {fileID: 825228812}
   InitiativeManager: {fileID: 825228810}
+  MasterDeck: {fileID: 11400000, guid: 1a1f6f9d5d849284fb7dbf2f80cee766, type: 2}
   Player1: {fileID: 781356637}
   Player2: {fileID: 1309157944}
   HandoverPanel: {fileID: 0}
@@ -2478,6 +2481,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CharacterCardUIPrefab: {fileID: 149393505435969762, guid: 9bac17b2de7ef914288d38bd3032b175, type: 3}
   CardsContainer: {fileID: 1468609666}
+  Character3DPrefab: {fileID: 0}
   PlayerHand: {fileID: 11400000, guid: 043c8f8a70661ec47b9674bc230192d9, type: 2}
   MaxCards: 8
   ScaleSafetyMargin: 0.8
@@ -2517,18 +2521,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 122dbc3012e7cef44ac36806b688e529, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MasterDeck: {fileID: 0}
+  MasterDeck: {fileID: 11400000, guid: 1a1f6f9d5d849284fb7dbf2f80cee766, type: 2}
   TraitsContainerPanel: {fileID: 0}
   TraitCardPrefab: {fileID: 0}
-  ConfirmTraitsButton: {fileID: 0}
+  ConfirmTraitsButton: {fileID: 2057048021}
   UPBalanceText: {fileID: 0}
   TotalTeamUP: 24
   MaxUPPerCharacter: 5
   Traits5UP: 3
-  Traits4UP: 6
-  Traits3UP: 9
-  Traits2UP: 12
-  Traits1UP: 15
+  Traits4UP: 5
+  Traits3UP: 7
+  Traits2UP: 9
+  Traits1UP: 11
 --- !u!114 &825228819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2568,30 +2572,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &825228820
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 825228808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 122dbc3012e7cef44ac36806b688e529, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MasterDeck: {fileID: 0}
-  TraitsContainerPanel: {fileID: 1286351401}
-  TraitCardPrefab: {fileID: 0}
-  ConfirmTraitsButton: {fileID: 2057048021}
-  UPBalanceText: {fileID: 0}
-  TotalTeamUP: 24
-  MaxUPPerCharacter: 5
-  Traits5UP: 3
-  Traits4UP: 6
-  Traits3UP: 9
-  Traits2UP: 12
-  Traits1UP: 15
 --- !u!1 &847567013
 GameObject:
   m_ObjectHideFlags: 0
@@ -2752,7 +2732,7 @@ MonoBehaviour:
   SmoothTime: 0.32
   MinZoomDistance: 2
   MaxZoomDistance: 16
-  FieldSize: {x: 9, y: 9}
+  FieldSize: {x: 10, y: 10}
   CellSize: 1
 --- !u!81 &853778899
 AudioListener:

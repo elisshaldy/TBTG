@@ -8,8 +8,9 @@ public class PlacementInputHandler : MonoBehaviour
     private GameManager _gameManager;
     private PlayerController _activePlayer;
 
-    // Властивості для відстеження стану
-    private Character _selectedCharacterForPlacement;
+    // РЎС‚Р°РЅ РґР»СЏ drag-and-drop СЂРѕР·РјС–С‰РµРЅРЅСЏ
+    private PairCardDragHandler _currentDraggedPair = null;
+    private CharacterPair _currentPairForPlacement = null;
     private bool _isPlacementPhaseActive = false;
 
     void Start()
@@ -23,84 +24,105 @@ public class PlacementInputHandler : MonoBehaviour
         _activePlayer = player;
         _isPlacementPhaseActive = true;
 
-        Debug.Log($"Input Handler: P{_activePlayer.PlayerID}, оберіть персонажа зі списку CharactersToPlaceList.");
-        _selectedCharacterForPlacement = null;
-
-        // Тут у реальній грі ви підсвічуєте персонажів, доступних для розміщення.
+        Debug.Log($"Input Handler: P{_activePlayer.PlayerID}, ready for pair drag-and-drop placement.");
+        _currentPairForPlacement = null;
+        _currentDraggedPair = null;
     }
 
     public void StopListening()
     {
         _isPlacementPhaseActive = false;
-        _selectedCharacterForPlacement = null;
+        _currentPairForPlacement = null;
+        _currentDraggedPair = null;
         _activePlayer = null;
-        Debug.Log("Input Handler: Очікування введення вимкнено.");
+        Debug.Log("Input Handler: Placement phase stopped.");
     }
 
-    void Update()
+    /// <summary>
+    /// Р’РёРєР»РёРєР°С”С‚СЊСЃСЏ PairCardDragHandler РїСЂРё РїРѕС‡Р°С‚РєСѓ РїРµСЂРµС‚СЏРіСѓРІР°РЅРЅСЏ РїР°СЂРё.
+    /// </summary>
+    public void OnPairDragStarted(PairCardDragHandler dragHandler, CharacterPair pair)
     {
         if (!_isPlacementPhaseActive) return;
 
-        if (Input.GetMouseButtonDown(0)) // Ліва кнопка миші
-        {
-            HandleMouseClick();
-        }
+        _currentDraggedPair = dragHandler;
+        _currentPairForPlacement = pair;
+
+        Debug.Log($"PlacementInputHandler: Started dragging pair {pair.ActiveCharacter.CharacterName}");
     }
 
-    private void HandleMouseClick()
+    /// <summary>
+    /// Р’РёРєР»РёРєР°С”С‚СЊСЃСЏ PairCardDragHandler РїСЂРё Р·Р°РІРµСЂС€РµРЅРЅС– РїРµСЂРµС‚СЏРіСѓРІР°РЅРЅСЏ РїР°СЂРё.
+    /// </summary>
+    public void OnPairDragEnded(PairCardDragHandler dragHandler, bool wasPlaced)
     {
-        // Raycasting для визначення, на що клікнули
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        if (_currentDraggedPair == dragHandler)
         {
-            // 1. Спроба обрати персонажа
-            if (_selectedCharacterForPlacement == null)
-            {
-                TrySelectCharacter(hit.transform.gameObject);
-            }
-            // 2. Спроба розмістити обраного персонажа на клітинці
-            else
-            {
-                TryPlaceCharacter(hit.transform.gameObject);
-            }
+            _currentDraggedPair = null;
+            _currentPairForPlacement = null;
         }
+
+        Debug.Log($"PlacementInputHandler: Ended dragging pair, placed: {wasPlaced}");
     }
 
-    private void TrySelectCharacter(GameObject clickedObject)
+    /// <summary>
+    /// РџРµСЂРµРІС–СЂСЏС”, С‡Рё РєР»С–С‚РёРЅРєР° РІР°Р»С–РґРЅР° РґР»СЏ СЂРѕР·РјС–С‰РµРЅРЅСЏ.
+    /// </summary>
+    public bool IsValidPlacementTile(Tile tile)
     {
-        Character character = clickedObject.GetComponent<Character>();
-
-        if (character != null && _activePlayer.CharactersToPlaceList.Contains(character))
+        if (!_isPlacementPhaseActive || _activePlayer == null || tile == null)
         {
-            _selectedCharacterForPlacement = character;
-            Debug.Log($"ОБРАНО ПЕРСОНАЖА: {character.Data.CharacterName}. Тепер клікніть на доступну клітинку в зоні.");
-
-            // Тут слід підсвітити доступну зону розміщення для кращого UX.
+            return false;
         }
+
+        // РџРµСЂРµРІС–СЂРєР° С‚РёРїСѓ РєР»С–С‚РёРЅРєРё
+        if (tile.Type == TileType.Impassable || tile.Type == TileType.AttackableOnly)
+        {
+            return false;
+        }
+
+        // РџРµСЂРµРІС–СЂРєР°, С‡Рё РєР»С–С‚РёРЅРєР° РІР¶Рµ Р·Р°Р№РЅСЏС‚Р°
+        if (tile.IsOccupied)
+        {
+            return false;
+        }
+
+        // РџРµСЂРµРІС–СЂРєР°, С‡Рё РєР»С–С‚РёРЅРєР° РІ Р·РѕРЅС– СЂРѕР·РјС–С‰РµРЅРЅСЏ РіСЂР°РІС†СЏ
+        List<Vector2Int> allowedZone = _gameManager.GetPlayerPlacementZone(_activePlayer.PlayerID);
+        if (!allowedZone.Contains(tile.GridCoordinates))
+        {
+            return false;
+        }
+
+        return true;
     }
 
-    private void TryPlaceCharacter(GameObject clickedObject)
+    /// <summary>
+    /// Р’РёРєР»РёРєР°С”С‚СЊСЃСЏ PairCardDragHandler РїСЂРё СѓСЃРїС–С€РЅРѕРјСѓ drop РЅР° РєР»С–С‚РёРЅРєСѓ.
+    /// </summary>
+    public void HandlePairDroppedOnTile(PairCardDragHandler dragHandler, Vector2Int tileCoords)
     {
-        Tile tile = clickedObject.GetComponent<Tile>();
-
-        if (tile != null)
+        if (!_isPlacementPhaseActive || _activePlayer == null || _currentPairForPlacement == null)
         {
-            // Перевіряємо, чи клітинка в дозволеній зоні
-            List<Vector2Int> allowedZone = _gameManager.GetPlayerPlacementZone(_activePlayer.PlayerID);
-
-            if (allowedZone.Contains(tile.GridCoordinates))
-            {
-                // Викликаємо PlayerController для виконання розміщення
-                _activePlayer.PlaceCharacter(_selectedCharacterForPlacement, tile.GridCoordinates);
-
-                // Якщо розміщення успішне, InputHandler буде зупинений
-                // (це робиться через StartNextPlacementTurn -> StopListening)
-            }
-            else
-            {
-                Debug.LogWarning("Клітинка знаходиться поза дозволеною зоною розміщення!");
-            }
+            Debug.LogWarning("PlacementInputHandler: Cannot place pair - invalid state.");
+            return;
         }
+
+        // Р—РЅР°С…РѕРґРёРјРѕ Р°РєС‚РёРІРЅРѕРіРѕ РїРµСЂСЃРѕРЅР°Р¶Р° Р· РїР°СЂРё РІ СЃРїРёСЃРєСѓ РґР»СЏ СЂРѕР·РјС–С‰РµРЅРЅСЏ
+        Character characterToPlace = _activePlayer.CharactersToPlaceList
+            .FirstOrDefault(c => c != null && c.Data == _currentPairForPlacement.ActiveCharacter);
+
+        if (characterToPlace == null)
+        {
+            Debug.LogWarning($"PlacementInputHandler: Character {_currentPairForPlacement.ActiveCharacter.CharacterName} not found in CharactersToPlaceList.");
+            return;
+        }
+
+        // Р РѕР·РјС–С‰СѓС”РјРѕ РїРµСЂСЃРѕРЅР°Р¶Р°
+        _activePlayer.PlaceCharacter(characterToPlace, tileCoords);
+
+        // РћС‡РёС‰Р°С”РјРѕ СЃС‚Р°РЅ
+        _currentPairForPlacement = null;
+        _currentDraggedPair = null;
     }
 }

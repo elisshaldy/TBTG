@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a85474dbcf341db43beb4e1684c209ac, type: 3}
-  m_Name: Test
+  m_Name: "\u0406\u043D\u0441\u0442\u0438\u043D\u043A\u0442 \u0425\u0438\u0436\u0430\u043A\u0430"
   m_EditorClassIdentifier: 
-  TraitName: 
-  Description: 
-  Cost: 1
+  TraitName: "\u0406\u043D\u0441\u0442\u0438\u043D\u043A\u0442 \u0425\u0438\u0436\u0430\u043A\u0430"
+  Description: "\u041A\u0440\u0438\u0442 \u043D\u0430 16-18"
+  Cost: 5
   Kind: 0
   Rules:
-  - Trigger: 0
+  - Trigger: 4
     Condition: 0
     MinValue: 0
     MaxValue: 0
@@ -25,4 +25,11 @@ MonoBehaviour:
     MinHealthState: 0
     MaxHealthState: 0
     Status: 0
-    Effects: []
+    Effects:
+    - EffectType: 2
+      TargetSide: 0
+      Duration: 0
+      IntValue1: 16
+      IntValue2: 18
+      Status: 0
+      Flag: 0
