@@ -1,38 +1,38 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-// ПРИМІТКА: Вам потрібно переконатися, що enum 'SelectionMode'
-// тепер існує як глобальний тип у файлі SelectionMode.cs!
+// РџР РРњР†РўРљРђ: Р’Р°Рј РїРѕС‚СЂС–Р±РЅРѕ РїРµСЂРµРєРѕРЅР°С‚РёСЃСЏ, С‰Рѕ enum 'SelectionMode'
+// С‚РµРїРµСЂ С–СЃРЅСѓС” СЏРє РіР»РѕР±Р°Р»СЊРЅРёР№ С‚РёРї Сѓ С„Р°Р№Р»С– SelectionMode.cs!
 
-// ScriptableObject, що зберігає склад персонажів гравця.
+// ScriptableObject, С‰Рѕ Р·Р±РµСЂС–РіР°С” СЃРєР»Р°Рґ РїРµСЂСЃРѕРЅР°Р¶С–РІ РіСЂР°РІС†СЏ.
 [CreateAssetMenu(fileName = "NewPlayerHand", menuName = "Game Data/Player Hand")]
 public class PlayerHandData : ScriptableObject
 {
-    [Tooltip("Список усіх об'єктів CharacterData, які гравець обрав для гри.")]
+    [Tooltip("РЎРїРёСЃРѕРє СѓСЃС–С… РѕР±'С”РєС‚С–РІ CharacterData, СЏРєС– РіСЂР°РІРµС†СЊ РѕР±СЂР°РІ РґР»СЏ РіСЂРё.")]
     public List<CharacterData> SelectedCharacters = new List<CharacterData>();
 
-    [Tooltip("Картки, які були відкинуті гравцем під час драфту (більше не доступні).")]
+    [Tooltip("РљР°СЂС‚РєРё, СЏРєС– Р±СѓР»Рё РІС–РґРєРёРЅСѓС‚С– РіСЂР°РІС†РµРј РїС–Рґ С‡Р°СЃ РґСЂР°С„С‚Сѓ (Р±С–Р»СЊС€Рµ РЅРµ РґРѕСЃС‚СѓРїРЅС–).")]
     public List<CharacterData> DiscardedCharacters = new List<CharacterData>();
 
-    // Зберігає (CharacterData, SelectionMode) — режими вибору (Visible/Hidden).
-    // Тепер SelectionMode — це глобальний тип, а не вкладений.
-    [System.NonSerialized] // Це runtime дані, не зберігаємо в ассеті
+    // Р—Р±РµСЂС–РіР°С” (CharacterData, SelectionMode) вЂ” СЂРµР¶РёРјРё РІРёР±РѕСЂСѓ (Visible/Hidden).
+    // РўРµРїРµСЂ SelectionMode вЂ” С†Рµ РіР»РѕР±Р°Р»СЊРЅРёР№ С‚РёРї, Р° РЅРµ РІРєР»Р°РґРµРЅРёР№.
+    [System.NonSerialized] // Р¦Рµ runtime РґР°РЅС–, РЅРµ Р·Р±РµСЂС–РіР°С”РјРѕ РІ Р°СЃСЃРµС‚С–
     private List<(CharacterData data, SelectionMode mode)> _selectionModes =
         new List<(CharacterData data, SelectionMode mode)>();
 
 
     /// <summary>
-    /// Очищає всі списки перед початком нового драфту.
+    /// РћС‡РёС‰Р°С” РІСЃС– СЃРїРёСЃРєРё РїРµСЂРµРґ РїРѕС‡Р°С‚РєРѕРј РЅРѕРІРѕРіРѕ РґСЂР°С„С‚Сѓ.
     /// </summary>
     public void ClearHand()
     {
         SelectedCharacters.Clear();
-        // DiscardedCharacters.Clear(); // Залишаємо відкинуті, щоб вони не з'явилися знову для P2!
+        // DiscardedCharacters.Clear(); // Р—Р°Р»РёС€Р°С”РјРѕ РІС–РґРєРёРЅСѓС‚С–, С‰РѕР± РІРѕРЅРё РЅРµ Р·'СЏРІРёР»РёСЃСЏ Р·РЅРѕРІСѓ РґР»СЏ P2!
         _selectionModes.Clear();
     }
 
     /// <summary>
-    /// Встановлює режими вибору для кожного персонажа.
+    /// Р’СЃС‚Р°РЅРѕРІР»СЋС” СЂРµР¶РёРјРё РІРёР±РѕСЂСѓ РґР»СЏ РєРѕР¶РЅРѕРіРѕ РїРµСЂСЃРѕРЅР°Р¶Р°.
     /// </summary>
     public void SetSelectionModes(List<(CharacterData data, SelectionMode mode)> modes)
     {
@@ -40,11 +40,11 @@ public class PlayerHandData : ScriptableObject
     }
 
     /// <summary>
-    /// Повертає режим вибору для конкретного персонажа.
+    /// РџРѕРІРµСЂС‚Р°С” СЂРµР¶РёРј РІРёР±РѕСЂСѓ РґР»СЏ РєРѕРЅРєСЂРµС‚РЅРѕРіРѕ РїРµСЂСЃРѕРЅР°Р¶Р°.
     /// </summary>
     public SelectionMode GetSelectionMode(CharacterData data)
     {
-        // Повертаємо режим, або None, якщо карта не знайдена в списку
+        // РџРѕРІРµСЂС‚Р°С”РјРѕ СЂРµР¶РёРј, Р°Р±Рѕ None, СЏРєС‰Рѕ РєР°СЂС‚Р° РЅРµ Р·РЅР°Р№РґРµРЅР° РІ СЃРїРёСЃРєСѓ
         var found = _selectionModes.FirstOrDefault(x => x.data == data);
         return (found.data != null) ? found.mode : SelectionMode.None;
     }
