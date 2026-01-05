@@ -78,27 +78,27 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     {
         Debug.Log($"AcceptCard called for {newCard.CardData.CharacterName} in slot {name}");
 
-        // Якщо це та сама картка, що вже в слоті - нічого не робимо
+        // РЇРєС‰Рѕ С†Рµ С‚Р° СЃР°РјР° РєР°СЂС‚РєР°, С‰Рѕ РІР¶Рµ РІ СЃР»РѕС‚С– - РЅС–С‡РѕРіРѕ РЅРµ СЂРѕР±РёРјРѕ
         if (CurrentCard == newCard)
         {
             Debug.Log("Same card, no replacement needed");
             return;
         }
 
-        // Перевірка, чи можемо прийняти картку
+        // РџРµСЂРµРІС–СЂРєР°, С‡Рё РјРѕР¶РµРјРѕ РїСЂРёР№РЅСЏС‚Рё РєР°СЂС‚РєСѓ
         if (!CanAcceptCard(newCard))
         {
             Debug.Log($"Cannot accept card {newCard.CardData.CharacterName} in slot {name}");
             return;
         }
 
-        // Зберігаємо посилання на стару картку
+        // Р—Р±РµСЂС–РіР°С”РјРѕ РїРѕСЃРёР»Р°РЅРЅСЏ РЅР° СЃС‚Р°СЂСѓ РєР°СЂС‚РєСѓ
         CardSelectionHandler oldCard = CurrentCard;
 
-        // Видаляємо нову картку з попереднього слота
+        // Р’РёРґР°Р»СЏС”РјРѕ РЅРѕРІСѓ РєР°СЂС‚РєСѓ Р· РїРѕРїРµСЂРµРґРЅСЊРѕРіРѕ СЃР»РѕС‚Р°
         RemoveCardFromPreviousSlot(newCard);
 
-        // ТИМЧАСОВО ВИМИКАЄМО LAYOUT GROUP для уникнення артефактів
+        // РўРРњР§РђРЎРћР’Рћ Р’РРњРРљРђР„РњРћ LAYOUT GROUP РґР»СЏ СѓРЅРёРєРЅРµРЅРЅСЏ Р°СЂС‚РµС„Р°РєС‚С–РІ
         bool wasLayoutEnabled = false;
         if (_hasLayoutGroup && _layoutGroup.enabled)
         {
@@ -108,12 +108,12 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
         try
         {
-            // Призначаємо нову картку в поточний слот
+            // РџСЂРёР·РЅР°С‡Р°С”РјРѕ РЅРѕРІСѓ РєР°СЂС‚РєСѓ РІ РїРѕС‚РѕС‡РЅРёР№ СЃР»РѕС‚
             CurrentCard = newCard;
             newCard.MoveToSlot(transform, this, AutoScaleCard ? CardScaleFactor : 1f);
             newCard.OnPlacedInSlot(this);
 
-            // Якщо була стара картка - повертаємо її на поле вибору
+            // РЇРєС‰Рѕ Р±СѓР»Р° СЃС‚Р°СЂР° РєР°СЂС‚РєР° - РїРѕРІРµСЂС‚Р°С”РјРѕ С—С— РЅР° РїРѕР»Рµ РІРёР±РѕСЂСѓ
             if (oldCard != null)
             {
                 Debug.Log($"Replacing old card {oldCard.CardData.CharacterName} with new card {newCard.CardData.CharacterName}");
@@ -124,7 +124,7 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
         }
         finally
         {
-            // ЗАВЖДИ увімкнути Layout Group знову
+            // Р—РђР’Р–Р”Р СѓРІС–РјРєРЅСѓС‚Рё Layout Group Р·РЅРѕРІСѓ
             if (_hasLayoutGroup && wasLayoutEnabled)
             {
                 _layoutGroup.enabled = true;
@@ -136,25 +136,25 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     }
 
     /// <summary>
-    /// Перевіряє, чи може слот прийняти картку
+    /// РџРµСЂРµРІС–СЂСЏС”, С‡Рё РјРѕР¶Рµ СЃР»РѕС‚ РїСЂРёР№РЅСЏС‚Рё РєР°СЂС‚РєСѓ
     /// </summary>
     private bool CanAcceptCard(CardSelectionHandler card)
     {
         if (card == null) return false;
         if (card == CurrentCard) return false;
 
-        // Тут можна додати додаткові умови (наприклад, перевірка типу картки)
+        // РўСѓС‚ РјРѕР¶РЅР° РґРѕРґР°С‚Рё РґРѕРґР°С‚РєРѕРІС– СѓРјРѕРІРё (РЅР°РїСЂРёРєР»Р°Рґ, РїРµСЂРµРІС–СЂРєР° С‚РёРїСѓ РєР°СЂС‚РєРё)
         return true;
     }
 
     /// <summary>
-    /// Видаляє картку з попереднього слота
+    /// Р’РёРґР°Р»СЏС” РєР°СЂС‚РєСѓ Р· РїРѕРїРµСЂРµРґРЅСЊРѕРіРѕ СЃР»РѕС‚Р°
     /// </summary>
     private void RemoveCardFromPreviousSlot(CardSelectionHandler card)
     {
         if (card == null) return;
 
-        // Шукаємо всі слоти на сцені
+        // РЁСѓРєР°С”РјРѕ РІСЃС– СЃР»РѕС‚Рё РЅР° СЃС†РµРЅС–
         DropSlot[] allSlots = FindObjectsOfType<DropSlot>();
         foreach (DropSlot slot in allSlots)
         {
@@ -162,13 +162,13 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
             {
                 Debug.Log($"Removing card {card.CardData.CharacterName} from previous slot: {slot.name}");
                 slot.ClearCardWithoutReturning();
-                break; // Картка може бути тільки в одному слоті
+                break; // РљР°СЂС‚РєР° РјРѕР¶Рµ Р±СѓС‚Рё С‚С–Р»СЊРєРё РІ РѕРґРЅРѕРјСѓ СЃР»РѕС‚С–
             }
         }
     }
 
     /// <summary>
-    /// Видаляє картку зі слота і повертає її на поле вибору
+    /// Р’РёРґР°Р»СЏС” РєР°СЂС‚РєСѓ Р·С– СЃР»РѕС‚Р° С– РїРѕРІРµСЂС‚Р°С” С—С— РЅР° РїРѕР»Рµ РІРёР±РѕСЂСѓ
     /// </summary>
     public void RemoveCard()
     {
@@ -179,7 +179,7 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
             CurrentCard.ReturnToDraftArea();
             CurrentCard = null;
 
-            // УВІМКНУТИ LAYOUT GROUP знову
+            // РЈР’Р†РњРљРќРЈРўР LAYOUT GROUP Р·РЅРѕРІСѓ
             if (_hasLayoutGroup)
             {
                 _layoutGroup.enabled = true;
@@ -189,7 +189,7 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     }
 
     /// <summary>
-    /// Очищає слот без повернення картки на поле вибору
+    /// РћС‡РёС‰Р°С” СЃР»РѕС‚ Р±РµР· РїРѕРІРµСЂРЅРµРЅРЅСЏ РєР°СЂС‚РєРё РЅР° РїРѕР»Рµ РІРёР±РѕСЂСѓ
     /// </summary>
     public void ClearCardWithoutReturning()
     {
@@ -199,7 +199,7 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
             CurrentCard.OnRemovedFromSlot();
             CurrentCard = null;
 
-            // УВІМКНУТИ LAYOUT GROUP знову
+            // РЈР’Р†РњРљРќРЈРўР LAYOUT GROUP Р·РЅРѕРІСѓ
             if (_hasLayoutGroup)
             {
                 _layoutGroup.enabled = true;
@@ -222,7 +222,7 @@ public class DropSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
             }
         }
 
-        // Індикатор можливості дропу
+        // Р†РЅРґРёРєР°С‚РѕСЂ РјРѕР¶Р»РёРІРѕСЃС‚С– РґСЂРѕРїСѓ
         if (DropIndicator != null)
         {
             DropIndicator.SetActive(CurrentCard == null);

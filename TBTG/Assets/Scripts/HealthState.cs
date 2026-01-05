@@ -1,10 +1,10 @@
 public enum HealthState
 {
     Dead = 0,
-    Come = 1,       // Кома
+    Come = 1,       // РљРѕРјР°
     Critical = 2,
     Heavy = 3,
     Light = 4,
     Unharmed = 5,
-    Extra = 6       // Екстра стан
+    Extra = 6       // Р•РєСЃС‚СЂР° СЃС‚Р°РЅ
 }

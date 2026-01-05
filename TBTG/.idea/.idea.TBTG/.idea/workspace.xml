@@ -8,11 +8,10 @@
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TBTG/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TBTG/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scene/Game.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scene/Game.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scene/Menu.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scene/Menu.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/CreateRoomWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/CreateRoomWindow.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/JoinRoomWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/JoinRoomWindow.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/MultiplayerWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/MultiplayerWindow.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDragHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDragHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/DropSlot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/DropSlot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/HealthState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/HealthState.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF - Fallback.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF - Fallback.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,7 +24,11 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d44b17e136d09081da1e8fd0e8c83fde60e11818b9f2442d7ed8cb733fae895e/System.Collections.Generic.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/NewVersion/Scripts/BackButton.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDeckController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDragHandler.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardSlot.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/GameSettings/GameSceneState.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/GameUIController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/NewVersion/Scripts/MultiplayerManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/NewVersion/Scripts/PhotonManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/NewVersion/Scripts/RainbowText.cs" root0="FORCE_HIGHLIGHTING" />
@@ -118,6 +121,8 @@
       <option name="presentableId" value="Default" />
       <updated>1767373879120</updated>
       <workItem from="1767373894035" duration="16131000" />
+      <workItem from="1767462238279" duration="6722000" />
+      <workItem from="1767636328361" duration="8757000" />
     </task>
     <servers />
   </component>
