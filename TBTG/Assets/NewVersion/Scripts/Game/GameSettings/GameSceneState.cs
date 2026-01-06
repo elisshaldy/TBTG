@@ -12,12 +12,41 @@ public class GameSceneState : MonoBehaviour
     [SerializeField] private HotseatSettings hotseatSettings;
     [SerializeField] private PlayerVsBotSettings playerVsBotSettings;
 
-    private GameSettings _currentSettings;
+    public GameSettings _currentSettings;
+    private GameSetupStep _currentStep = GameSetupStep.Cards;
+    public GameSetupStep CurrentStep => _currentStep;
 
     private void Start()
     {
         SelectSettings();
         UpdateUI();
+    }
+    
+    public void StartFlow(GameUIController ui)
+    {
+        _currentStep = GameSetupStep.Cards;
+        ui.EnableDeckListening();
+        _currentSettings.OnFlowStarted(ui);
+        ui.OpenCards();
+    }
+
+    
+    public void Next(GameUIController ui)
+    {
+        _currentStep++;
+
+        switch (_currentStep)
+        {
+            case GameSetupStep.Mods:
+                Debug.Log($"GameSceneState: Switching to Mods step");
+                ui.OpenMods();
+                _currentSettings.OnFlowFinished(ui);
+                break;
+
+            case GameSetupStep.ModeSpecific:
+                _currentSettings.OpenModeSpecific(ui);
+                break;
+        }
     }
 
     private void SelectSettings()

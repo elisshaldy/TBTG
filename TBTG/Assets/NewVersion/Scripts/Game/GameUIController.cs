@@ -4,39 +4,80 @@ using UnityEngine.UI;
 
 public class GameUIController : MonoBehaviour
 {
+    [Header("Containers")]
     [SerializeField] private GameObject _containerCards;
     [SerializeField] private GameObject _containerMods;
-    [Space(20)]
-    [SerializeField] private CardDeckController _cardDeckController;
+    [Header("UI")]
     [SerializeField] private TextMeshProUGUI _hotseatPlayerNameTxt;
     [SerializeField] private Button _applyBtn;
+    [Header("State")]
+    [SerializeField] private GameSceneState _gameSceneState;
+    [SerializeField] private CardDeckController _cardDeckController;
 
-    private void OnEnable()
+    public void EnableDeckListening()
     {
         _cardDeckController.DeckStateChanged += OnDeckStateChanged;
     }
 
     private void OnDisable()
     {
+        DisableDeckListening();
+    }
+    
+    public void DisableDeckListening()
+    {
         _cardDeckController.DeckStateChanged -= OnDeckStateChanged;
+        _cardDeckController.UnsubscribeSlots();
     }
 
     private void Start()
     {
         _applyBtn.gameObject.SetActive(false);
-        _hotseatPlayerNameTxt.gameObject.SetActive(false);
         
-        _applyBtn.onClick.AddListener(OpenMods);
+        _applyBtn.onClick.AddListener(NextStep);
+        
+        _gameSceneState.StartFlow(this);
     }
 
     private void OnDeckStateChanged(bool isDeckFull)
     {
         _applyBtn.gameObject.SetActive(isDeckFull);
     }
-
-    private void OpenMods()
+    
+    private void NextStep()
     {
-        _containerMods.SetActive(true);
+        _gameSceneState.Next(this);
+    }
+
+    public void OpenCards()
+    {
+        _containerCards.SetActive(true);
+        _containerMods.SetActive(false);
+    }
+
+    public void OpenMods()
+    {
         _containerCards.SetActive(false);
+        _containerMods.SetActive(true);
+        _applyBtn.gameObject.SetActive(false);
+    }
+    
+    public void OpenMap()
+    {
+        Debug.Log("Map opened");
+        _containerMods.SetActive(false);
+        _applyBtn.gameObject.SetActive(false);
+    }
+
+    public void OpenHotseatWindow()
+    {
+        // open window for player 2, after he done OpenMap();
+        _hotseatPlayerNameTxt.gameObject.SetActive(true);
+    }
+    
+    public void ShowHotseatPlayer(string playerName)
+    {
+        _hotseatPlayerNameTxt.text = "Current player: " + playerName;
+        _hotseatPlayerNameTxt.gameObject.SetActive(true);
     }
 }

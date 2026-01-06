@@ -25,6 +25,11 @@ public class CardDeckController : MonoBehaviour
 
     private void OnDestroy()
     {
+        UnsubscribeSlots();
+    }
+
+    public void UnsubscribeSlots()
+    {
         foreach (CardSlot slot in _cardDeck)
         {
             slot.CardAdded -= CheckDeck;
