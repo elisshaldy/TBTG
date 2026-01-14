@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
 {
     public CardSlot CurrentSlot { get; set; }
+    public CardSlot LastSlot { get; private set; }
 
     private RectTransform rectTransform;
     private Canvas canvas;
@@ -78,6 +79,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         _canDrag = true;
 
+        LastSlot = CurrentSlot;
         if (CurrentSlot != null)
         {
             CurrentSlot.ClearSlot();

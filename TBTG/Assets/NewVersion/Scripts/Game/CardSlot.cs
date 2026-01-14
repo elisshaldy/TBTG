@@ -21,24 +21,37 @@ public class CardSlot : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
-        CardDragHandler card = eventData.pointerDrag.GetComponent<CardDragHandler>();
-        if (card == null) return;
+        CardDragHandler incomingCard = eventData.pointerDrag.GetComponent<CardDragHandler>();
+        if (incomingCard == null) return;
 
         if (IsOccupied)
         {
-            CurrentCard.ReturnHome();
-            CurrentCard.CurrentSlot = null;
-            CurrentCard = null;
+            CardDragHandler existingCard = CurrentCard;
+            CardSlot previousSlot = incomingCard.LastSlot;
+
+            if (previousSlot != null)
+            {
+                // SWAP
+                previousSlot.SetCardManually(existingCard);
+            }
+            else
+            {
+                existingCard.ReturnHome();
+                existingCard.CurrentSlot = null;
+            }
         }
 
-        if (card.CurrentSlot != null)
-        {
-            card.CurrentSlot.ClearSlot();
-        }
+        CurrentCard = incomingCard;
+        incomingCard.CurrentSlot = this;
 
+        incomingCard.SnapToSlot(SlotPoint);
+        CardAdded?.Invoke();
+    }
+
+    public void SetCardManually(CardDragHandler card)
+    {
         CurrentCard = card;
         card.CurrentSlot = this;
-
         card.SnapToSlot(SlotPoint);
         CardAdded?.Invoke();
     }
