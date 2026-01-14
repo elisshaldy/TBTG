@@ -5209,7 +5209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameStateText: {fileID: 1482781032}
-  _sceneState: 1
+  _sceneState: 0
   multiplayerSettings:
     TurnTime: 0
     FieldSize: 0

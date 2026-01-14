@@ -121,9 +121,33 @@ public class RoomWindow : UIWindow
     
     public void OnStartGameClicked()
     {
-        if (roomNetworkService != null)
+        GameSettings settings = _roomParameters.GetPopulatedSettings(_sceneState);
+        GameSettingsManager.Instance.CurrentMode = _sceneState;
+        GameSettingsManager.Instance.CurrentSettings = settings;
+
+        if (_sceneState == SceneState.Multiplayer)
         {
-            roomNetworkService.StartGame();
+            if (PhotonNetwork.IsMasterClient)
+            {
+                var props = new ExitGames.Client.Photon.Hashtable();
+                props.Add("TurnTime", settings.TurnTime);
+                props.Add("FieldSize", settings.FieldSize);
+                props.Add("PartyCount", settings.PartyCount);
+                props.Add("BossCount", settings.BossCount);
+                props.Add("BossDifficulty", (int)settings.BossDifficulty);
+            
+                PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+                
+                if (roomNetworkService != null)
+                {
+                    roomNetworkService.StartGame();
+                }
+            }
+        }
+        else
+        {
+            // ЛОКАЛЬНИЙ СТАРТ (Hotseat / VS Bot)
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Game");
         }
     }
 }

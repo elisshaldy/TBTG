@@ -114,4 +114,50 @@ public class RoomParametersUI : MonoBehaviour
         _hotSeatPlayerName1UI.SetActive(true);
         _hotSeatPlayerName2UI.SetActive(true);
     }
+
+    public GameSettings GetPopulatedSettings(SceneState state)
+    {
+        GameSettings settings = null;
+
+        switch (state)
+        {
+            case SceneState.Multiplayer:
+                settings = new MultiplayerSettings();
+                break;
+            case SceneState.Hotseat:
+                var hs = new HotseatSettings();
+                hs.Player1Name = _namePlayer1.text;
+                hs.Player2Name = _namePlayer2.text;
+                settings = hs;
+                break;
+            case SceneState.PlayerVSBot:
+                var pvb = new PlayerVsBotSettings();
+                pvb.BotDifficulty = (BotDifficulty)(_botDifficultyDropdown.value + 1);
+                settings = pvb;
+                break;
+        }
+
+        if (settings != null)
+        {
+            settings.TurnTime = int.Parse(_turnTimeDropdown.text);
+            
+            settings.FieldSize = ExtractNumber(_fieldSizeDropdown.options[_fieldSizeDropdown.value].text, _fieldSizeDropdown.value);
+            settings.PartyCount = ExtractNumber(_partyCountDropdown.options[_partyCountDropdown.value].text, _partyCountDropdown.value);
+            settings.BossCount = ExtractNumber(_bossCountDropdown.options[_bossCountDropdown.value].text, _bossCountDropdown.value);
+
+            settings.BossDifficulty = (BossDifficulty)(_bossDifficultyDropdown.value + 1);
+        }
+
+        return settings;
+    }
+
+    private int ExtractNumber(string text, int defaultValue)
+    {
+        // Витягуємо першу послідовність цифр з тексту (наприклад "10x10" -> "10")
+        string digits = System.Text.RegularExpressions.Regex.Match(text, @"\d+").Value;
+        if (int.TryParse(digits, out int result))
+            return result;
+        
+        return defaultValue;
+    }
 }

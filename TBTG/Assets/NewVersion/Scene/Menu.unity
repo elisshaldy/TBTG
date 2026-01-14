@@ -7718,6 +7718,7 @@ GameObject:
   - component: {fileID: 1633189201}
   - component: {fileID: 1633189202}
   - component: {fileID: 1633189203}
+  - component: {fileID: 1633189204}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -7790,6 +7791,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _roomWindow: {fileID: 181712136}
   _joinRoomWindow: {fileID: 1193429694}
+--- !u!114 &1633189204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633189198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9841398c4d9360544a6ad9cb734225e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1633419229
 GameObject:
   m_ObjectHideFlags: 0

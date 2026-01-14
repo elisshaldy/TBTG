@@ -1,5 +1,7 @@
 using UnityEngine;
 using TMPro;
+using Photon.Pun;
+using System;
 
 public enum SceneState
 {
@@ -24,12 +26,16 @@ public class GameSceneState : MonoBehaviour
     private GameSetupStep _currentStep = GameSetupStep.Cards;
     public GameSetupStep CurrentStep => _currentStep;
 
-    private void Start()
+    private void Awake()
     {
         SelectSettings();
+    }
+
+    private void Start()
+    {
         UpdateUI();
     }
-    
+
     public void StartFlow(GameUIController ui)
     {
         _currentStep = GameSetupStep.Cards;
@@ -38,7 +44,6 @@ public class GameSceneState : MonoBehaviour
         ui.OpenCards();
     }
 
-    
     public void Next(GameUIController ui)
     {
         _currentStep++;
@@ -59,25 +64,80 @@ public class GameSceneState : MonoBehaviour
 
     private void SelectSettings()
     {
+        // Спочатку визначаємо режим
+        if (GameSettingsManager.Instance != null && GameSettingsManager.Instance.CurrentSettings != null)
+        {
+            _sceneState = GameSettingsManager.Instance.CurrentMode;
+        }
+        else if (PhotonNetwork.InRoom)
+        {
+            _sceneState = SceneState.Multiplayer;
+        }
+
+        // Призначаємо _currentSettings на один з готових об'єктів в інспекторі
         switch (_sceneState)
         {
-            case SceneState.Multiplayer:
-                _currentSettings = multiplayerSettings;
-                break;
+            case SceneState.Multiplayer: _currentSettings = multiplayerSettings; break;
+            case SceneState.Hotseat: _currentSettings = hotseatSettings; break;
+            case SceneState.PlayerVSBot: _currentSettings = playerVsBotSettings; break;
+        }
 
-            case SceneState.Hotseat:
-                _currentSettings = hotseatSettings;
-                break;
+        if (_currentSettings == null)
+        {
+            Debug.LogError("Failed to identify GameSettings to use!");
+            return;
+        }
 
-            case SceneState.PlayerVSBot:
-                _currentSettings = playerVsBotSettings;
-                break;
+        // Копіюємо дані з менеджера (якщо вони там є)
+        if (GameSettingsManager.Instance != null && GameSettingsManager.Instance.CurrentSettings != null)
+        {
+            CopyValues(GameSettingsManager.Instance.CurrentSettings, _currentSettings);
+        }
 
-            case SceneState.Undefined:
-            default:
-                _currentSettings = null;
-                Debug.LogWarning("SceneState is Undefined. Game settings not selected");
-                break;
+        // Якщо мультіплеєр — докачуємо дані з Photon
+        if (_sceneState == SceneState.Multiplayer && PhotonNetwork.InRoom)
+        {
+            SyncMultiplayerSettings();
+        }
+    }
+
+    private void CopyValues(GameSettings source, GameSettings target)
+    {
+        target.TurnTime = source.TurnTime;
+        target.FieldSize = source.FieldSize;
+        target.BossCount = source.BossCount;
+        target.PartyCount = source.PartyCount;
+        target.BossDifficulty = source.BossDifficulty;
+
+        if (source is PlayerVsBotSettings sBot && target is PlayerVsBotSettings tBot)
+            tBot.BotDifficulty = sBot.BotDifficulty;
+        
+        if (source is HotseatSettings sHs && target is HotseatSettings tHs)
+        {
+            tHs.Player1Name = sHs.Player1Name;
+            tHs.Player2Name = sHs.Player2Name;
+        }
+    }
+
+    private void SyncMultiplayerSettings()
+    {
+        var props = PhotonNetwork.CurrentRoom.CustomProperties;
+        
+        if (props.TryGetValue("TurnTime", out object turnTime)) _currentSettings.TurnTime = Convert.ToInt32(turnTime);
+        if (props.TryGetValue("FieldSize", out object fieldSize)) _currentSettings.FieldSize = Convert.ToInt32(fieldSize);
+        if (props.TryGetValue("PartyCount", out object partyCount)) _currentSettings.PartyCount = Convert.ToInt32(partyCount);
+        if (props.TryGetValue("BossCount", out object bossCount)) _currentSettings.BossCount = Convert.ToInt32(bossCount);
+        if (props.TryGetValue("BossDifficulty", out object bossDiff)) _currentSettings.BossDifficulty = (BossDifficulty)Convert.ToInt32(bossDiff);
+        
+        if (_currentSettings is MultiplayerSettings mp)
+        {
+            mp.RoomName = PhotonNetwork.CurrentRoom.Name;
+            mp.YourName = PhotonNetwork.LocalPlayer.NickName;
+            mp.PlayerList = new System.Collections.Generic.List<string>();
+            foreach (var p in PhotonNetwork.PlayerList)
+            {
+                mp.PlayerList.Add(p.NickName);
+            }
         }
     }
 
@@ -94,7 +154,7 @@ public class GameSceneState : MonoBehaviour
         string text =
             $"Mode: {_sceneState}\n" +
             $"Turn Time: {_currentSettings.TurnTime}\n" +
-            $"Field Size: {_currentSettings.FieldSize}\n" +
+            $"Field Size: {_currentSettings.FieldSize}x{_currentSettings.FieldSize}\n" +
             $"Bosses: {_currentSettings.BossCount}\n" +
             $"Party Count: {_currentSettings.PartyCount}\n" +
             $"Boss Difficulty: {_currentSettings.BossDifficulty}\n";
