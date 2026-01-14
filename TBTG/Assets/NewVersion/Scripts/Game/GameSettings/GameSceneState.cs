@@ -151,39 +151,39 @@ public class GameSceneState : MonoBehaviour
             return;
         }
 
-        string text =
-            $"Mode: {_sceneState}\n" +
-            $"Turn Time: {_currentSettings.TurnTime}\n" +
-            $"Field Size: {_currentSettings.FieldSize}x{_currentSettings.FieldSize}\n" +
-            $"Bosses: {_currentSettings.BossCount}\n" +
-            $"Party Count: {_currentSettings.PartyCount}\n" +
-            $"Boss Difficulty: {_currentSettings.BossDifficulty}\n";
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine($"Mode: {_sceneState}");
+        sb.AppendLine($"Turn Time: {_currentSettings.TurnTime}");
+        sb.AppendLine($"Field Size: {_currentSettings.FieldSize}x{_currentSettings.FieldSize}");
+        sb.AppendLine($"Bosses: {_currentSettings.BossCount}");
+        sb.AppendLine($"Party Count: {_currentSettings.PartyCount}");
+        sb.AppendLine($"Boss Difficulty: {_currentSettings.BossDifficulty}");
 
         if (_currentSettings is PlayerVsBotSettings botSettings)
         {
-            text += $"Bot Difficulty: {botSettings.BotDifficulty}\n";
+            sb.AppendLine($"Bot Difficulty: {botSettings.BotDifficulty}");
         }
 
         if (_currentSettings is MultiplayerSettings mp)
         {
-            text +=
-                $"\nRoom Name: {mp.RoomName}\n" +
-                $"Your Name: {mp.YourName}\n" +
-                $"Players:\n";
+            sb.AppendLine();
+            sb.AppendLine($"Room Name: {mp.RoomName}");
+            sb.AppendLine($"Your Name: {mp.YourName}");
+            sb.AppendLine("Players:");
 
             foreach (var player in mp.PlayerList)
             {
-                text += $"- {player}\n";
+                sb.AppendLine($"- {player}");
             }
         }
 
         if (_currentSettings is HotseatSettings hs)
         {
-            text +=
-                $"\nPlayer 1: {hs.Player1Name}\n" +
-                $"Player 2: {hs.Player2Name}\n";
+            sb.AppendLine();
+            sb.AppendLine($"Player 1: {hs.Player1Name}");
+            sb.AppendLine($"Player 2: {hs.Player2Name}");
         }
 
-        _gameStateText.text = text;
+        _gameStateText.text = sb.ToString();
     }
 }

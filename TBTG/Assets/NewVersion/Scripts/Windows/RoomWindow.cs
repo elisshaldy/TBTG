@@ -122,8 +122,12 @@ public class RoomWindow : UIWindow
     public void OnStartGameClicked()
     {
         GameSettings settings = _roomParameters.GetPopulatedSettings(_sceneState);
-        GameSettingsManager.Instance.CurrentMode = _sceneState;
-        GameSettingsManager.Instance.CurrentSettings = settings;
+        
+        if (GameSettingsManager.Instance != null)
+        {
+            GameSettingsManager.Instance.CurrentMode = _sceneState;
+            GameSettingsManager.Instance.CurrentSettings = settings;
+        }
 
         if (_sceneState == SceneState.Multiplayer)
         {

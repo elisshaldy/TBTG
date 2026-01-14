@@ -115,6 +115,8 @@ public class RoomParametersUI : MonoBehaviour
         _hotSeatPlayerName2UI.SetActive(true);
     }
 
+    private static readonly System.Text.RegularExpressions.Regex _numberRegex = new(@"\d+", System.Text.RegularExpressions.RegexOptions.Compiled);
+
     public GameSettings GetPopulatedSettings(SceneState state)
     {
         GameSettings settings = null;
@@ -139,7 +141,8 @@ public class RoomParametersUI : MonoBehaviour
 
         if (settings != null)
         {
-            settings.TurnTime = int.Parse(_turnTimeDropdown.text);
+            if (int.TryParse(_turnTimeDropdown.text, out int turnTime))
+                settings.TurnTime = turnTime;
             
             settings.FieldSize = ExtractNumber(_fieldSizeDropdown.options[_fieldSizeDropdown.value].text, _fieldSizeDropdown.value);
             settings.PartyCount = ExtractNumber(_partyCountDropdown.options[_partyCountDropdown.value].text, _partyCountDropdown.value);
@@ -154,7 +157,7 @@ public class RoomParametersUI : MonoBehaviour
     private int ExtractNumber(string text, int defaultValue)
     {
         // Витягуємо першу послідовність цифр з тексту (наприклад "10x10" -> "10")
-        string digits = System.Text.RegularExpressions.Regex.Match(text, @"\d+").Value;
+        string digits = _numberRegex.Match(text).Value;
         if (int.TryParse(digits, out int result))
             return result;
         
