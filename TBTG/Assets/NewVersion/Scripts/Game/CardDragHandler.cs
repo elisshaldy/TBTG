@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
 {
@@ -8,7 +9,9 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private RectTransform rectTransform;
     private Canvas canvas;
     private CanvasGroup canvasGroup;
+
     private GameSceneState gameSceneState;
+    private CardDeckController cardDeckController;
 
     private Transform homeParent;
 
@@ -22,6 +25,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private Quaternion originalLocalRotation;
 
     private CardScaler scaler;
+    private bool _canDrag = false;
 
     private void Awake()
     {
@@ -44,11 +48,20 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private void Start()
     {
         if (gameSceneState == null)
-            gameSceneState = FindObjectOfType<GameSceneState>();
+            gameSceneState = FindObjectOfType<GameSceneState>(); // OPTIMIZE
+        if (cardDeckController == null)
+            cardDeckController = FindObjectOfType<CardDeckController>(); // OPTIMIZE
     }
-
-    private bool _canDrag = false;
-
+    
+    public void SetRaycastTarget(bool value)
+    {
+        if (canvasGroup != null)
+            canvasGroup.blocksRaycasts = value;
+        
+        var image = GetComponent<Image>(); // OPTIMIZE
+        if (image != null) image.raycastTarget = value;
+    }
+    
     public void OnBeginDrag(PointerEventData eventData)
     {
         _canDrag = false;
@@ -74,11 +87,19 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         // Bring card to top of canvas
         transform.SetParent(canvas.transform, true);
         transform.SetAsLastSibling();
-        canvasGroup.blocksRaycasts = false;
+        SetRaycastTarget(false);
 
         // Disable hover scaling while draggingі
         if (scaler != null)
             scaler.SetDragging(true);
+
+        ToggleOtherCardsInSlotsRaycasts(false);
+    }
+
+    private void ToggleOtherCardsInSlotsRaycasts(bool value)
+    {
+        if (cardDeckController != null)
+            cardDeckController.ToggleCardsRaycasts(value, this);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -91,7 +112,8 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         if (!_canDrag) return;
 
-        canvasGroup.blocksRaycasts = true;
+        SetRaycastTarget(true);
+        ToggleOtherCardsInSlotsRaycasts(true);
 
         if (scaler != null)
             scaler.SetDragging(false);
@@ -104,6 +126,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void ReturnHome()
     {
+        SetRaycastTarget(true);
         transform.SetParent(homeParent, false);
 
         rectTransform.anchorMin = originalAnchorMin;
@@ -114,8 +137,8 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         rectTransform.localScale = originalLocalScale;
         rectTransform.localRotation = originalLocalRotation;
         
-        // if (scaler != null)
-        //     scaler.UpdateHome();
+        if (scaler != null)
+            scaler.UpdateHome();
     }
 
     public void SnapToSlot(RectTransform slot)

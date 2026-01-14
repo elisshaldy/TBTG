@@ -5,19 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a71ad837-b436-4a01-978f-9a3a1ce2c269" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/LobbyController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TBTG/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TBTG/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scene/Menu.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scene/Menu.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/GameSettings/GameSceneState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/GameSettings/GameSceneState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/RoomController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/RoomController.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/LobbyController.cs.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/WindowManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/WindowManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/MultiplayerWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/MultiplayerWindow.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/PlayerVsBotWindow.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/PlayerVsBotWindow.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/RoomWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/RoomWindow.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/TwoPlayerWindow.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/TwoPlayerWindow.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDeckController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDeckController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDragHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDragHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardSlot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardSlot.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +49,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;Attach to Unity Editor.Attach to Unity Editor.executor&quot;: &quot;Debug&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;add-photon&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -135,7 +127,7 @@
       <workItem from="1767712004689" duration="18426000" />
       <workItem from="1768018317158" duration="4334000" />
       <workItem from="1768376640020" duration="6965000" />
-      <workItem from="1768384210713" duration="8969000" />
+      <workItem from="1768384210713" duration="14292000" />
     </task>
     <servers />
   </component>

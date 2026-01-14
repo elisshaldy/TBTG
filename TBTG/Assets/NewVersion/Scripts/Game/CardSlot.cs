@@ -26,8 +26,9 @@ public class CardSlot : MonoBehaviour, IDropHandler
 
         if (IsOccupied)
         {
-            card.ReturnHome();
-            return;
+            CurrentCard.ReturnHome();
+            CurrentCard.CurrentSlot = null;
+            CurrentCard = null;
         }
 
         if (card.CurrentSlot != null)

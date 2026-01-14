@@ -52,4 +52,15 @@ public class CardDeckController : MonoBehaviour
 
         DeckStateChanged?.Invoke(isDeckFull);
     }
+
+    public void ToggleCardsRaycasts(bool value, CardDragHandler caller)
+    {
+        foreach (var slot in _cardDeck)
+        {
+            if (slot.CurrentCard != null && slot.CurrentCard != caller)
+            {
+                slot.CurrentCard.SetRaycastTarget(value);
+            }
+        }
+    }
 }
