@@ -5,10 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a71ad837-b436-4a01-978f-9a3a1ce2c269" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.TBTG/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TBTG/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDeckController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDeckController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDragHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDragHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardSlot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardSlot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -127,7 +125,7 @@
       <workItem from="1767712004689" duration="18426000" />
       <workItem from="1768018317158" duration="4334000" />
       <workItem from="1768376640020" duration="6965000" />
-      <workItem from="1768384210713" duration="14292000" />
+      <workItem from="1768384210713" duration="14704000" />
     </task>
     <servers />
   </component>
