@@ -2,18 +2,23 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System;
+using UnityEngine.Events;
 
 [Serializable]
 public class WindowInfo
 {
     public Button Btn;
     public UIWindow Window;
+    public UnityEvent OnOpen;
 }
 
 public class WindowManager : MonoBehaviour
 {
     public static WindowManager Instance { get; private set; }
 
+    public event Action<SceneState> OnSceneStateSelected;
+    public SceneState CurrentSceneState { get; private set; }
+    
     [SerializeField] private UIWindow _mainMenu;
     [SerializeField] private Button _exitBtn;
     [SerializeField] private List<WindowInfo> _windows;
@@ -32,14 +37,31 @@ public class WindowManager : MonoBehaviour
 
             if (w.Btn != null)
             {
-                UIWindow capturedWin = w.Window;
-                w.Btn.onClick.AddListener(() => OpenWindow(capturedWin));
+                UIWindow targetWindow = w.Window;
+                UnityEvent onOpen = w.OnOpen;
+                w.Btn.onClick.AddListener(() => 
+                {
+                    OpenWindow(targetWindow);
+                    onOpen?.Invoke();
+                });
             }
         }
         
         _exitBtn.onClick.AddListener(Application.Quit);
 
         OpenMainMenu();
+    }
+    
+    public void SelectSceneState(int stateIndex)
+    {
+        SelectSceneState((SceneState)stateIndex);
+    }
+
+    public void SelectSceneState(SceneState state)
+    {
+        Debug.Log($"[WindowManager] SelectSceneState called with: {state}");
+        CurrentSceneState = state;
+        OnSceneStateSelected?.Invoke(state);
     }
 
     public void OpenWindow(UIWindow window)

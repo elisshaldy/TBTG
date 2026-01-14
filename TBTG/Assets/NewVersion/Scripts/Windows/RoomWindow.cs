@@ -1,16 +1,18 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Photon.Pun;
-using Photon.Realtime;
 using System.Collections.Generic;
+using System;
+using Photon.Realtime;
+using Photon.Pun;
 
-public class RoomWindow : UIWindow, IInRoomCallbacks
+public class RoomWindow : UIWindow
 {
-    [SerializeField] private TMP_InputField _turnTime; 
-    [SerializeField] private TMP_Dropdown _fieldSize;
-    [SerializeField] private Button _startGame; 
+    [SerializeField] private SceneState _sceneState;
+    [SerializeField] private WindowManager _windowManager;
     [Space(20)]
+    [SerializeField] private RoomNetworkService roomNetworkService;
+    [SerializeField] private RoomParametersUI _roomParameters;
     [SerializeField] private GameObject _roomUIPlayerName;   
     [SerializeField] private Transform _playerContainerUI;   
 
@@ -20,48 +22,53 @@ public class RoomWindow : UIWindow, IInRoomCallbacks
 
     private void OnEnable()
     {
-        PhotonNetwork.AddCallbackTarget(this);
-        RefreshPlayerList();
-        UpdateHostUI();
-    }
-    
-    private void UpdateHostUI()
-    {
-        bool isHost = PhotonNetwork.IsMasterClient;
-
-        _turnTime.interactable = isHost;
-        _fieldSize.interactable = isHost;
-        _startGame.interactable = isHost;
-    }
-
-    private void OnDisable()
-    {
-        PhotonNetwork.RemoveCallbackTarget(this);
-    }
-
-    public override void OnShow()
-    {
-        base.OnShow();
-        UpdateRoomName();
-        RefreshPlayerList();
-        UpdateHostUI();
-    }
-
-    private void UpdateRoomName()
-    {
-        if (PhotonManager.Instance != null && !string.IsNullOrEmpty(PhotonManager.Instance.CurrentRoomName))
+        if (_windowManager != null)
         {
-            _roomName.text = $"Room: {PhotonManager.Instance.CurrentRoomName}";
+            _windowManager.OnSceneStateSelected += OnSceneStateSelected;
+        }
+        
+        if (roomNetworkService != null)
+        {
+            roomNetworkService.OnPlayerListUpdated += RefreshPlayerList;
+            roomNetworkService.OnHostStatusChanged += UpdateHostUI;
+            roomNetworkService.OnRoomNameSet += UpdateRoomNameDisplay;
+            
+            roomNetworkService.RefreshState();
         }
     }
+    
+    private void OnSceneStateSelected(SceneState state)
+    {
+        _sceneState = state;
+        Debug.Log($"[RoomWindow] SceneState updated to: {_sceneState}");
 
-    public void RefreshPlayerList()
+        switch (_sceneState)
+        {
+            case SceneState.Multiplayer:
+                _roomParameters.ShowMultiplayerUI();
+                break;
+
+            case SceneState.Hotseat:
+                _roomName.text = "Hotseat";
+                _roomParameters.ShowHotseatUI();
+                break;
+            
+            case SceneState.PlayerVSBot:
+                _roomName.text = "PlayerVSBot";
+                _roomParameters.ShowPlayerVSBotUI();
+                break;
+        }
+        
+        UpdateHostUI(roomNetworkService != null && PhotonNetwork.IsMasterClient);
+    }
+    
+    private void RefreshPlayerList(List<Player> players)
     {
         foreach (var obj in _spawnedPlayers)
             Destroy(obj);
         _spawnedPlayers.Clear();
         
-        foreach (Player p in PhotonNetwork.PlayerList)
+        foreach (Player p in players)
         {
             GameObject go = Instantiate(_roomUIPlayerName, _playerContainerUI);
 
@@ -72,33 +79,51 @@ public class RoomWindow : UIWindow, IInRoomCallbacks
             _spawnedPlayers.Add(go);
         }
     }
-    
-    public void OnPlayerEnteredRoom(Player newPlayer)
+
+    private void UpdateHostUI(bool isHost)
     {
-        RefreshPlayerList();
+        if (_roomParameters != null)
+        {
+            _roomParameters.SetInteractable(isHost, _sceneState);
+        }
     }
 
-    public void OnPlayerLeftRoom(Player otherPlayer)
+    private void UpdateRoomNameDisplay(string name)
     {
-        RefreshPlayerList();
+        _roomName.text = $"Room: {name}";
+    }
+
+    private void OnDisable()
+    {
+        if (_windowManager != null)
+        {
+            _windowManager.OnSceneStateSelected -= OnSceneStateSelected;
+        }
+        
+        if (roomNetworkService != null)
+        {
+            roomNetworkService.OnPlayerListUpdated -= RefreshPlayerList;
+            roomNetworkService.OnHostStatusChanged -= UpdateHostUI;
+            roomNetworkService.OnRoomNameSet -= UpdateRoomNameDisplay;
+        }
+    }
+
+    public override void OnShow()
+    {
+        base.OnShow();
+        if (roomNetworkService != null)
+        {
+             roomNetworkService.RefreshState();
+        }
+        
+        OnSceneStateSelected(_windowManager.CurrentSceneState);
     }
     
     public void OnStartGameClicked()
     {
-        if (!PhotonNetwork.IsMasterClient)
-            return;
-
-        Debug.Log("Host started the game");
-
-        PhotonNetwork.LoadLevel("Game");
+        if (roomNetworkService != null)
+        {
+            roomNetworkService.StartGame();
+        }
     }
-
-    public void OnMasterClientSwitched(Player newMasterClient)
-    {
-        Debug.Log($"New host: {newMasterClient.NickName}");
-        UpdateHostUI();
-    }
-    
-    public void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps) { }
-    public void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged) { }
 }

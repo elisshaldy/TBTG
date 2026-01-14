@@ -3,7 +3,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
 
-public class RoomUIController : MonoBehaviourPunCallbacks
+public class LobbyController : MonoBehaviourPunCallbacks
 {
     [SerializeField] private UIWindow _roomWindow;
     [SerializeField] private JoinRoomWindow _joinRoomWindow;
@@ -27,6 +27,7 @@ public class RoomUIController : MonoBehaviourPunCallbacks
 
     private void OnRoomJoined(string roomName, string playerName)
     {
+        WindowManager.Instance.SelectSceneState(SceneState.Multiplayer);
         WindowManager.Instance.OpenWindow(_roomWindow);
     }
     

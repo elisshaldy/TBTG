@@ -5,35 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a71ad837-b436-4a01-978f-9a3a1ce2c269" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/LobbyController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TBTG/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TBTG/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scene/Game.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scene/Game.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scene/Menu.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scene/Menu.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDeckController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDeckController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDragHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/CardDragHandler.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/GameSettings/GameSceneState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/GameSettings/GameSceneState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/GameSettings/GameSettings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/GameSettings/GameSettings.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/GameUIController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Game/GameUIController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/CardScaler.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/CardScaler.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/CardSelectionHandler.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/CardSelectionHandler.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/DraftPhaseController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/DraftPhaseController.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/DropSlot.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/DropSlot.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/GameDeckManager.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/GameDeckManager.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/PairFormationManager.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/PairFormationManager.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/PlayerCardManage.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/PlayerCardManage.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TraitCardHandler.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TraitCardHandler.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TraitPurchaseManager.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TraitPurchaseManager.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TraitSlot.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TraitSlot.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF - Fallback.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF - Fallback.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/RoomController.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/RoomController.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/LobbyController.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/WindowManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/WindowManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/MultiplayerWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/MultiplayerWindow.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/PlayerVsBotWindow.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/PlayerVsBotWindow.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/RoomWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/RoomWindow.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/TwoPlayerWindow.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/TwoPlayerWindow.cs.meta" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,6 +44,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/NewVersion/Scripts/UIWindow.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/NewVersion/Scripts/WindowManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/RoomWindow.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/NewVersion/Scripts/Windows/RoomWindowLocal.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/CombatManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@1.0.0/Runtime/UI/Core/GraphicRaycaster.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
@@ -148,6 +133,9 @@
       <workItem from="1767462238279" duration="6722000" />
       <workItem from="1767636328361" duration="8757000" />
       <workItem from="1767712004689" duration="18426000" />
+      <workItem from="1768018317158" duration="4334000" />
+      <workItem from="1768376640020" duration="6965000" />
+      <workItem from="1768384210713" duration="8969000" />
     </task>
     <servers />
   </component>

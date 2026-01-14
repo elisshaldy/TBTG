@@ -1,6 +1,14 @@
 using UnityEngine;
 using TMPro;
 
+public enum SceneState
+{
+    Undefined,
+    Multiplayer,
+    Hotseat,
+    PlayerVSBot
+}
+
 public class GameSceneState : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _gameStateText;
@@ -117,13 +125,5 @@ public class GameSceneState : MonoBehaviour
         }
 
         _gameStateText.text = text;
-    }
-    
-    public enum SceneState
-    {
-        Undefined,
-        Multiplayer,
-        Hotseat,
-        PlayerVSBot
     }
 }
