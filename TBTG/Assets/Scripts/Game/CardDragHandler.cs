@@ -21,7 +21,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private Vector2 originalAnchorMin;
     private Vector2 originalAnchorMax;
     private Vector2 originalPivot;
-    private Vector3 originalLocalPosition;
+    private Vector2 originalAnchoredPosition;
     private Vector3 originalLocalScale;
     private Quaternion originalLocalRotation;
 
@@ -41,7 +41,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         originalAnchorMin = rectTransform.anchorMin;
         originalAnchorMax = rectTransform.anchorMax;
         originalPivot = rectTransform.pivot;
-        originalLocalPosition = rectTransform.localPosition;
+        originalAnchoredPosition = rectTransform.anchoredPosition;
         originalLocalScale = rectTransform.localScale;
         originalLocalRotation = rectTransform.localRotation;
     }
@@ -135,7 +135,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         rectTransform.anchorMax = originalAnchorMax;
         rectTransform.pivot = originalPivot;
         rectTransform.sizeDelta = originalSize;
-        rectTransform.localPosition = originalLocalPosition;
+        rectTransform.anchoredPosition = originalAnchoredPosition;
         rectTransform.localScale = originalLocalScale;
         rectTransform.localRotation = originalLocalRotation;
         
@@ -156,6 +156,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         rectTransform.localScale = Vector3.one;
         rectTransform.localRotation = Quaternion.identity;
 
+        // НЕ оновлюємо homeParent - карточка завжди повертається в колоду
         // 🔥 ВАЖЛИВО
         if (scaler != null)
             scaler.UpdateHome();

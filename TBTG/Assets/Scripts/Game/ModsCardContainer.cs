@@ -6,29 +6,44 @@ public class ModsCardContainer : MonoBehaviour
 
     public bool TryAddMod(ModData modData)
     {
+        if (!CanAddMod(modData))
+            return false;
+            
+        AddMod(modData);
+        return true;
+    }
+
+    public bool CanAddMod(ModData modData)
+    {
         int currentPrice = 0;
-        foreach (var mod in _mods)
+        int freeSlot = -1;
+        
+        for (int i = 0; i < _mods.Length; i++)
         {
-            if (mod != null)
+            if (_mods[i] != null)
             {
-                currentPrice += mod.Price;
+                currentPrice += _mods[i].Price;
+            }
+            else if (freeSlot < 0)
+            {
+                freeSlot = i;
             }
         }
 
-        if (currentPrice + modData.Price > 5)
-        {
-            return false;
-        }
+        // Перевіряємо чи є вільний слот і чи не перевищуємо ліміт
+        return freeSlot >= 0 && currentPrice + modData.Price <= 5;
+    }
 
+    public void AddMod(ModData modData)
+    {
         for (int i = 0; i < _mods.Length; i++)
         {
             if (_mods[i] == null)
             {
                 _mods[i] = modData;
-                return true;
+                return;
             }
         }
-        return false;
     }
 
     public void RemoveMod(ModData modData)

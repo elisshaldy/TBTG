@@ -52,7 +52,7 @@ public class MultiplayerSettings : GameSettings
     
     public override void OnFlowFinished(GameUIController ui)
     {
-        ui.DisableDeckListening();
+        //ui.DisableDeckListening();
     }
 }
 
@@ -68,7 +68,7 @@ public class PlayerVsBotSettings : GameSettings
     
     public override void OnFlowFinished(GameUIController ui)
     {
-        ui.DisableDeckListening();
+        //ui.DisableDeckListening();
     }
 }
 
@@ -85,6 +85,6 @@ public class HotseatSettings : GameSettings
     
     public override void OpenModeSpecific(GameUIController ui)
     {
-        ui.OpenHotseatWindow();
+        ui.OpenHotseatWindow(); // show player 2 name
     }
 }

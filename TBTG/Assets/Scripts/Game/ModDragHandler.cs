@@ -63,7 +63,16 @@ public class ModDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     {
         int price = _modInfo.ModData.Price;
 
-        // спробувати списати очки через event
+        // Спочатку перевіряємо чи є контейнер і чи можна додати мод
+        var modsContainer = card.GetComponent<ModsCardContainer>();
+        if (modsContainer == null || !modsContainer.CanAddMod(_modInfo.ModData))
+        {
+            // контейнера немає або він повний — повертаємо мод без списання очок
+            ReturnHome();
+            return;
+        }
+
+        // Тепер спробувати списати очки через event
         bool success = ModAttachHere?.Invoke(price) ?? false;
 
         if (!success)
@@ -73,30 +82,19 @@ public class ModDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
             return;
         }
 
-        var modsContainer = card.GetComponent<ModsCardContainer>();
-        if (modsContainer != null)
-        {
-            if (modsContainer.TryAddMod(_modInfo.ModData))
-            {
-                // успіх — прикріплюємо мод до контейнера
-                transform.SetParent(modsContainer.transform, false);
-                
-                rectTransform.anchorMin =
-                    rectTransform.anchorMax =
-                        rectTransform.pivot = new Vector2(0.5f, 0.5f);
-
-                rectTransform.anchoredPosition = Vector2.zero;
-                rectTransform.localScale = Vector3.one;
-                rectTransform.localRotation = Quaternion.identity;
-                return;
-            }
-        }
-
-        // Якщо контейнера немає або він повний, але ми все одно хочемо прикріпити (або повернути додому, якщо це помилка логіки)
-        // В даному випадку, якщо немає контейнера, логічно прикріпити просто до картки або повернути. 
-        // Згідно завдання, треба в контейнер. Якщо не вдалося — повертаємо.
+        // Все ОК — додаємо мод до контейнера
+        modsContainer.AddMod(_modInfo.ModData);
         
-        ReturnHome();
+        // прикріплюємо мод до контейнера
+        transform.SetParent(modsContainer.transform, false);
+        
+        rectTransform.anchorMin =
+            rectTransform.anchorMax =
+                rectTransform.pivot = new Vector2(0.5f, 0.5f);
+
+        rectTransform.anchoredPosition = Vector2.zero;
+        rectTransform.localScale = Vector3.one;
+        rectTransform.localRotation = Quaternion.identity;
     }
 
     private void ReturnHome()

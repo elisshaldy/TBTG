@@ -84,6 +84,7 @@ public class GameUIController : MonoBehaviour
     {
         // open window for player 2, after he done OpenMap();
         _hotseatPlayerNameTxt.gameObject.SetActive(true);
+        // here Hotseat Important !!!!!
     }
     
     public void ShowHotseatPlayer(string playerName)
