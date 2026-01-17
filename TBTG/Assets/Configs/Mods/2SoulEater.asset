@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c9c326a48dedb64099226a4699eaad5, type: 3}
-  m_Name: 1ReflectionSpirit
+  m_Name: 2SoulEater
   m_EditorClassIdentifier: 
-  ModificatorName: mod_a_5up_1b_n
-  ModificatorDescription: mod_a_5up_1b_d
-  Icon: {fileID: 21300000, guid: 6896a2bfd854fdb4a9a86d678d7a63b8, type: 3}
-  ModType: 2
-  Price: 3
+  ModificatorName: 'mod_a_5up_1m_n '
+  ModificatorDescription: mod_a_5up_1m_d
+  Icon: {fileID: 0}
+  ModType: 1
+  Price: 5

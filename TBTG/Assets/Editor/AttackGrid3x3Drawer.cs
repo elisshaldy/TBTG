@@ -57,18 +57,15 @@ public class AttackGrid3x3Drawer : PropertyDrawer
                     bool value = cells.GetArrayElementAtIndex(index).boolValue;
                     EditorGUI.DrawRect(cellRect, value ? Color.red : Color.gray);
                 }
-
-                // 🖱 Інпут
+                
                 if (cellRect.Contains(e.mousePosition) && e.type == EventType.MouseDown)
                 {
-                    // ПКМ — перемістити персонажа
                     if (e.button == 1)
                     {
                         charPos.vector2IntValue = new Vector2Int(x, y);
                         cells.GetArrayElementAtIndex(index).boolValue = false;
                         e.Use();
                     }
-                    // ЛКМ — toggle attack
                     else if (e.button == 0 && !isCharacter)
                     {
                         SerializedProperty cell =
