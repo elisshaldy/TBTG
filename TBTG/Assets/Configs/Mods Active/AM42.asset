@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c9c326a48dedb64099226a4699eaad5, type: 3}
+  m_Name: AM42
+  m_EditorClassIdentifier: 
+  ModificatorName: mod_a_2up_6b_n
+  ModificatorDescription: mod_a_2up_6b_d
+  Icon: {fileID: 0}
+  ModType: 1
+  Price: 2
+  ReactiveParameters:
+  - MinValue: 15
+    MaxValue: 17
+  Critical:
+  - {fileID: 11400000, guid: 6d2ed74ca51f787469f21453d23800c8, type: 2}
