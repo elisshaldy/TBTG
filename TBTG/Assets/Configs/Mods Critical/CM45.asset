@@ -15,8 +15,8 @@ MonoBehaviour:
   ModificatorName: mod_a_2up_9m_n
   ModificatorDescription: mod_a_2up_9m_d
   Icon: {fileID: 0}
-  ModType: 1
-  Price: 2
+  ModType: 3
+  Price: 0
   ReactiveParameters:
   - MinValue: 18
     MaxValue: 18
