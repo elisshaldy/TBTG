@@ -9,7 +9,7 @@ public class ModData : ScriptableObject
     public string ModificatorDescription;
     public Sprite Icon;
     public ModType ModType;
-    [Range(1, 5)] public int Price = 1;
+    [Range(0, 5)] public int Price = 1;
 
     public List<ReactiveParameter> ReactiveParameters = new List<ReactiveParameter>();
 
@@ -20,7 +20,8 @@ public enum ModType
 {
     Undefined,
     Active,
-    Passive
+    Passive,
+    Critical
 }
 
 [Serializable]
