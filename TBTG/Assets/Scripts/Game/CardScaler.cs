@@ -114,6 +114,16 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void UpdateHome()
     {
+        if (returningHome)
+        {
+            transform.localPosition = returnPosition;
+            transform.localRotation = returnRotation;
+            returningHome = false;
+        }
+
+        if (isHovered || isDraggingSelf)
+            return;
+
         homeParent = transform.parent;
         homeSiblingIndex = transform.GetSiblingIndex();
         homeLocalPosition = transform.localPosition;
@@ -125,16 +135,13 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (eventData.pointerDrag != null || isDraggingSelf || isHovered)
             return;
 
-        isHovered = true;
         UpdateHome();
+        isHovered = true;
 
         targetScale = normalScale * hoverScale;
 
-        // Змінюємо батька на Canvas для hover, але запам'ятовуємо локальні координати відносно Canvas
+        // Змінюємо батька на Canvas для hover
         transform.SetParent(canvas.transform, true);
-        returnPosition = transform.localPosition;
-        returnRotation = transform.localRotation;
-
         transform.SetAsLastSibling();
     }
 
