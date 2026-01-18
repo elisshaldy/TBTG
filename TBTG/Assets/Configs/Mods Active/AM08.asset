@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ModificatorName: mod_a_5up_8b_n
   ModificatorDescription: mod_a_5up_8b_d
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: 2ff8dda5059261842a5dff2b44eceb52, type: 3}
   ModType: 1
   Price: 5
   ReactiveParameters:
