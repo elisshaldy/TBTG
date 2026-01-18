@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c9c326a48dedb64099226a4699eaad5, type: 3}
   m_Name: 029
   m_EditorClassIdentifier: 
-  ModificatorName: 
-  ModificatorDescription: 
+  ModificatorName: mod_p_1up_1_n
+  ModificatorDescription: mod_p_1up_1_d
   Icon: {fileID: 0}
-  ModType: 0
+  ModType: 2
   Price: 1

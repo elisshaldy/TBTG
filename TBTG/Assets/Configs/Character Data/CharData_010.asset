@@ -14,14 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CharacterName: "\u0412\u0435\u043D\u0434\u0438\u0433\u043E"
   CharacterSprite: {fileID: 21300000, guid: 642eb2e6fa8e604448e492090396b33a, type: 3}
-  AttackRollDice: 3
-  AttackRollSides: 6
-  BaseAttackBonus: 0
-  BaseDefenseBonus: 1
-  CriticalHealthLimit: 4
-  CenterTilePosition: {x: 2, y: 0}
-  AttackPattern:
-  - {x: -2, y: 2}
-  - {x: -1, y: 2}
-  MaxTraitPoints: 4
-  PurchasedTraits: []
+  AttackBase: 0
+  DefenseBase: 0
+  AttackPatternGrid:
+    CharacterPosition: {x: 2, y: 2}
+    Cells: 000100010100000000
