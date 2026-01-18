@@ -43,6 +43,12 @@ public class ModDataEditor : Editor
         EditorGUILayout.Space();
         EditorGUILayout.PropertyField(serializedObject.FindProperty("ModType"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("Price"));
+        EditorGUILayout.Space();
+        //EditorGUILayout.LabelField("Reactive Parameters", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("ReactiveParameters"), true);
+        
+        EditorGUILayout.Space();
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("Critical"), true);
 
         serializedObject.ApplyModifiedProperties();
     }

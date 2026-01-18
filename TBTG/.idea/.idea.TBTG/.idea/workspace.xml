@@ -6,13 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="a71ad837-b436-4a01-978f-9a3a1ce2c269" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.TBTG/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TBTG/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Game.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Game.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/ScriptableObject/Mods/Резонансний Бар’єр.asset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/CardDragHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/CardDragHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/GameSettings/GameSettings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/GameSettings/GameSettings.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/GameUIController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/GameUIController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/ModDragHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/ModDragHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/ModsCardContainer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/ModsCardContainer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Editor/ModDataEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Editor/ModDataEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/ModData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/ModData.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
