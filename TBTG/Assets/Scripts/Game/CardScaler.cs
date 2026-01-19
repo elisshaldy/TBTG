@@ -24,6 +24,8 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private bool isDraggingSelf;
     private bool isHovered;
+    
+    private Vector3 initialGlobalScale;
 
     private void Awake()
     {
@@ -38,6 +40,8 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
         canvas = GetComponentInParent<Canvas>();
         canvasRect = canvas.transform as RectTransform;
+        
+        initialGlobalScale = transform.localScale;
     }
 
     private void Update()
@@ -165,7 +169,7 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         homeLocalPosition = transform.localPosition;
         homeLocalRotation = transform.localRotation;
 
-        targetScale = normalScale * hoverScale;
+        targetScale = initialGlobalScale * hoverScale;
 
         // Змінюємо батька на Canvas ДЛЯ ПОРЯДКУ (тільки якщо він не вже там)
         if (transform.parent != canvas.transform)

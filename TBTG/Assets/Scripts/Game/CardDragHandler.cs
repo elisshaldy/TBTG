@@ -160,32 +160,23 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         transform.SetParent(slot, false);
 
-        rectTransform.anchorMin =
-            rectTransform.anchorMax =
-                rectTransform.pivot = new Vector2(0.5f, 0.5f);
-
+        rectTransform.anchorMin = rectTransform.anchorMax = rectTransform.pivot = new Vector2(0.5f, 0.5f);
         rectTransform.anchoredPosition = Vector2.zero;
-        
-        if (originalSize.x > 0 && originalSize.y > 0)
-        {
-            float scaleX = slot.rect.width / originalSize.x;
-            float scaleY = slot.rect.height / originalSize.y;
-            float scale = Mathf.Min(scaleX, scaleY);
-            rectTransform.localScale = new Vector3(scale, scale, 1f);
-            rectTransform.sizeDelta = originalSize;
-        }
-        else
-        {
-            rectTransform.sizeDelta = slot.rect.size;
-            rectTransform.localScale = Vector3.one;
-        }
+    
+        // Повертаємо розмір, щоб прорахувати скейл
+        rectTransform.sizeDelta = originalSize;
 
+        // Вираховуємо коефіцієнт, щоб картка влізла в слот
+        float scaleX = slot.rect.width / originalSize.x;
+        float scaleY = slot.rect.height / originalSize.y;
+        float scale = Mathf.Min(scaleX, scaleY);
+    
+        // Встановлюємо візуальний масштаб для слота
+        rectTransform.localScale = new Vector3(scale, scale, 1f);
         rectTransform.localRotation = Quaternion.identity;
 
-        // НЕ оновлюємо homeParent - карточка завжди повертається в колоду
-        // 🔥 ВАЖЛИВО
         if (scaler != null)
-            scaler.UpdateHome();
+            scaler.UpdateHome(); 
     }
 
     public void OnDrop(PointerEventData eventData)
