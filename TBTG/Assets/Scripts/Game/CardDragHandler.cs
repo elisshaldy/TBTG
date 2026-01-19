@@ -152,8 +152,23 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                 rectTransform.pivot = new Vector2(0.5f, 0.5f);
 
         rectTransform.anchoredPosition = Vector2.zero;
-        rectTransform.sizeDelta = slot.rect.size;
-        rectTransform.localScale = Vector3.one;
+
+        // Масштабуємо карточку під розмір слота через localScale,
+        // щоб всі дочірні елементи масштабувались пропорційно
+        if (originalSize.x > 0 && originalSize.y > 0)
+        {
+            float scaleX = slot.rect.width / originalSize.x;
+            float scaleY = slot.rect.height / originalSize.y;
+            float scale = Mathf.Min(scaleX, scaleY);
+            rectTransform.localScale = new Vector3(scale, scale, 1f);
+            rectTransform.sizeDelta = originalSize;
+        }
+        else
+        {
+            rectTransform.sizeDelta = slot.rect.size;
+            rectTransform.localScale = Vector3.one;
+        }
+
         rectTransform.localRotation = Quaternion.identity;
 
         // НЕ оновлюємо homeParent - карточка завжди повертається в колоду
