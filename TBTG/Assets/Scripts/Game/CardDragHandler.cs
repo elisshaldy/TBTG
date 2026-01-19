@@ -67,13 +67,12 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         _canDrag = false;
 
-        // Fallback if Start didn't run or object created later
         if (gameSceneState == null)
             gameSceneState = FindObjectOfType<GameSceneState>();
 
         if (gameSceneState != null && gameSceneState.CurrentStep != GameSetupStep.Cards)
         {
-            eventData.pointerDrag = null; // Cancel drag to allow hover
+            eventData.pointerDrag = null;
             return;
         }
 
@@ -85,13 +84,27 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             CurrentSlot.ClearSlot();
             CurrentSlot = null;
         }
-
-        // Bring card to top of canvas
+        
         transform.SetParent(canvas.transform, true);
         transform.SetAsLastSibling();
         SetRaycastTarget(false);
+        
+        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+        rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        
+        Vector3 globalMousePos;
+        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                canvas.transform as RectTransform, 
+                eventData.position, 
+                eventData.pressEventCamera, 
+                out globalMousePos))
+        {
+            rectTransform.position = globalMousePos;
+        }
 
-        // Disable hover scaling while draggingі
+        rectTransform.localRotation = Quaternion.identity;
+
         if (scaler != null)
             scaler.SetDragging(true);
 
@@ -152,9 +165,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                 rectTransform.pivot = new Vector2(0.5f, 0.5f);
 
         rectTransform.anchoredPosition = Vector2.zero;
-
-        // Масштабуємо карточку під розмір слота через localScale,
-        // щоб всі дочірні елементи масштабувались пропорційно
+        
         if (originalSize.x > 0 && originalSize.y > 0)
         {
             float scaleX = slot.rect.width / originalSize.x;
