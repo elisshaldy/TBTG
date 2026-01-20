@@ -1,8 +1,37 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ModsCardContainer : MonoBehaviour
 {
     public ModData[] _mods = new ModData[6];
+    
+    [SerializeField] private Image[] _modsIcon = new Image[6]; // 2x6
+
+    private void Awake()
+    {
+        for (int i = 0; i < _modsIcon.Length; i++)
+        {
+            if (_modsIcon[i] == null) continue;
+            
+            var btn = _modsIcon[i].GetComponent<Button>();
+            if (btn == null) btn = _modsIcon[i].gameObject.AddComponent<Button>();
+            
+            int index = i;
+            btn.onClick.AddListener(() => OnIconClick(index));
+            
+            _modsIcon[i].gameObject.SetActive(false);
+        }
+    }
+
+    private void OnIconClick(int index)
+    {
+        // Шукаємо вимкнений об'єкт модифікатора всередині слота іконки
+        var dragHandler = _modsIcon[index].GetComponentInChildren<ModDragHandler>(true);
+        if (dragHandler != null)
+        {
+            dragHandler.DetachFromCard();
+        }
+    }
 
     public bool TryAddMod(ModData modData)
     {
@@ -30,20 +59,45 @@ public class ModsCardContainer : MonoBehaviour
             }
         }
 
-        // Перевіряємо чи є вільний слот і чи не перевищуємо ліміт
         return freeSlot >= 0 && currentPrice + modData.Price <= 5;
     }
 
-    public void AddMod(ModData modData)
+    public Transform AddMod(ModData modData)
     {
-        for (int i = 0; i < _mods.Length; i++)
+        int targetIndex = GetFreeIndexForType(modData.ModType);
+        
+        if (targetIndex >= 0)
         {
-            if (_mods[i] == null)
+            _mods[targetIndex] = modData;
+            if (_modsIcon[targetIndex] != null)
             {
-                _mods[i] = modData;
-                return;
+                _modsIcon[targetIndex].sprite = modData.Icon;
+                _modsIcon[targetIndex].gameObject.SetActive(true);
+                return _modsIcon[targetIndex].transform;
             }
         }
+        return null;
+    }
+
+    private int GetFreeIndexForType(ModType type)
+    {
+        if (type == ModType.Active)
+        {
+            // Активні йдуть зліва направо: 0, 1, 2...
+            for (int i = 0; i < 3; i++)
+            {
+                if (_mods[i] == null) return i;
+            }
+        }
+        else
+        {
+            // Пасивні йдуть справа наліво: 5, 4, 3...
+            for (int i = 5; i >= 3; i--)
+            {
+                if (_mods[i] == null) return i;
+            }
+        }
+        return -1;
     }
 
     public void RemoveMod(ModData modData)
@@ -53,6 +107,11 @@ public class ModsCardContainer : MonoBehaviour
             if (_mods[i] == modData)
             {
                 _mods[i] = null;
+                if (_modsIcon[i] != null)
+                {
+                    _modsIcon[i].sprite = null;
+                    _modsIcon[i].gameObject.SetActive(false);
+                }
                 return;
             }
         }

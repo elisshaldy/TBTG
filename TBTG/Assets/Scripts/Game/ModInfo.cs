@@ -6,12 +6,14 @@ public class ModInfo : MonoBehaviour
 {
     public ModData ModData;
 
-    [SerializeField] private TextMeshProUGUI _name;
+    [SerializeField] private TextMeshProUGUI _name; // LOCALE
     [SerializeField] private TextMeshProUGUI _price;
     [SerializeField] private Image _icon;
     
-    private void Start()
+    public void Initialize()
     {
         _name.text = ModData.ModificatorName;
+        _price.text = ModData.Price.ToString();
+        _icon.sprite = ModData.Icon;
     }
 }

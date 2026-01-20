@@ -71,7 +71,7 @@ public class LocalizationManager : MonoBehaviour
         //
         // string translation = Instance.Config.GetTranslation(key, Instance.currentLanguage);
         // return string.IsNullOrEmpty(translation) ? key : translation;
-        return null;
+        return key;
     }
 
     public SystemLanguage GetCurrentLanguage()

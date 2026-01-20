@@ -67,13 +67,12 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         _canDrag = false;
 
-        // Fallback if Start didn't run or object created later
         if (gameSceneState == null)
             gameSceneState = FindObjectOfType<GameSceneState>();
 
         if (gameSceneState != null && gameSceneState.CurrentStep != GameSetupStep.Cards)
         {
-            eventData.pointerDrag = null; // Cancel drag to allow hover
+            eventData.pointerDrag = null;
             return;
         }
 
@@ -85,13 +84,27 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             CurrentSlot.ClearSlot();
             CurrentSlot = null;
         }
-
-        // Bring card to top of canvas
+        
         transform.SetParent(canvas.transform, true);
         transform.SetAsLastSibling();
         SetRaycastTarget(false);
+        
+        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+        rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        
+        Vector3 globalMousePos;
+        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                canvas.transform as RectTransform, 
+                eventData.position, 
+                eventData.pressEventCamera, 
+                out globalMousePos))
+        {
+            rectTransform.position = globalMousePos;
+        }
 
-        // Disable hover scaling while draggingі
+        rectTransform.localRotation = Quaternion.identity;
+
         if (scaler != null)
             scaler.SetDragging(true);
 
@@ -147,19 +160,23 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         transform.SetParent(slot, false);
 
-        rectTransform.anchorMin =
-            rectTransform.anchorMax =
-                rectTransform.pivot = new Vector2(0.5f, 0.5f);
-
+        rectTransform.anchorMin = rectTransform.anchorMax = rectTransform.pivot = new Vector2(0.5f, 0.5f);
         rectTransform.anchoredPosition = Vector2.zero;
-        rectTransform.sizeDelta = slot.rect.size;
-        rectTransform.localScale = Vector3.one;
+    
+        // Повертаємо розмір, щоб прорахувати скейл
+        rectTransform.sizeDelta = originalSize;
+
+        // Вираховуємо коефіцієнт, щоб картка влізла в слот
+        float scaleX = slot.rect.width / originalSize.x;
+        float scaleY = slot.rect.height / originalSize.y;
+        float scale = Mathf.Min(scaleX, scaleY);
+    
+        // Встановлюємо візуальний масштаб для слота
+        rectTransform.localScale = new Vector3(scale, scale, 1f);
         rectTransform.localRotation = Quaternion.identity;
 
-        // НЕ оновлюємо homeParent - карточка завжди повертається в колоду
-        // 🔥 ВАЖЛИВО
         if (scaler != null)
-            scaler.UpdateHome();
+            scaler.UpdateHome(); 
     }
 
     public void OnDrop(PointerEventData eventData)
