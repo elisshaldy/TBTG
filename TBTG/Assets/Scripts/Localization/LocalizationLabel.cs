@@ -6,6 +6,8 @@ public class LocalizationLabel : MonoBehaviour
     public TextMeshProUGUI Text;
     public string Key;
 
+    private string _suffix = "";
+
     private void OnEnable()
     {
         LocalizationManager.OnLanguageChanged += UpdateText;
@@ -17,11 +19,17 @@ public class LocalizationLabel : MonoBehaviour
         LocalizationManager.OnLanguageChanged -= UpdateText;
     }
 
+    public void SetSuffix(string suffix)
+    {
+        _suffix = suffix;
+        UpdateText();
+    }
+
     public void UpdateText()
     {
         if (Text != null && !string.IsNullOrEmpty(Key))
         {
-            Text.text = LocalizationManager.GetTranslation(Key);
+            Text.text = LocalizationManager.GetTranslation(Key) + _suffix;
         }
     }
 }
