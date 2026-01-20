@@ -64,21 +64,40 @@ public class ModsCardContainer : MonoBehaviour
 
     public Transform AddMod(ModData modData)
     {
-        for (int i = 0; i < _mods.Length; i++)
+        int targetIndex = GetFreeIndexForType(modData.ModType);
+        
+        if (targetIndex >= 0)
         {
-            if (_mods[i] == null)
+            _mods[targetIndex] = modData;
+            if (_modsIcon[targetIndex] != null)
             {
-                _mods[i] = modData;
-                if (_modsIcon[i] != null)
-                {
-                    _modsIcon[i].sprite = modData.Icon;
-                    _modsIcon[i].gameObject.SetActive(true);
-                    return _modsIcon[i].transform;
-                }
-                return transform;
+                _modsIcon[targetIndex].sprite = modData.Icon;
+                _modsIcon[targetIndex].gameObject.SetActive(true);
+                return _modsIcon[targetIndex].transform;
             }
         }
         return null;
+    }
+
+    private int GetFreeIndexForType(ModType type)
+    {
+        if (type == ModType.Active)
+        {
+            // Активні йдуть зліва направо: 0, 1, 2...
+            for (int i = 0; i < 3; i++)
+            {
+                if (_mods[i] == null) return i;
+            }
+        }
+        else
+        {
+            // Пасивні йдуть справа наліво: 5, 4, 3...
+            for (int i = 5; i >= 3; i--)
+            {
+                if (_mods[i] == null) return i;
+            }
+        }
+        return -1;
     }
 
     public void RemoveMod(ModData modData)
