@@ -16,6 +16,7 @@ MonoBehaviour:
   ModificatorDescription: mod_p_3up_8_d
   Icon: {fileID: 21300000, guid: a57c84c0cf7ce83468d7117b37c806a8, type: 3}
   ModType: 2
+  Background: {fileID: 21300000, guid: e293a667fb0b4204693c25bfedb2dbd0, type: 3}
   Price: 3
   ReactiveParameters: []
   Critical: []

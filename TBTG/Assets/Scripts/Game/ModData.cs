@@ -9,6 +9,7 @@ public class ModData : ScriptableObject
     public string ModificatorDescription;
     public Sprite Icon;
     public ModType ModType;
+    public Sprite Background;
     [Range(0, 5)] public int Price = 1;
 
     public List<ReactiveParameter> ReactiveParameters = new List<ReactiveParameter>();

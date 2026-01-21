@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,10 +12,11 @@ public class CardInfo : MonoBehaviour
     [SerializeField] private LocalizationLabel _defenseBaseTxt;
 
     [Header("Attack Grid UI")]
+    [SerializeField] private Sprite _char;
+    [SerializeField] private Sprite _inactiveCell;
+    [SerializeField] private Sprite _activeCell;
+
     [SerializeField] private Image[] _gridCells;
-    [SerializeField] private Color _activeCellColor;
-    [SerializeField] private Color _inactiveCellColor;
-    [SerializeField] private Color _characterCellColor;
 
     public void Initialize()
     {
@@ -48,15 +48,15 @@ public class CardInfo : MonoBehaviour
 
             if (CharData.AttackPatternGrid.IsCharacterTile(x, y))
             {
-                _gridCells[i].color = _characterCellColor;
+                _gridCells[i].sprite = _char;
             }
             else if (CharData.AttackPatternGrid.Cells[i])
             {
-                _gridCells[i].color = _activeCellColor;
+                _gridCells[i].sprite = _activeCell;
             }
             else
             {
-                _gridCells[i].color = _inactiveCellColor;
+                _gridCells[i].sprite = _inactiveCell;
             }
         }
     }

@@ -17,46 +17,51 @@ public class ModDataEditor : Editor
         
         if (modType != ModType.Critical)
         {
+            SerializedProperty backgroundProp = serializedObject.FindProperty("Background");
+            EditorGUILayout.PropertyField(backgroundProp);
+            DrawSpritePreview(backgroundProp, 192, 64);
+
             SerializedProperty iconProp = serializedObject.FindProperty("Icon");
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Icon", EditorStyles.label);
 
             EditorGUILayout.PropertyField(iconProp, GUIContent.none);
-            
-            if (iconProp.objectReferenceValue != null)
-            {
-                Sprite sprite = iconProp.objectReferenceValue as Sprite;
-                if (sprite != null)
-                {
-                    Texture2D tex = sprite.texture;
-
-                    Rect rect = GUILayoutUtility.GetRect(64, 64, GUILayout.ExpandWidth(false));
-
-                    EditorGUI.DrawRect(rect, new Color(0, 0, 0, 0.2f));
-                    
-                    Rect uv = new Rect(
-                        sprite.rect.x / tex.width,
-                        sprite.rect.y / tex.height,
-                        sprite.rect.width / tex.width,
-                        sprite.rect.height / tex.height
-                    );
-
-                    GUI.DrawTextureWithTexCoords(rect, tex, uv, true);
-                }
-            }
+            DrawSpritePreview(iconProp, 64, 64);
 
             EditorGUILayout.Space();
             EditorGUILayout.PropertyField(serializedObject.FindProperty("Price"));
         }
 
         EditorGUILayout.Space();
-        //EditorGUILayout.LabelField("Reactive Parameters", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("ReactiveParameters"), true);
         
         EditorGUILayout.Space();
         EditorGUILayout.PropertyField(serializedObject.FindProperty("Critical"), true);
 
         serializedObject.ApplyModifiedProperties();
+    }
+
+    private void DrawSpritePreview(SerializedProperty prop, float width, float height)
+    {
+        if (prop.objectReferenceValue != null)
+        {
+            Sprite sprite = prop.objectReferenceValue as Sprite;
+            if (sprite != null)
+            {
+                Texture2D tex = sprite.texture;
+                Rect rect = GUILayoutUtility.GetRect(width, height, GUILayout.ExpandWidth(false));
+                EditorGUI.DrawRect(rect, new Color(0, 0, 0, 0.2f));
+                
+                Rect uv = new Rect(
+                    sprite.rect.x / tex.width,
+                    sprite.rect.y / tex.height,
+                    sprite.rect.width / tex.width,
+                    sprite.rect.height / tex.height
+                );
+
+                GUI.DrawTextureWithTexCoords(rect, tex, uv, true);
+            }
+        }
     }
 }
