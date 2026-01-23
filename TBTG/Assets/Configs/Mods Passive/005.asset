@@ -16,6 +16,7 @@ MonoBehaviour:
   ModificatorDescription: mod_p_4up_1_d
   Icon: {fileID: 21300000, guid: 9f49fd0ff84d0a44e89b6966fcb1aa18, type: 3}
   ModType: 2
+  Background: {fileID: 21300000, guid: e293a667fb0b4204693c25bfedb2dbd0, type: 3}
   Price: 4
   ReactiveParameters: []
   Critical: []

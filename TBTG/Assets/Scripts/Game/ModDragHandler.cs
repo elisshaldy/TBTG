@@ -32,6 +32,14 @@ public class ModDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (ModTooltip.Instance != null) ModTooltip.Instance.Hide();
+
+        if (ModTooltip.Instance != null) ModTooltip.Instance.Hide();
+
+        // Оновлюємо canvas перед кожним drag (бо модифікатор міг бути в іншій ієрархії)
+        canvas = GetComponentInParent<Canvas>()?.rootCanvas;
+        if (canvas == null) return;
+
         var parentContainer = GetComponentInParent<ModsCardContainer>();
         if (parentContainer != null)
         {
@@ -80,6 +88,14 @@ public class ModDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
         // Беремо трансформ конкретного слота
         Transform slotTransform = modsContainer.AddMod(_modInfo.ModData);
+        
+        // Якщо слот не знайдено - повертаємо модифікатор додому ТА ПОВЕРТАЄМО ОЧКИ
+        if (slotTransform == null)
+        {
+            ModDetachHere?.Invoke(price);
+            ReturnHome();
+            return;
+        }
         
         // Прикріплюємо до слота
         transform.SetParent(slotTransform, false);

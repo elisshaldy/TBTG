@@ -910,6 +910,9 @@ MonoBehaviour:
   _charImage: {fileID: 4498913529504321604}
   _attackBaseTxt: {fileID: 3938794829115708756}
   _defenseBaseTxt: {fileID: 1843909666193693312}
+  _char: {fileID: 21300000, guid: 43db492dbe41c6c4c97bf35df3b73117, type: 3}
+  _inactiveCell: {fileID: 21300000, guid: 6fa42683881253a46a314e98ce6ae76f, type: 3}
+  _activeCell: {fileID: 21300000, guid: 67c26f417c7b21946b1038c6d55157c3, type: 3}
   _gridCells:
   - {fileID: 1638757960753825794}
   - {fileID: 5843780599683447560}
@@ -920,9 +923,6 @@ MonoBehaviour:
   - {fileID: 5045141439996082412}
   - {fileID: 1305417113975765642}
   - {fileID: 981731949716310042}
-  _activeCellColor: {r: 1, g: 0, b: 0, a: 1}
-  _inactiveCellColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-  _characterCellColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &3229630663980008643
 GameObject:
   m_ObjectHideFlags: 0

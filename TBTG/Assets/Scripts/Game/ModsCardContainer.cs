@@ -16,6 +16,9 @@ public class ModsCardContainer : MonoBehaviour
             var btn = _modsIcon[i].GetComponent<Button>();
             if (btn == null) btn = _modsIcon[i].gameObject.AddComponent<Button>();
             
+            var trigger = _modsIcon[i].GetComponent<ModTooltipTrigger>();
+            if (trigger == null) trigger = _modsIcon[i].gameObject.AddComponent<ModTooltipTrigger>();
+            
             int index = i;
             btn.onClick.AddListener(() => OnIconClick(index));
             
@@ -73,6 +76,10 @@ public class ModsCardContainer : MonoBehaviour
             {
                 _modsIcon[targetIndex].sprite = modData.Icon;
                 _modsIcon[targetIndex].gameObject.SetActive(true);
+                
+                var trigger = _modsIcon[targetIndex].GetComponent<ModTooltipTrigger>();
+                if (trigger != null) trigger.SetData(modData);
+                
                 return _modsIcon[targetIndex].transform;
             }
         }
@@ -84,7 +91,7 @@ public class ModsCardContainer : MonoBehaviour
         if (type == ModType.Active)
         {
             // Активні йдуть зліва направо: 0, 1, 2...
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 6; i++)
             {
                 if (_mods[i] == null) return i;
             }
@@ -92,7 +99,7 @@ public class ModsCardContainer : MonoBehaviour
         else
         {
             // Пасивні йдуть справа наліво: 5, 4, 3...
-            for (int i = 5; i >= 3; i--)
+            for (int i = 5; i >= 0; i--)
             {
                 if (_mods[i] == null) return i;
             }
