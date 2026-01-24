@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
-using System;
 using Photon.Realtime;
 using Photon.Pun;
 
@@ -17,7 +16,7 @@ public class RoomWindow : UIWindow
     [SerializeField] private GameObject _roomUIPlayerName;   
     [SerializeField] private Transform _playerContainerUI;   
 
-    [SerializeField] private TextMeshProUGUI _roomName;
+    [SerializeField] private LocalizationLabel _roomName;
 
     private List<GameObject> _spawnedPlayers = new List<GameObject>();
 
@@ -55,12 +54,12 @@ public class RoomWindow : UIWindow
                 break;
 
             case SceneState.Hotseat:
-                _roomName.text = "Hotseat";
+                _roomName.SetKey("hotseat_label");
                 _roomParameters.ShowHotseatUI();
                 break;
             
             case SceneState.PlayerVSBot:
-                _roomName.text = "PlayerVSBot";
+                _roomName.SetKey("player_vs_bot_label");
                 _roomParameters.ShowPlayerVSBotUI();
                 break;
         }
@@ -99,7 +98,7 @@ public class RoomWindow : UIWindow
 
     private void UpdateRoomNameDisplay(string name)
     {
-        _roomName.text = $"Room: {name}";
+        _roomName.Text.text = $"Room: {name}";
     }
 
     private void OnDisable()

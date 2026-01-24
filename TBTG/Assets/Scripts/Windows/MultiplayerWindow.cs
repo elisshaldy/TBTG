@@ -6,7 +6,7 @@ using Photon.Pun;
 public class MultiplayerWindow : UIWindow
 {
     [SerializeField] private TMP_InputField _inputFieldName;
-    [SerializeField] private TextMeshProUGUI _playerNameTxt;
+    [SerializeField] private LocalizationLabel _playerNameTxt;
     [SerializeField] private Button _enterName;
     
     [SerializeField] private Button _quickMatchBtn;
@@ -37,7 +37,8 @@ public class MultiplayerWindow : UIWindow
     {
         PhotonNetwork.NickName = name;
 
-        _playerNameTxt.text = "You current name: " + name;
+        _playerNameTxt.SetKey("current_name_player_txt");
+        _playerNameTxt.SetSuffix(": " + name);
 
         Debug.Log($"Player name set to: {PhotonNetwork.NickName}");
         _inputFieldName.text = "";
@@ -52,7 +53,8 @@ public class MultiplayerWindow : UIWindow
     private void OnPhotonConnected()
     {
         SetButtonsInteractable(true);
-        _playerNameTxt.text = "You current name: " + PhotonNetwork.NickName;
+        _playerNameTxt.SetKey("current_name_player_txt");
+        _playerNameTxt.SetSuffix(": " + PhotonNetwork.NickName);
     }
 
     private void OnQuickMatchClicked()
