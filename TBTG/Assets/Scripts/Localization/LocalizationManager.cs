@@ -247,18 +247,8 @@ public class LocalizationManager : MonoBehaviour
             {
                 return val;
             }
-            // Fallback: try English if current isn't English
-            if (Instance._currentLanguage != "English" && 
-                langDict.TryGetValue("English", out string enVal))
-            {
-                return enVal;
-            }
-            
-            // Fallback: get first available
-            if (langDict.Count > 0)
-            {
-               return langDict.Values.First();
-            }
+
+            return key + " <MISSING>";
         }
 
         return key;

@@ -20,7 +20,7 @@ public class CardInfo : MonoBehaviour
 
     public void Initialize()
     {
-        _charName.Text.text = CharData.CharacterName;
+        _charName.SetKey(CharData.CharacterName);
         _charImage.sprite = CharData.CharacterSprite;
         _attackBaseTxt.SetSuffix($": {CharData.AttackBase}");
         _defenseBaseTxt.SetSuffix($": {CharData.DefenseBase}");

@@ -801,3 +801,8 @@ mod_points_game,Кількість очок,Mod points
 enum_easy,Легко,Easy
 enum_medium,Середній,Medium
 enum_hard,Складно,Hard
+continiue_btn,Продовжити,Continiue
+exit_main_menu_btn,Вихід в меню,Exit to main menu
+exit_dektop,Вихід на робочий стіл,Exit to dekstop
+accept_btn,Прийняти,Accept
+hotseat_current_player,Поточний гравець,Current player

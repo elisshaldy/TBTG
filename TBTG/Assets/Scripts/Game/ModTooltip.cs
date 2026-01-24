@@ -9,8 +9,8 @@ public class ModTooltip : MonoBehaviour
     public static ModTooltip Instance => _instance;
 
     [SerializeField] private GameObject _tooltipPanel;
-    [SerializeField] private TextMeshProUGUI _nameText;
-    [SerializeField] private TextMeshProUGUI _descriptionText;
+    [SerializeField] private LocalizationLabel _nameText;
+    [SerializeField] private LocalizationLabel _descriptionText;
     [SerializeField] private RectTransform _rectTransform;
     [SerializeField] private Vector2 _offset = new Vector2(20, -20);
     
@@ -52,8 +52,8 @@ public class ModTooltip : MonoBehaviour
 
         _tooltipPanel.SetActive(true);
         _rectTransform.SetAsLastSibling();
-        _nameText.text = modData.ModificatorName;
-        _descriptionText.text = modData.ModificatorDescription;
+        _nameText.SetKey(modData.ModificatorName);
+        _descriptionText.SetKey(modData.ModificatorDescription);
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(_rectTransform);
         UpdatePosition(position);

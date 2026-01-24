@@ -8,8 +8,9 @@ public class GameUIController : MonoBehaviour
     [SerializeField] private GameObject _containerCards;
     [SerializeField] private GameObject _containerMods;
     [Header("UI")]
-    [SerializeField] private TextMeshProUGUI _hotseatPlayerNameTxt;
-    [SerializeField] private TextMeshProUGUI _modPointsTxt;
+    [Header("UI")]
+    [SerializeField] private LocalizationLabel _hotseatPlayerNameTxt;
+    [SerializeField] private LocalizationLabel _modPointsTxt;
     [SerializeField] private Button _applyBtn;
     [Header("State")]
     [SerializeField] private GameSceneState _gameSceneState;
@@ -46,7 +47,8 @@ public class GameUIController : MonoBehaviour
     
     private void UpdateModPointsUI(int value)
     {
-        _modPointsTxt.text = $"Mod points: {value}";
+        _modPointsTxt.SetKey("mod_points_game");
+        _modPointsTxt.SetSuffix(": " + value); 
     }
     
     private void OnDeckStateChanged(bool isDeckFull)
@@ -89,7 +91,8 @@ public class GameUIController : MonoBehaviour
     
     public void ShowHotseatPlayer(string playerName)
     {
-        _hotseatPlayerNameTxt.text = "Current player: " + playerName;
+        _hotseatPlayerNameTxt.SetKey("hotseat_current_player");
+        _hotseatPlayerNameTxt.SetSuffix(": " + playerName);
         _hotseatPlayerNameTxt.gameObject.SetActive(true);
     }
 }
