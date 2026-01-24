@@ -10953,6 +10953,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a4d1dfc77a688148aa4fda75fae35ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _showDelay: 0.5
 --- !u!114 &2133464720
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10970,6 +10971,7 @@ MonoBehaviour:
   _descriptionText: {fileID: 1027568829}
   _rectTransform: {fileID: 2133464716}
   _offset: {x: 10, y: 10}
+  _fadeDuration: 0.15
 --- !u!224 &2143674087 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7680301720700418671, guid: 70f90277c37a14c43846259a1bb7c4cc, type: 3}

@@ -56,18 +56,19 @@ public class ButtonSoundManager : MonoBehaviour
         pointerEnterEntry.eventID = EventTriggerType.PointerEnter;
         pointerEnterEntry.callback.AddListener((data) => OnButtonHover());
 
-        // Створюємо подію натискання
-        EventTrigger.Entry pointerClickEntry = new EventTrigger.Entry();
-        pointerClickEntry.eventID = EventTriggerType.PointerClick;
-        pointerClickEntry.callback.AddListener((data) => OnButtonClick());
+        // Створюємо подію НАТИСКАННЯ (а не кліку)
+        EventTrigger.Entry pointerDownEntry = new EventTrigger.Entry();
+        pointerDownEntry.eventID = EventTriggerType.PointerDown;
+        pointerDownEntry.callback.AddListener((data) => OnButtonClick());
 
         // Очищуємо старі події та додаємо нові
         eventTrigger.triggers.Clear();
         eventTrigger.triggers.Add(pointerEnterEntry);
-        eventTrigger.triggers.Add(pointerClickEntry);
+        eventTrigger.triggers.Add(pointerDownEntry);
 
-        // Також налаштовуємо стандартне натискання кнопки (для подвійного захисту)
-        button.onClick.AddListener(OnButtonClick);
+        // УВАГА: Не додаємо слухача до стандартного onClick,
+        // бо він викликається при відпусканні кнопки миші
+        // button.onClick.AddListener(OnButtonClick); // ЦЕЙ РЯДОК КОМЕНТУЄМО
     }
 
     void OnButtonHover()
@@ -86,7 +87,7 @@ public class ButtonSoundManager : MonoBehaviour
         }
     }
 
-    // Метод для додавання нових кнопок динамічно (на випадок, якщо ви створюєте кнопки під час гри)
+    // Метод для додавання нових кнопок динамічно
     public void AddButton(Button newButton)
     {
         if (!sceneButtons.Contains(newButton))
@@ -96,16 +97,42 @@ public class ButtonSoundManager : MonoBehaviour
         }
     }
 
-    // Очищення списку при знищенні об'єкта
+    // Очищення при знищенні об'єкта
     void OnDestroy()
     {
         foreach (Button button in sceneButtons)
         {
             if (button != null)
             {
-                button.onClick.RemoveListener(OnButtonClick);
+                // Оскільки ми не додавали слухача до onClick, не потрібно видаляти
+                // Але видаляємо EventTrigger компонент, якщо хочете
+                EventTrigger trigger = button.GetComponent<EventTrigger>();
+                if (trigger != null)
+                {
+                    trigger.triggers.Clear();
+                }
             }
         }
         sceneButtons.Clear();
+    }
+
+    // Додатковий метод для оновлення всіх кнопок, якщо змінилася сцена
+    public void RefreshAllButtons()
+    {
+        // Очищуємо старі підписки
+        foreach (Button button in sceneButtons)
+        {
+            if (button != null)
+            {
+                EventTrigger trigger = button.GetComponent<EventTrigger>();
+                if (trigger != null)
+                {
+                    trigger.triggers.Clear();
+                }
+            }
+        }
+
+        sceneButtons.Clear();
+        FindAndSetupAllButtons();
     }
 }
