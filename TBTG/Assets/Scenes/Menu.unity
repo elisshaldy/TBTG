@@ -5352,7 +5352,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hoverSound: {fileID: 8300000, guid: c568e944c7e90b349831065790da44b7, type: 3}
-  clickSound: {fileID: 8300000, guid: ab3f0fd5020c10e479be687a3df2e6d3, type: 3}
+  clickSound: {fileID: 8300000, guid: 5ef759a8623c41343ba3752a48484538, type: 3}
   hoverVolume: 1
   clickVolume: 1
 --- !u!82 &1375625523
