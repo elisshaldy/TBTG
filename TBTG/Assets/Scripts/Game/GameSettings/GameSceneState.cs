@@ -128,6 +128,7 @@ public class GameSceneState : MonoBehaviour
         if (props.TryGetValue("PartyCount", out object partyCount)) _currentSettings.PartyCount = Convert.ToInt32(partyCount);
         if (props.TryGetValue("BossCount", out object bossCount)) _currentSettings.BossCount = Convert.ToInt32(bossCount);
         if (props.TryGetValue("BossDifficulty", out object bossDiff)) _currentSettings.BossDifficulty = (BossDifficulty)Convert.ToInt32(bossDiff);
+        if (props.TryGetValue("CharIndices", out object charIndices)) _currentSettings.CharacterPoolIndices = (int[])charIndices;
         
         if (_currentSettings is MultiplayerSettings mp)
         {
