@@ -33,10 +33,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3465498915481676401}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0.000061035156, y: -75}
-  m_SizeDelta: {x: 541.12, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 285.353, y: -187.07999}
+  m_SizeDelta: {x: 510.706, y: 21.78}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3855254850487481203
 CanvasRenderer:
@@ -99,7 +99,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -182,10 +182,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3465498915481676401}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -0.0006713867, y: 0}
-  m_SizeDelta: {x: 541.12, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 285.353, y: -140.34999}
+  m_SizeDelta: {x: 510.706, y: 26.62}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &8648055367754641950
 CanvasRenderer:
@@ -331,10 +331,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3465498915481676401}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0.0018005371, y: 0.000061035156}
-  m_SizeDelta: {x: 541.12, y: 167.29}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 285.353, y: -331.65}
+  m_SizeDelta: {x: 391.004, y: 24.2}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &8429647458452081415
 CanvasRenderer:
@@ -482,10 +482,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3465498915481676401}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -0.0014953613, y: -256}
-  m_SizeDelta: {x: 541.12, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 285.353, y: -240.60999}
+  m_SizeDelta: {x: 510.706, y: 26.62}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &7462633263114404162
 CanvasRenderer:
@@ -631,10 +631,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3465498915481676401}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.0014343262, y: 80.524}
-  m_SizeDelta: {x: 541.12, y: 161.05}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 279.06723, y: -219.29}
+  m_SizeDelta: {x: 391.004, y: 24.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5849206915824432841
 CanvasRenderer:
@@ -820,7 +820,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 0caf8e63f321849478aba021fe080c27, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -851,6 +851,8 @@ MonoBehaviour:
   _typeTextCritical: {fileID: 3383799402827649457}
   _rectTransform: {fileID: 3465498915481676401}
   _offset: {x: 10, y: 10}
+  _paddingHorizontal: 50
+  _paddingVertical: 140
   _fadeDuration: 0.15
 --- !u!114 &6156424578871548913
 MonoBehaviour:
@@ -898,10 +900,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3465498915481676401}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -0.0015563965, y: -313}
-  m_SizeDelta: {x: 541.12, y: 41.801}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 285.353, y: -276.44998}
+  m_SizeDelta: {x: 510.706, y: 21.78}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &7570200347479937127
 CanvasRenderer:
@@ -964,7 +966,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
