@@ -4530,6 +4530,7 @@ MonoBehaviour:
     FieldSize: 0
     BossCount: 0
     PartyCount: 0
+    CharacterPoolIndices: 
     BossDifficulty: 0
     RoomName: Undefined
     YourName: Undefined
@@ -4539,6 +4540,7 @@ MonoBehaviour:
     FieldSize: 0
     BossCount: 0
     PartyCount: 0
+    CharacterPoolIndices: 
     BossDifficulty: 0
     Player1Name: Undefined
     Player2Name: Undefined
@@ -4547,6 +4549,7 @@ MonoBehaviour:
     FieldSize: 0
     BossCount: 0
     PartyCount: 0
+    CharacterPoolIndices: 
     BossDifficulty: 0
     BotDifficulty: 0
 --- !u!114 &818084966
@@ -12099,11 +12102,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3465498915481676401, guid: 93fff6d980e9f8d4d89c5adc42ca490e, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 541.117
+      value: 512
       objectReference: {fileID: 0}
     - target: {fileID: 3465498915481676401, guid: 93fff6d980e9f8d4d89c5adc42ca490e, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 522.096
+      value: 768
       objectReference: {fileID: 0}
     - target: {fileID: 3465498915481676401, guid: 93fff6d980e9f8d4d89c5adc42ca490e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -12164,6 +12167,14 @@ PrefabInstance:
     - target: {fileID: 8748153848378663837, guid: 93fff6d980e9f8d4d89c5adc42ca490e, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -0.0006713867
+      objectReference: {fileID: 0}
+    - target: {fileID: 9188698953347479136, guid: 93fff6d980e9f8d4d89c5adc42ca490e, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 0caf8e63f321849478aba021fe080c27, type: 3}
+    - target: {fileID: 9188698953347479136, guid: 93fff6d980e9f8d4d89c5adc42ca490e, type: 3}
+      propertyPath: m_Color.a
+      value: 0.78431374
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
