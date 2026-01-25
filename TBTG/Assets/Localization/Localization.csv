@@ -806,3 +806,6 @@ exit_main_menu_btn,Вихід в меню,Exit to main menu
 exit_dektop,Вихід на робочий стіл,Exit to dekstop
 accept_btn,Прийняти,Accept
 hotseat_current_player,Поточний гравець,Current player
+enum_mod_am,Активний,Active
+enum_mod_pm,Пасивний,Passive
+enum_mod_cm,Критичний варіант,Critical

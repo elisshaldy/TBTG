@@ -12069,6 +12069,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1862283546}
     m_Modifications:
+    - target: {fileID: 1583262365760922255, guid: 93fff6d980e9f8d4d89c5adc42ca490e, type: 3}
+      propertyPath: m_fontStyle
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3465498915481676401, guid: 93fff6d980e9f8d4d89c5adc42ca490e, type: 3}
       propertyPath: m_Pivot.x
       value: 1
@@ -12099,7 +12103,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3465498915481676401, guid: 93fff6d980e9f8d4d89c5adc42ca490e, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 281.441
+      value: 522.096
       objectReference: {fileID: 0}
     - target: {fileID: 3465498915481676401, guid: 93fff6d980e9f8d4d89c5adc42ca490e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -12149,9 +12153,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3563570672292898941, guid: 93fff6d980e9f8d4d89c5adc42ca490e, type: 3}
+      propertyPath: m_fontStyle
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8147715434266441001, guid: 93fff6d980e9f8d4d89c5adc42ca490e, type: 3}
       propertyPath: m_Name
       value: ModToolTip
+      objectReference: {fileID: 0}
+    - target: {fileID: 8748153848378663837, guid: 93fff6d980e9f8d4d89c5adc42ca490e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.0006713867
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
