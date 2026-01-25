@@ -4530,6 +4530,7 @@ MonoBehaviour:
     FieldSize: 0
     BossCount: 0
     PartyCount: 0
+    CharacterPoolIndices: 
     BossDifficulty: 0
     RoomName: Undefined
     YourName: Undefined
@@ -4539,6 +4540,7 @@ MonoBehaviour:
     FieldSize: 0
     BossCount: 0
     PartyCount: 0
+    CharacterPoolIndices: 
     BossDifficulty: 0
     Player1Name: Undefined
     Player2Name: Undefined
@@ -4547,6 +4549,7 @@ MonoBehaviour:
     FieldSize: 0
     BossCount: 0
     PartyCount: 0
+    CharacterPoolIndices: 
     BossDifficulty: 0
     BotDifficulty: 0
 --- !u!114 &818084966
@@ -4621,6 +4624,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _containerCards: {fileID: 1227386511}
   _containerMods: {fileID: 328051604}
+  _map: {fileID: 1585235940}
   _hotseatPlayerNameTxt: {fileID: 304424511}
   _modPointsTxt: {fileID: 1290313380}
   _applyBtn: {fileID: 907371220}

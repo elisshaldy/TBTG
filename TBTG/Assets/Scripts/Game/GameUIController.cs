@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,7 +6,7 @@ public class GameUIController : MonoBehaviour
     [Header("Containers")]
     [SerializeField] private GameObject _containerCards;
     [SerializeField] private GameObject _containerMods;
-    [Header("UI")]
+    [SerializeField] private GameObject _map;
     [Header("UI")]
     [SerializeField] private LocalizationLabel _hotseatPlayerNameTxt;
     [SerializeField] private LocalizationLabel _modPointsTxt;
@@ -71,7 +70,7 @@ public class GameUIController : MonoBehaviour
     {
         _containerCards.SetActive(false);
         _containerMods.SetActive(true);
-        _applyBtn.gameObject.SetActive(false);
+        _applyBtn.gameObject.SetActive(true);
         _modPointsTxt.gameObject.SetActive(true);
     }
     
@@ -79,7 +78,9 @@ public class GameUIController : MonoBehaviour
     {
         Debug.Log("Map opened");
         _containerMods.SetActive(false);
+        _modPointsTxt.gameObject.SetActive(false);
         _applyBtn.gameObject.SetActive(false);
+        _map.SetActive(true);
     }
 
     public void OpenHotseatWindow()
@@ -87,6 +88,7 @@ public class GameUIController : MonoBehaviour
         // open window for player 2, after he done OpenMap();
         _hotseatPlayerNameTxt.gameObject.SetActive(true);
         // here Hotseat Important !!!!!
+        // here Next Step();
     }
     
     public void ShowHotseatPlayer(string playerName)

@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerModel : MonoBehaviour
 {
     [SerializeField] private int _modPoints = 24;
-    [SerializeField] private List<CardSlot> _cardDeckPlayerModelFinal;
+    [SerializeField] private List<GameObject> _cardDeckPlayerModelFinal; // snapshot, 8 card
 
     public event Action<int> OnModPointsChanged;
 
