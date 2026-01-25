@@ -46,7 +46,7 @@ public class GameDataInitializer : MonoBehaviour
         }
 
         // ===== MODIFIERS =====
-        List<ModData> randomMods = _library.GetRandomMods(_modsInstances.Length);
+        List<ModData> randomMods = _library.GetModsByBalanceRules();
 
         if (randomMods.Count < _modsInstances.Length)
             Debug.LogWarning($"Not enough mods! Need {_modsInstances.Length}, got {randomMods.Count}");
