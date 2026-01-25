@@ -20,6 +20,8 @@ public class ModTooltip : MonoBehaviour
     [Space(20)]
     [SerializeField] private RectTransform _rectTransform;
     [SerializeField] private Vector2 _offset = new Vector2(20, -20);
+    [SerializeField] private int _paddingHorizontal = 30;
+    [SerializeField] private int _paddingVertical = 40;
     
     [Header("Fade Animation")]
     [SerializeField] private float _fadeDuration = 0.15f;   
@@ -67,11 +69,8 @@ public class ModTooltip : MonoBehaviour
         group.childForceExpandWidth = true;
         group.spacing = 10; 
         
-        // Apply larger padding
-        if (group.padding.left < 20) // Update if small or zero
-        {
-             group.padding = new RectOffset(30, 30, 30, 30);
-        }
+        // Apply padding from serialized fields
+        group.padding = new RectOffset(_paddingHorizontal, _paddingHorizontal, _paddingVertical, _paddingVertical);
 
         var fitter = _tooltipPanel.GetComponent<ContentSizeFitter>();
         if (fitter == null)
