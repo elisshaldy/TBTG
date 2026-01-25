@@ -510,6 +510,7 @@ MonoBehaviour:
   _roomUIPlayerName: {fileID: 2288983604096542215, guid: e189a1e9905feee4b8f724d6f135b094, type: 3}
   _playerContainerUI: {fileID: 1764884313}
   _roomName: {fileID: 1179583756}
+  _library: {fileID: 11400000, guid: 3b40fb580eef8ac43b4026e490f9a4a6, type: 2}
 --- !u!114 &181712137
 MonoBehaviour:
   m_ObjectHideFlags: 0

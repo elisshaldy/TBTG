@@ -17,6 +17,7 @@ public class RoomWindow : UIWindow
     [SerializeField] private Transform _playerContainerUI;   
 
     [SerializeField] private LocalizationLabel _roomName;
+    [SerializeField] private GameDataLibrary _library;
 
     private List<GameObject> _spawnedPlayers = new List<GameObject>();
 
@@ -167,6 +168,12 @@ public class RoomWindow : UIWindow
     {
         GameSettings settings = _roomParameters.GetPopulatedSettings(_sceneState);
         
+        // Генеруємо перемішаний список індексів один раз для всієї гри
+        if (_library != null)
+        {
+            settings.CharacterPoolIndices = _library.GetShuffledIndices();
+        }
+        
         if (GameSettingsManager.Instance != null)
         {
             GameSettingsManager.Instance.CurrentMode = _sceneState;
@@ -183,6 +190,7 @@ public class RoomWindow : UIWindow
                 props.Add("PartyCount", settings.PartyCount);
                 props.Add("BossCount", settings.BossCount);
                 props.Add("BossDifficulty", (int)settings.BossDifficulty);
+                props.Add("CharIndices", settings.CharacterPoolIndices);
             
                 PhotonNetwork.CurrentRoom.SetCustomProperties(props);
                 

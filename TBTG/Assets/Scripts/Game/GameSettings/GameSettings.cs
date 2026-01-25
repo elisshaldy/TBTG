@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 [Serializable]
 public abstract class GameSettings
@@ -8,7 +9,23 @@ public abstract class GameSettings
     public int FieldSize;
     public int BossCount;
     public int PartyCount;
+    public int[] CharacterPoolIndices; // Спільний список індексів для всіх гравців
     public BossDifficulty BossDifficulty;
+
+    public int[] GetIndicesForPlayer(int playerIndex)
+    {
+        if (CharacterPoolIndices == null || CharacterPoolIndices.Length == 0) return null;
+        
+        int countPerPlayer = 10;
+        int start = playerIndex * countPerPlayer;
+        
+        if (start >= CharacterPoolIndices.Length) return null;
+
+        int actualCount = Mathf.Min(countPerPlayer, CharacterPoolIndices.Length - start);
+        int[] result = new int[actualCount];
+        System.Array.Copy(CharacterPoolIndices, start, result, 0, actualCount);
+        return result;
+    }
 
     public virtual void OnFlowStarted(GameUIController ui) {}
     public abstract void OpenModeSpecific(GameUIController ui);

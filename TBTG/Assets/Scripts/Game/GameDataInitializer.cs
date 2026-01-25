@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Photon.Pun;
 
 public class GameDataInitializer : MonoBehaviour
 {
@@ -23,22 +24,50 @@ public class GameDataInitializer : MonoBehaviour
             return;
         }
 
+        // 1. Отримуємо налаштування та індекс поточного гравця
+        SceneState mode = SceneState.Undefined;
+        GameSettings settings = null;
+        if (GameSettingsManager.Instance != null && GameSettingsManager.Instance.CurrentSettings != null)
+        {
+            settings = GameSettingsManager.Instance.CurrentSettings;
+            mode = GameSettingsManager.Instance.CurrentMode;
+        }
+
+        int playerIndex = GetPlayerIndex(mode);
+        Debug.Log($"[Initializer] Initializing for player {playerIndex}");
+
+        // 2. Отримуємо ПЕРЕМІШАНІ індекси персонажів саме для цього гравця
+        int[] myIndices = (settings != null) ? settings.GetIndicesForPlayer(playerIndex) : null;
+        List<CharacterData> myChars = new List<CharacterData>();
+
+        if (myIndices != null)
+        {
+            foreach (int idx in myIndices)
+            {
+                if (idx < _library.AllCharacters.Count)
+                    myChars.Add(_library.AllCharacters[idx]);
+            }
+        }
+        else
+        {
+            // Фоллбек, якщо налаштування чомусь не прийшли
+            myChars = _library.GetRandomCharacters(_cardsInstances.Length);
+        }
+
         // ===== CHARACTERS =====
-        List<CharacterData> randomChars = _library.GetRandomCharacters(_cardsInstances.Length);
+        if (myChars.Count < _cardsInstances.Length)
+            Debug.LogWarning($"Not enough characters! Need {_cardsInstances.Length}, got {myChars.Count}");
 
-        if (randomChars.Count < _cardsInstances.Length)
-            Debug.LogWarning($"Not enough characters! Need {_cardsInstances.Length}, got {randomChars.Count}");
-
-        // 1️⃣ Спершу присвоюємо дані всім CardInfo
+        // 3. Присвоюємо дані
         for (int i = 0; i < _cardsInstances.Length; i++)
         {
             if (_cardsInstances[i] == null) continue;
 
-            if (i < randomChars.Count)
-                _cardsInstances[i].CharData = randomChars[i];
+            if (i < myChars.Count)
+                _cardsInstances[i].CharData = myChars[i];
         }
 
-        // 2️⃣ Тільки після цього ініціалізуємо UI
+        // 4. Ініціалізуємо UI
         foreach (var card in _cardsInstances)
         {
             if (card == null || card.CharData == null) continue;
@@ -68,5 +97,31 @@ public class GameDataInitializer : MonoBehaviour
         }
 
         Debug.Log("Game Data Initialized SUCCESSFULLY");
+    }
+
+    private int GetPlayerIndex(SceneState mode)
+    {
+        switch (mode)
+        {
+            case SceneState.Multiplayer:
+                if (PhotonNetwork.InRoom)
+                {
+                    // Many developers use ActorNumber - 1 as a 0-indexed player ID
+                    return PhotonNetwork.LocalPlayer.ActorNumber - 1;
+                }
+                return 0;
+
+            case SceneState.Hotseat:
+                // If it's hotseat, we might need to track current player turn.
+                // For now, let's assume we logic handles sequential initialization if needed.
+                // Or if it's strictly 2 players on same screen, index 0 is used.
+                return 0; 
+
+            case SceneState.PlayerVSBot:
+                return 0; // Player is always 0, Bot is 1 (if bot needs cards)
+
+            default:
+                return 0;
+        }
     }
 }

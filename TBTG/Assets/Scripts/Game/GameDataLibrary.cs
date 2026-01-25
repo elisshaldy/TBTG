@@ -12,7 +12,14 @@ public class GameDataLibrary : ScriptableObject
     public List<CharacterData> AllCharacters;
     public List<ModData> AllMods;
 
-    // Метод для рандомного вибору карт
+    // Перемішує всі доступні карти і повертає їх індекси
+    public int[] GetShuffledIndices()
+    {
+        return Enumerable.Range(0, AllCharacters.Count)
+            .OrderBy(x => System.Guid.NewGuid())
+            .ToArray();
+    }
+
     public List<CharacterData> GetRandomCharacters(int count)
     {
         return AllCharacters.OrderBy(x => System.Guid.NewGuid()).Take(count).ToList();
