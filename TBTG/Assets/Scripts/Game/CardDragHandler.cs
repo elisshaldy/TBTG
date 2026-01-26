@@ -34,7 +34,14 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         canvas = GetComponentInParent<Canvas>();
         canvasGroup = GetComponent<CanvasGroup>();
         scaler = GetComponent<CardScaler>();
-        
+    }
+
+    public void InitializeHome()
+    {
+        if (rectTransform == null) rectTransform = GetComponent<RectTransform>();
+        if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
+        if (scaler == null) scaler = GetComponent<CardScaler>();
+
         homeParent = transform.parent;
 
         originalSize = rectTransform.sizeDelta;
@@ -44,6 +51,9 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         originalAnchoredPosition = rectTransform.anchoredPosition;
         originalLocalScale = rectTransform.localScale;
         originalLocalRotation = rectTransform.localRotation;
+
+        if (scaler != null)
+            scaler.UpdateHome();
     }
 
     private void Start()
