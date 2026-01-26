@@ -1,67 +1,111 @@
 KEY,Українська,English
-mod_a_5up_1b_n,Віддзеркалення Духу,
-mod_a_5up_1b_d,"Після знищення ворога ви тимчасово стаєте його прихованим парним персонажем, отримуючи 1 випадкову його рису, яка додається до ваших власних.
+mod_a_5up_1b_n,Віддзеркалення Духу,Spirit Reflection
+mod_a_5up_1b_d,"Убиваючи ворога, ти на мить стаєш його тінню — вдягаєш чужу сутність поверх власної, ризикуючи втратити частину себе, поки відлуння душі повільно тане.
+Після знищення ворога ви тимчасово стаєте його прихованим парним персонажем, отримуючи 1 випадкову його рису, яка додається до ваших власних.
 Є ризик: на 5–6 одна ваша випадкова риса зникає.
 Ефект триває до 6 раундів, із зростаючим шансом розсіювання щораунду.
-Стан береться гірший із двох.",
-mod_a_5up_1m_n,Пожирач Душ,
-mod_a_5up_1m_d,"Після вбивства ви стаєте прихованим парним персонажем ворога, отримуючи 2 його випадкові риси та ще випадкову 1 рису його пари, що накладаються на ваші.
+Стан береться гірший із двох.","By killing an enemy, you briefly become their shadow — wearing a чужу essence over your own, risking the loss of a part of yourself as the echo of their soul slowly fades.
+After defeating an enemy, you temporarily become their hidden paired character, gaining 1 random trait of theirs added to your own.
+Risk: on a 5-6, one random trait of yours disappears.
+Effect lasts up to 6 rounds, with an increasing chance of dispelling each round.
+The worse of the two conditions is taken."
+mod_a_5up_1m_n,Пожирач Душ,Soul Devourer
+mod_a_5up_1m_d,"Ти не наслідуєш убитого — ти його поглинаєш, вибираючи найкраще з двох існувань, навіть якщо за це доводиться пожертвувати власною цілісністю.
+Після вбивства ви стаєте прихованим парним персонажем ворога, отримуючи 2 його випадкові риси та ще випадкову 1 рису його пари, що накладаються на ваші.
 Є ризик: на 3–6 одна ваша випадкова риса зникає.
 Ефект триває до 6 раундів, із зростаючим шансом розсіювання щораунду.
-Стан береться кращий із двох.",
-mod_a_5up_2b_n,Тіньова Маріонетка,
-mod_a_5up_2b_d,"Поруч із ціллю (до 3 клітин) з’являється новий випадковий персонаж із колоди.
+Стан береться кращий із двох.","You do not imitate the slain — you consume them, choosing the best between two existences, even if it costs you your own wholeness.
+After a kill, you become the enemy's hidden paired character, gaining 2 of their random traits and 1 random trait of their partner, all applied on top of yours.
+Risk: on a 3-6, one random trait of yours disappears.
+Effect lasts up to 6 rounds, with an increasing chance of dispelling each round.
+The better of the two conditions is taken."
+mod_a_5up_2b_n,Тіньова Маріонетка,Shadow Marionette
+mod_a_5up_2b_d,"Ти смикаєш за нитку темряви й випускаєш іншу себе на поле бою, але поки маріонетка рухається — ти безпорадно стоїш, оголений і приречений.
+Поруч із ціллю (до 3 клітин) з’являється новий випадковий персонаж із колоди.
 Поки він живий:
 • ви не можете діяти
 • усі атаки по вас автоматично влучають
 • шанс на крит по вам розширюється до 15–18
 Призваний щораунду втрачає 1 Impact.
-Його можна вбити за 1 дію, щоб повернути контроль.",
-mod_a_5up_2m_n,Військо Пітьми,
-mod_a_5up_2m_d,"Темрява відповідає двічі - поруч із ціллю (до 3 клітин) з’являються 2 нових випадкових персонажів із колоди.
+Його можна вбити за 1 дію, щоб повернути контроль.","You pull a thread of darkness and release another self onto the battlefield, but while the marionette moves, you stand helpless, exposed and doomed.
+A new random character from the deck appears near the target (up to 3 cells away).
+While it's alive:
+• you cannot act
+• all attacks against you automatically hit
+• critical chance against you expands to 15-18.
+The summoned unit loses 1 Impact each round.
+It can be killed with 1 action to regain control."
+mod_a_5up_2m_n,Військо Пітьми,Darkness Legion
+mod_a_5up_2m_d,"Ти віддаєш себе на поталу, щоб темрява вийшла у множині, знаючи: кожна її істота живе, доки ти готовий платити власною бездіяльністю.
+Ти віддаєш себе на поталу, щоб темрява вийшла у множині, знаючи: кожна її істота живе, доки ти готовий платити власною бездіяльністю.
 Поки вони живі:
 • ви не можете діяти
 • усі атаки по вас автоматично влучають
 • шанс на крит по вам розширюється до 15–18
 Призвані щораунду втрачають 1 Impact.
-Їх можна вбити за 1 дію для кожного, щоб повернути контроль.",
-mod_a_5up_3b_n,Вітер Забуття,
+Їх можна вбити за 1 дію для кожного, щоб повернути контроль.","You offer yourself to vulnerability so that darkness may emerge in numbers, knowing each of its servants lives only as long as you are willing to pay with your own inaction.
+Darkness answers twice - 2 new random characters from the deck appear near the target (up to 3 cells away).
+While they're alive:
+• you cannot act
+• all attacks against you automatically hit
+• critical chance against you expands to 15-18.
+Summoned units lose 1 Impact each round.
+They can be killed with 1 action each to regain control."
+mod_a_5up_3b_n,Вітер Забуття,Wind of Oblivion
 mod_a_5up_3b_d,"Пам’ять шляху стирається подихом.
 Кидається 1d6:
 • 1–3: опонент скидає 1 випадкову карту руху
 • 4–5: 2 випадкові карти
-• 6: 3 випадкові карти",
-mod_a_5up_3m_n,Плетучий Хаос,
+• 6: 3 випадкові карти","The memory of the path is erased by a breath.
+Roll 1d6:
+• 1-3: opponent discards 1 random movement card
+• 4-5: 2 random cards
+• 6: 3 random cards"
+mod_a_5up_3m_n,Плетучий Хаос,Weaving Chaos
 mod_a_5up_3m_d,"Забуте може стати вашим.
 Кидається 1d6:
 • 1–3: опонент скидає 1 випадкову карту руху
 • 4–5: 2 випадкові карти
 • 6: 3 випадкові карти
-За наявності вільного місця гравець може забрати одну зі скинутих карт собі.",
-mod_a_5up_4b_n,Наказ Безодні,
+За наявності вільного місця гравець може забрати одну зі скинутих карт собі.","The forgotten can become yours.
+Roll 1d6:
+• 1-3: opponent discards 1 random movement card
+• 4-5: 2 random cards
+• 6: 3 random cards.
+If there is free space, the player can take one of the discarded cards for themselves."
+mod_a_5up_4b_n,Наказ Безодні,Abyss Command
 mod_a_5up_4b_d,"Воля ворога замінюється чужою.
 Випадкова карта руху з пулу опонента стає обов’язковою для його наступного ходу.
-Більш того - випадкова картка руху опонента передається гравцю, за наявності місця, або скидається.",
-mod_a_5up_4m_n,Диктат Долі,
+Більш того - випадкова картка руху опонента передається гравцю, за наявності місця, або скидається.","The enemy's will is replaced by another's.
+A random movement card from the opponent's pool becomes mandatory for their next turn.
+Moreover - a random opponent's movement card is transferred to the player, if space is available, or discarded."
+mod_a_5up_4m_n,Диктат Долі,Dictate of Fate
 mod_a_5up_4m_d,"Воля ворога замінюється чужою.
-Випадкова карта руху з пулу опонента стає обов’язковою для його наступного ходу.",
-mod_a_5up_5b_n,Тінь Чужої Сили,
+Випадкова карта руху з пулу опонента стає обов’язковою для його наступного ходу.","The enemy's will is replaced by another's.
+A random movement card from the opponent's pool becomes mandatory for their next turn."
+mod_a_5up_5b_n,Тінь Чужої Сили,Shadow of Foreign Power
 mod_a_5up_5b_d,"Коли партнер падає — його тінь б’ється за вас.
-Якщо парний персонаж у критичному стані, ви разово застосовуєте 1 випадкову його активну рису зі штрафом -1.",
-mod_a_5up_5m_n,Тіньовий Дар,
+Якщо парний персонаж у критичному стані, ви разово застосовуєте 1 випадкову його активну рису зі штрафом -1.","When a partner falls - their shadow fights for you.
+If the paired character is in critical condition, you once apply 1 random active trait of theirs with a -1 penalty."
+mod_a_5up_5m_n,Тіньовий Дар,Shadow Gift
 mod_a_5up_5m_d,"""Коли партнер падає — його тінь б’ється за вас.
 Якщо парний персонаж у критичному стані, ви разово застосовуєте 1 випадкову його активну рису зі штрафом -1.
-Також на 1-2 парний персонаж відновлює 1 Impact.",
-mod_a_5up_6b_n,Допельгангрел,
-mod_a_5up_6b_d,"Після атаки ви стаєте ціллю на наступний раунд, копіюючи схему атаки та поточний стан до кінця раунду.",
-mod_a_5up_6m_n,Абсолютна Асиміляція,
+Також на 1-2 парний персонаж відновлює 1 Impact.","When a partner falls - their shadow fights for you.
+If the paired character is in critical condition, you once apply 1 random active trait of theirs with a -1 penalty.
+Also, on a 1-2 the paired character heals 1 Impact."
+mod_a_5up_6b_n,Допельгангрел,Doppelganger
+mod_a_5up_6b_d,"Після атаки ви стаєте ціллю на наступний раунд, копіюючи схему атаки та поточний стан до кінця раунду.","After attacking, you become the target for the next round, copying the attack pattern and current condition until the end of the round."
+mod_a_5up_6m_n,Абсолютна Асиміляція,Absolute Assimilation
 mod_a_5up_6m_d,"Немає різниці між мисливцем і здобиччю.
-Ви копіюєте схему атаки, всі активні й пасивні риси ворога, а також кращий поточний стан — ваш або його до кінця раунду.",
-mod_a_5up_7b_n,Больовий Резонанс,
+Ви копіюєте схему атаки, всі активні й пасивні риси ворога, а також кращий поточний стан — ваш або його до кінця раунду.","There is no difference between hunter and prey.
+You copy the attack pattern, all active and passive traits of the enemy, and the better current condition - yours or theirs - until the end of the round."
+mod_a_5up_7b_n,Больовий Резонанс,Pain Resonance
 mod_a_5up_7b_d,"Біль не зникає — він ділиться.
 На раунд створюється зв’язок із прихованим парним персонажем опонента:
-усі атаки по вам дублюються по ньому.",
-mod_a_5up_7m_n,Смертельний Вуду-Зв'язок,
+усі атаки по вам дублюються по ньому.","Pain does not disappear - it is shared.
+A link is created with the opponent's hidden paired character for the round:
+all attacks against you are duplicated against them."
+mod_a_5up_7m_n,Смертельний Вуду-Зв'язок,Deadly Voodoo Link
 mod_a_5up_7m_d,"Зв’язок стає прокляттям.
 На раунд створюється зв’язок із прихованим парним персонажем опонента:
 усі атаки по вам дублюються по ньому.
@@ -69,603 +113,960 @@ mod_a_5up_7m_d,"Зв’язок стає прокляттям.
 • 1: зв’язок також дублюється на активного партнера опонента
 • 2: ви лікуєте 1 Impact за кожну атаку по цій парі (не важливо, хто атакуватиме)
 • 3: у пари лише 1 дія на наступний хід
-• 4–6: ворог отримує –1 до атаки й захисту до кінця раунду",
-mod_a_5up_8b_n,Ритуал Виснаження,
+• 4–6: ворог отримує –1 до атаки й захисту до кінця раунду","The link becomes a curse.
+A link is created with the opponent's hidden paired character for the round:
+all attacks against you are duplicated against them.
+Additionally, roll 1d6 for an extra effect:
+• 1: the link is also duplicated onto the opponent's active partner
+• 2: you heal 1 Impact for each attack against this pair (no matter who attacks)
+• 3: the pair has only 1 action on their next turn
+• 4-6: the enemy gets -1 to attack and defense until the end of the round."
+mod_a_5up_8b_n,Ритуал Виснаження,Ritual of Exhaustion
 mod_a_5up_8b_d,"Чистота партнера стає кайданами для ворога.
-Якщо парний персонаж неушкоджений, ціль до кінця раунду має лише 1 дію за хід.",
-mod_a_5up_8m_n,Тенета Тліну,
+Якщо парний персонаж неушкоджений, ціль до кінця раунду має лише 1 дію за хід.","The partner's purity becomes shackles for the enemy.
+If the paired character is unharmed, the target has only 1 action per turn until the end of the round."
+mod_a_5up_8m_n,Тенета Тліну,Decay's Snare
 mod_a_5up_8m_d,"Чистота партнера стає кайданами для ворога.
 Якщо парний персонаж неушкоджений, ціль до кінця раунду має лише 1 дію за хід.
-Крім того проводиться перекид найгіршого кубика при першій наступній атаці по цілі.",
-mod_a_4up_1b_n,Смертельне Відлуння,
+Крім того проводиться перекид найгіршого кубика при першій наступній атаці по цілі.","The partner's purity becomes shackles for the enemy.
+If the paired character is unharmed, the target has only 1 action per turn until the end of the round.
+Additionally, the worst dice is rerolled on the first subsequent attack against the target."
+mod_a_4up_1b_n,Смертельне Відлуння,Deadly Echo
 mod_a_4up_1b_d,"Удар минає тіло перед очима й вражає того, хто ховається в тіні.
-Атака наносить шкоду прихованому парному персонажу ворога; активний не отримує шкоди, але має –1 до атаки й захисту до кінця раунду.",
-mod_a_4up_1m_n,Резонанс Болю,
+Атака наносить шкоду прихованому парному персонажу ворога; активний не отримує шкоди, але має –1 до атаки й захисту до кінця раунду.","The blow passes the body before the eyes and strikes the one hiding in the shadows.
+The attack deals damage to the enemy's hidden paired character; the active one does not take damage, but gets -1 to attack and defense until the end of the round."
+mod_a_4up_1m_n,Резонанс Болю,Resonance of Pain
 mod_a_4up_1m_d,"Біль більше не знає, де тіло, а де відбиток.
-Атака одночасно наносить шкоду і активному, і прихованому персонажам ворога; обидва отримують –1 до атаки й захисту до кінця раунду.",
-mod_a_4up_2b_n,Відлуння Болю,
+Атака одночасно наносить шкоду і активному, і прихованому персонажам ворога; обидва отримують –1 до атаки й захисту до кінця раунду.","Pain no longer knows where the body is and where the imprint is.
+The attack simultaneously deals damage to both the enemy's active and hidden characters; both receive -1 to attack and defense until the end of the round."
+mod_a_4up_2b_n,Відлуння Болю,Echo of Pain
 mod_a_4up_2b_d,"Кожен, хто вдарить, відчує відповідь.
-Наступна атака по цьому персонажу в цьому раунді автоматично влучає також по атакуючому.",
-mod_a_4up_2m_n,Прокляття Дзеркальної Помсти,
+Наступна атака по цьому персонажу в цьому раунді автоматично влучає також по атакуючому.","Everyone who strikes will feel a response.
+The next attack against this character this round automatically also hits the attacker."
+mod_a_4up_2m_n,Прокляття Дзеркальної Помсти,Curse of Mirror Vengeance
 mod_a_4up_2m_d,"Дзеркало або кусає, або повністю міняє місця.
 При наступній атаці по персонажу:
 1–4 на d6 — удар відбивається, атакуючий отримує додатковий 1 Impact,
-5–6 — атака повністю переадресовується на атакуючого, персонаж не отримує шкоди.",
-mod_a_4up_3b_n,Друге Дихання,
+5–6 — атака повністю переадресовується на атакуючого, персонаж не отримує шкоди.","The mirror either bites or completely switches places.
+Upon the next attack against the character:
+1-4 on d6 — the blow is reflected, the attacker takes an additional 1 Impact,
+5-6 — the attack is completely redirected to the attacker, the character takes no damage."
+mod_a_4up_3b_n,Друге Дихання,Second Wind
 mod_a_4up_3b_d,"Відновлення руху.
-Ви відновлюєте 1 вигорілу карту руху.",
-mod_a_4up_3m_n,Полум'я Відплати,
+Ви відновлюєте 1 вигорілу карту руху.","Recovery of movement.
+You recover 1 expended movement card."
+mod_a_4up_3m_n,Полум'я Відплати,Flame of Retribution
 mod_a_4up_3m_d,"Відновлений крок перетворюється на прорив.
-Ви відновлюєте 1 карту руху, і наступним ходом один персонаж може зіграти 2 карти руху поспіль без штрафів.",
-mod_a_4up_4b_n,Відгомін Розколотої Душі,
+Ви відновлюєте 1 карту руху, і наступним ходом один персонаж може зіграти 2 карти руху поспіль без штрафів.","A recovered step turns into a breakthrough.
+You recover 1 movement card, and next turn one character can play 2 movement cards in a row without penalties."
+mod_a_4up_4b_n,Відгомін Розколотої Душі,Echo of a Shattered Soul
 mod_a_4up_4b_d,"Удар по тілу відлунює навіть в тіньовому напарнику.
-Якщо парний персонаж неушкоджений, атака з шансом 4–6 на d6 завдає 1 Impact прихованому парному персонажу.",
-mod_a_4up_4m_n,Печать Подвійної Муки,
+Якщо парний персонаж неушкоджений, атака з шансом 4–6 на d6 завдає 1 Impact прихованому парному персонажу.","A blow to the body echoes even in the shadow partner.
+If the paired character is unharmed, the attack with a 4-6 chance on d6 deals 1 Impact to the hidden paired character."
+mod_a_4up_4m_n,Печать Подвійної Муки,Seal of Double Torment
 mod_a_4up_4m_d,"Розкол стає ярмом для обох.
-Якщо парний персонаж неушкоджений, атака з шансом 4–6 на d6 завдає 1 Impact прихованому парному персонажу, крім того активний ворожий персонаж додатково отримує –1 до атаки й захисту до кінця раунду.",
-mod_a_4up_5b_n,Зсув Тіней,
+Якщо парний персонаж неушкоджений, атака з шансом 4–6 на d6 завдає 1 Impact прихованому парному персонажу, крім того активний ворожий персонаж додатково отримує –1 до атаки й захисту до кінця раунду.","The split becomes a yoke for both.
+If the paired character is unharmed, the attack with a 4-6 chance on d6 deals 1 Impact to the hidden paired character, additionally the active enemy character gets -1 to attack and defense until the end of the round."
+mod_a_4up_5b_n,Зсув Тіней,Shadow Shift
 mod_a_4up_5b_d,"Ті, хто ховався, виходять уперед — не з власної волі.
-Якщо ваш парний персонаж у критичному стані чи комі, ворожа пара примусово міняється місцями.",
-mod_a_4up_5m_n,Виклик Глибин,
+Якщо ваш парний персонаж у критичному стані чи комі, ворожа пара примусово міняється місцями.","Those who were hiding come forward - not of their own will.
+If your paired character is in critical condition or coma, the enemy pair is forcibly swapped."
+mod_a_4up_5m_n,Виклик Глибин,Call of the Depths
 mod_a_4up_5m_d,"Заміна супроводжується жертвою.
-Після обміну позиціями, з шансом 1–3 на d6, новий активний ворог отримує 1 Impact.",
-mod_a_4up_6b_n,Рівновага Пустоти,
+Після обміну позиціями, з шансом 1–3 на d6, новий активний ворог отримує 1 Impact.","The swap is accompanied by sacrifice.
+After swapping positions, with a 1-3 chance on d6, the new active enemy takes 1 Impact."
+mod_a_4up_6b_n,Рівновага Пустоти,Void Equilibrium
 mod_a_4up_6b_d,"Порожнеча не лікує — вона зрівнює.
-Ви та ціль міняєтесь станами здоров’я (Health State).",
-mod_a_4up_6m_n,Кривавий Тріумф,
+Ви та ціль міняєтесь станами здоров’я (Health State).","The void does not heal - it equalizes.
+You and the target swap health states."
+mod_a_4up_6m_n,Кривавий Тріумф,Bloody Triumph
 mod_a_4up_6m_d,"Рівновага порушується на вашу користь.
-Після обміну станами ви лікуєте 1 Impact, а ціль отримує 1 Impact шкоди.",
-mod_a_4up_7b_n,Подих Живої Тіні,
+Після обміну станами ви лікуєте 1 Impact, а ціль отримує 1 Impact шкоди.","The equilibrium is broken in your favor.
+After swapping states, you heal 1 Impact, and the target takes 1 Impact damage."
+mod_a_4up_7b_n,Подих Живої Тіні,Breath of Living Shadow
 mod_a_4up_7b_d,"Тінь б’ється першою, навіть якщо тіло стоїть.
-Якщо парний персонаж у Critical, до кінця раунду ви контратакуєте по входу в зону за схемою атаки прихованого парного персонажа (з шансом 2d6 на 9–12).",
-mod_a_4up_7m_n,Милість Безодні,
+Якщо парний персонаж у Critical, до кінця раунду ви контратакуєте по входу в зону за схемою атаки прихованого парного персонажа (з шансом 2d6 на 9–12).","The shadow strikes first, even if the body stands.
+If the paired character is Critical, until the end of the round you counterattack upon entering your zone using the attack pattern of the hidden paired character (with a 2d6 chance on 9-12)."
+mod_a_4up_7m_n,Милість Безодні,Abyss's Mercy
 mod_a_4up_7m_d,"Безодня не лише кличе — вона підтримує.
 Якщо парний персонаж у Critical, до кінця раунду ви контратакуєте по входу в зону за схемою атаки прихованого парного персонажа (з шансом 2d6 на 9–12).
-Парний персонаж у Critical лікується на 1 Impact.",
-mod_a_4up_8b_n,Удар Крізь Тінь,
+Парний персонаж у Critical лікується на 1 Impact.","The Abyss not only calls - it supports.
+If the paired character is Critical, until the end of the round you counterattack upon entering your zone using the attack pattern of the hidden paired character (with a 2d6 chance on 9-12).
+The paired character in Critical heals 1 Impact."
+mod_a_4up_8b_n,Удар Крізь Тінь,Strike Through Shadow
 mod_a_4up_8b_d,"Лезо знаходить того, хто думав, що сховався.
-Атака завдає шкоди виключно прихованому персонажу ворожої пари.",
-mod_a_4up_8m_n,Інверсія Страждань,
+Атака завдає шкоди виключно прихованому персонажу ворожої пари.","The blade finds the one who thought they were hidden.
+The attack deals damage exclusively to the hidden character of the enemy pair."
+mod_a_4up_8m_n,Інверсія Страждань,Inversion of Suffering
 mod_a_4up_8m_d,"Страждання міняються господарями.
-Окрім шкоди по прихованому, усі ваші дебафи копіюються на активного ворога до кінця раунду.",
-mod_a_4up_9b_n,Танець Тіней,
+Окрім шкоди по прихованому, усі ваші дебафи копіюються на активного ворога до кінця раунду.","Suffering changes owners.
+Besides damage to the hidden one, all your debuffs are copied onto the active enemy until the end of the round."
+mod_a_4up_9b_n,Танець Тіней,Shadow Dance
 mod_a_4up_9b_d,"Два силуети міняються місцями в один подих.
-Ви міняєтесь позиціями з противником.",
-mod_a_4up_9m_n,Безкінечний Кошмар,
+Ви міняєтесь позиціями з противником.","Two silhouettes swap places in one breath.
+You swap positions with an opponent."
+mod_a_4up_9m_n,Безкінечний Кошмар,Endless Nightmare
 mod_a_4up_9m_d,"Обмін стає пасткою.
-Ви міняєтесь позиціями з противником, який ше й не може рухайтись та атакувати до кынця раунду.",
-mod_a_4up_10b_n,Ехо Клинка,
+Ви міняєтесь позиціями з противником, який ше й не може рухайтись та атакувати до кынця раунду.","The swap becomes a trap.
+You swap positions with an opponent, who also cannot move or attack until the end of the round."
+mod_a_4up_10b_n,Ехо Клинка,Blade Echo
 mod_a_4up_10b_d,"Зона пам’ятає, чия це територія.
 До кінця раунду:
 якщо парний Unharmed — контратака за схемою прихованого (з шансом 2d6 на 10–12),
-якщо Critical — контратака за власною схемою (з шансом 2d6 на 10–12).",
-mod_a_4up_10m_n,Клятва Кривавого Входу,
+якщо Critical — контратака за власною схемою (з шансом 2d6 на 10–12).","The zone remembers whose territory it is.
+Until the end of the round:
+if the paired character is Unharmed - counterattack using the hidden character's pattern (2d6 chance on 10-12),
+if Critical - counterattack using your own pattern (2d6 chance on 10-12)."
+mod_a_4up_10m_n,Клятва Кривавого Входу,Oath of Bloody Entry
 mod_a_4up_10m_d,"Зона пам’ятає, чия це територія.
 До кінця раунду:
 якщо парний Unharmed — контратака за схемою прихованого (з шансом 2d6 на 8–12),
-якщо Critical — контратака за власною схемою (з шансом 2d6 на 8–12).",
-mod_a_4up_11b_n,Жнець,
+якщо Critical — контратака за власною схемою (з шансом 2d6 на 8–12).","The zone remembers whose territory it is.
+Until the end of the round:
+if the paired character is Unharmed - counterattack using the hidden character's pattern (2d6 chance on 8-12),
+if Critical - counterattack using your own pattern (2d6 chance on 8-12)."
+mod_a_4up_11b_n,Жнець,Reaper
 mod_a_4up_11b_d,"Смерть живить того, хто її приніс.
-При вбивстві цілі ви відновлюєте 2 Impact, аж до стану Extra.",
-mod_a_4up_11m_n,Жнець Душ,
+При вбивстві цілі ви відновлюєте 2 Impact, аж до стану Extra.","Death feeds the one who brought it.
+When you kill a target, you heal 2 Impact, up to the Extra state."
+mod_a_4up_11m_n,Жнець Душ,Soul Reaper
 mod_a_4up_11m_d,"Кров дає ще й час.
-При вбивстві цілі ви відновлюєте 2 Impact, аж до стану Extra, також ви отримуєте 1 додаткову дію в цьому ж ході.",
-mod_a_4up_12b_n,Тіньова Скверна,
+При вбивстві цілі ви відновлюєте 2 Impact, аж до стану Extra, також ви отримуєте 1 додаткову дію в цьому ж ході.","Blood also grants time.
+When you kill a target, you heal 2 Impact, up to the Extra state, and you also get 1 additional action this turn."
+mod_a_4up_12b_n,Тіньова Скверна,Shadow Defilement
 mod_a_4up_12b_d,"Прокляття чекає дотику.
-Ціль отримує статус прокляття до кінця раунду або до першої атаки, що його активує.",
-mod_a_4up_12m_n,Клеймо Мовчазної Скверни,
+Ціль отримує статус прокляття до кінця раунду або до першої атаки, що його активує.","The curse awaits a touch.
+The target gains the Curse status until the end of the round or until the first attack that triggers it."
+mod_a_4up_12m_n,Клеймо Мовчазної Скверни,Mark of Silent Defilement
 mod_a_4up_12m_d,"Навіть вибір стає розкішшю.
-Ціль отримує статус прокляття до кінця раунду або до першої атаки, що його активує, крім того а ворог може використовувати лише 2 випадкові карти руху, решта заблоковані на раунд.",
-mod_a_3up_1b_n,Агонія Безсилля,
+Ціль отримує статус прокляття до кінця раунду або до першої атаки, що його активує, крім того а ворог може використовувати лише 2 випадкові карти руху, решта заблоковані на раунд.","Even choice becomes a luxury.
+The target gains the Curse status until the end of the round or until the first attack that triggers it, moreover the enemy can only use 2 random movement cards, the rest are blocked for a round."
+mod_a_3up_1b_n,Агонія Безсилля,Agony of Powerlessness
 mod_a_3up_1b_d,"Зброя важчає в руках, наче сама відмовляється бити.
 Ціль до кінця раунду отримує штраф до атаки, що визначається кидком d6:
 1–3: –1 до переваги,
 4–5: –2 до переваги,
-6: –3 до переваги.",
-mod_a_3up_1m_n,Клинковий Стазис,
+6: –3 до переваги.","The weapon grows heavier in hand, as if refusing to strike.
+The target receives an attack penalty until the end of the round, determined by a d6 roll: 1-3:
+-1 advantage, 4-5:
+-2 advantage, 6:
+-3 advantage."
+mod_a_3up_1m_n,Клинковий Стазис,Blade Stasis
 mod_a_3up_1m_d,"Безсилля сковує не лише удар, а й крок.
 Ціль до кінця раунду отримує штраф до атаки, що визначається кидком d6:
 1–3: –1 до переваги,
 4–5: –2 до переваги,
 6: –3 до переваги.
-Крім того ціль не може рухатися до кінця раунду.",
-mod_a_3up_2b_n,Прокляття Тлену,
+Крім того ціль не може рухатися до кінця раунду.","Powerlessness shackles not only the strike but also the step.
+The target receives an attack penalty until the end of the round, determined by a d6 roll:
+1-3: -1 advantage, 4-5:
+-2 advantage, 6:
+-3 advantage.
+Additionally, the target cannot move until the end of the round."
+mod_a_3up_2b_n,Прокляття Тлену,Curse of Decay
 mod_a_3up_2b_d,"Захист осипається, мов стара броня.
 Ціль до кінця раунду отримує штраф до захисту, що визначається кидком d6:
 1–3: –1 до переваги,
 4–5: –2 до переваги,
-6: –3 до переваги.",
-mod_a_3up_2m_n,Щитова Анафема,
+6: –3 до переваги.","The defense crumbles like old armor.
+The target receives a defense penalty until the end of the round, determined by a d6 roll: 1-3:
+-1 advantage, 4-5:
+-2 advantage, 6:
+-3 advantage."
+mod_a_3up_2m_n,Щитова Анафема,Shield Anathema
 mod_a_3up_2m_d,"Щит стає тягарем.
 Ціль до кінця раунду отримує штраф до захисту, що визначається кидком d6:
 1–3: –1 до переваги,
 4–5: –2 до переваги,
 6: –3 до переваги.
-Крім того ціль не може атакувати до кінця раунду.",
-mod_a_3up_3b_n,Проклята Руна,
+Крім того ціль не може атакувати до кінця раунду.","The shield becomes a burden.
+The target receives a defense penalty until the end of the round, determined by a d6 roll:
+1-3: -1 advantage,
+4-5: -2 advantage,
+6: -3 advantage.
+Additionally, the target cannot attack until the end of the round."
+mod_a_3up_3b_n,Проклята Руна,Cursed Rune
 mod_a_3up_3b_d,"Поле бою пам’ятає місце, де не варто ступати.
-На вільній клітинці в межах 3 клітинок створюється прихована руна: з наступного раунду вона завдає 1 Impact будь-кому, хто на неї стане; щораунду кидається d6, і при 4–6 руна зникає.",
-mod_a_3up_3m_n,Смертельна Пастка,
+На вільній клітинці в межах 3 клітинок створюється прихована руна: з наступного раунду вона завдає 1 Impact будь-кому, хто на неї стане; щораунду кидається d6, і при 4–6 руна зникає.","The battlefield remembers the place not to tread.
+A hidden rune is created on a free cell within 3 cells: from the next round it deals 1 Impact to anyone stepping on it; each round a d6 is rolled, and on a 4-6 the rune disappears."
+mod_a_3up_3m_n,Смертельна Пастка,Deadly Trap
 mod_a_3up_3m_d,"Пастка не зникає — вона кочує.
-На вільній клітинці в межах 3 клітинок створюється прихована руна: з наступного раунду вона завдає 1 Impact будь-кому, хто на неї стане, а після спрацювання з’являється в іншій клітинці в межах 3, і зникає лише при 5–6 на d6 на початку раунду.",
-mod_a_3up_4b_n,Клеймо Забуття,
+На вільній клітинці в межах 3 клітинок створюється прихована руна: з наступного раунду вона завдає 1 Impact будь-кому, хто на неї стане, а після спрацювання з’являється в іншій клітинці в межах 3, і зникає лише при 5–6 на d6 на початку раунду.","The trap does not disappear - it moves.
+A hidden rune is created on a free cell within 3 cells: from the next round it deals 1 Impact to anyone stepping on it, and after triggering it appears in another cell within 3, disappearing only on a 5-6 on d6 at the start of a round."
+mod_a_3up_4b_n,Клеймо Забуття,Mark of Oblivion
 mod_a_3up_4b_d,"Прокляття притуплює і силу, і пильність.
-При атаці по проклятій цілі вона отримує –1 до атаки й захисту до кінця раунду.",
-mod_a_3up_4m_n,Печать Мовчання Душі,
+При атаці по проклятій цілі вона отримує –1 до атаки й захисту до кінця раунду.","The curse dulls both strength and vigilance.
+When attacking a cursed target, it gets -1 to attack and defense until the end of the round."
+mod_a_3up_4m_n,Печать Мовчання Душі,Seal of Soul's Silence
 mod_a_3up_4m_d,"Навіть здібності мовчать.
-При атаці по проклятій цілі вона отримує –1 до атаки й захисту до кінця раунду, а також атаки цілі до кінця раунду не активують її активні риси.",
-mod_a_3up_5b_n,Шорох Пітьми,
+При атаці по проклятій цілі вона отримує –1 до атаки й захисту до кінця раунду, а також атаки цілі до кінця раунду не активують її активні риси.","Even abilities fall silent.
+When attacking a cursed target, it gets -1 to attack and defense until the end of the round, and the target's attacks this round do not activate its active traits."
+mod_a_3up_5b_n,Шорох Пітьми,Rustle of Darkness
 mod_a_3up_5b_d,"Тінь торкається — і чекає удару.
-Накладає на ціль статус прокляття до кінця раунду або до першої атаки, що його активує.",
-mod_a_3up_5m_n,Опівнічний Жах,
+Накладає на ціль статус прокляття до кінця раунду або до першої атаки, що його активує.","The shadow touches - and awaits a strike.
+Applies the Curse status to the target until the end of the round or until the first attack that triggers it."
+mod_a_3up_5m_n,Опівнічний Жах,Midnight Horror
 mod_a_3up_5m_d,"Жах не поспішає йти.
-Накладає на ціль статус прокляття до кінця раунду або до першої атаки, що його активує, більш того до 6 раундів: на ході цілі кидається d6, і при 5–6 вона отримує 1 Impact (шанс зникнення ефекту зростає щораундно).",
-mod_a_3up_6b_n,Провісник Розплати,
+Накладає на ціль статус прокляття до кінця раунду або до першої атаки, що його активує, більш того до 6 раундів: на ході цілі кидається d6, і при 5–6 вона отримує 1 Impact (шанс зникнення ефекту зростає щораундно).","Horror is in no hurry to leave.
+Applies the Curse status to the target until the end of the round or until the first attack that triggers it, moreover for up to 6 rounds: on the target's turn a d6 is rolled, and on a 5-6 it takes 1 Impact (the chance for the effect to end increases each round)."
+mod_a_3up_6b_n,Провісник Розплати,Harbinger of Retribution
 mod_a_3up_6b_d,"Удар уже передбачений.
-Якщо парний персонаж Unharmed, наступна атака по цілі в цьому раунді отримує +1 перевагу.",
-mod_a_3up_6m_n,Погляд Безодні,
+Якщо парний персонаж Unharmed, наступна атака по цілі в цьому раунді отримує +1 перевагу.","The strike is already foreseen.
+If the paired character is Unharmed, the next attack against the target this round gets +1 advantage."
+mod_a_3up_6m_n,Погляд Безодні,Gaze of the Abyss
 mod_a_3up_6m_d,"Передбачення торкається й смерті.
-Якщо парний персонаж Unharmed, наступна атака по цілі в цьому раунді отримує +1 перевагу, а також +1 до шансу критичного удару",
-mod_a_3up_7b_n,Щит Мученика,
+Якщо парний персонаж Unharmed, наступна атака по цілі в цьому раунді отримує +1 перевагу, а також +1 до шансу критичного удару","The foresight touches even death.
+If the paired character is Unharmed, the next attack against the target this round gets +1 advantage, and also +1 to critical hit chance."
+mod_a_3up_7b_n,Щит Мученика,Martyr's Shield
 mod_a_3up_7b_d,"Атака завжди має ціну.
-Якщо парний персонаж Unharmed, наступна спроба атаки ціллю цього раунду завдає їй 1 Impact, незалежно від влучання.",
-mod_a_3up_7m_n,Фатальний Відгук,
+Якщо парний персонаж Unharmed, наступна спроба атаки ціллю цього раунду завдає їй 1 Impact, незалежно від влучання.","An attack always has a price.
+If the paired character is Unharmed, the next attempt to attack this target this round deals 1 Impact to it, regardless of a hit."
+mod_a_3up_7m_n,Фатальний Відгук,Fatal Feedback
 mod_a_3up_7m_d,"Ціна зростає.
-Якщо парний персонаж Unharmed, наступна спроба атаки ціллю цього раунду завдає їй 1 Impact, незалежно від влучання, а також ціль при першій своїй атаці перекидає найкращий кубик і бере менше значення.",
-mod_a_3up_8b_n,Тіньовий Контроль,
+Якщо парний персонаж Unharmed, наступна спроба атаки ціллю цього раунду завдає їй 1 Impact, незалежно від влучання, а також ціль при першій своїй атаці перекидає найкращий кубик і бере менше значення.","The price increases.
+If the paired character is Unharmed, the next attempt to attack this target this round deals 1 Impact to it, regardless of a hit, and also on its first attack the target rerolls its best die and takes the lower value."
+mod_a_3up_8b_n,Тіньовий Контроль,Shadow Control
 mod_a_3up_8b_d,"Вибору більше нема.
-Ціль має лише 1 дію на цей раунд.",
-mod_a_3up_8m_n,Кайдани Безволі,
+Ціль має лише 1 дію на цей раунд.","There is no more choice.
+The target has only 1 action this round."
+mod_a_3up_8m_n,Кайдани Безволі,Fetters of Willlessness
 mod_a_3up_8m_d,"Навіть втекти не вийде.
-Ціль має 1 дію і не може міняти активного персонажа цього раунду.",
-mod_a_3up_9b_n,Карма,
+Ціль має 1 дію і не може міняти активного персонажа цього раунду.","You can't even escape.
+The target has 1 action and cannot switch the active character this round."
+mod_a_3up_9b_n,Карма,Karma
 mod_a_3up_9b_d,"Біль завжди повертається.
-Наступного разу, коли ціль нанесе 1 Impact, вона отримає 1 Impact у відповідь.",
-mod_a_3up_9m_n,Смертельне Прокляття,
+Наступного разу, коли ціль нанесе 1 Impact, вона отримає 1 Impact у відповідь.","Pain always returns.
+The next time the target deals 1 Impact, it will receive 1 Impact in return."
+mod_a_3up_9m_n,Смертельне Прокляття,Deadly Curse
 mod_a_3up_9m_d,"Навіть намір карається.
-Наступна спроба атаки цілі (влучна чи ні) завдає їй 1 Impact.",
-mod_a_3up_10b_n,Шепіт Пітьми,
+Наступна спроба атаки цілі (влучна чи ні) завдає їй 1 Impact.","Even intent is punished.
+The next attack attempt against the target (hit or miss) deals 1 Impact to it."
+mod_a_3up_10b_n,Шепіт Пітьми,Whisper of Darkness
 mod_a_3up_10b_d,"Тіло не встигає відповісти.
-Ціль не може використовувати реактивні дії (контратака, віддзеркалення) цього раунду.",
-mod_a_3up_10m_n,Смертельний Холод,
+Ціль не може використовувати реактивні дії (контратака, віддзеркалення) цього раунду.","The body cannot respond in time.
+The target cannot use reactive actions (counterattack, reflection) this round."
+mod_a_3up_10m_n,Смертельний Холод,Deadly Chill
 mod_a_3up_10m_d,"Реакція і удар замерзають разом.
-Блокуються реактивні дії та атаки цілі на цей раунд.",
-mod_a_3up_11b_n,Коса Жнеця,
+Блокуються реактивні дії та атаки цілі на цей раунд.","Reaction and strike freeze together.
+The target's reactive actions and attacks are blocked this round."
+mod_a_3up_11b_n,Коса Жнеця,Scythe of the Reaper
 mod_a_3up_11b_d,"Проклята жертва ближче до кінця.
-При атаці по проклятій цілі крит спрацьовує на 15–18 до кінця раунду.",
-mod_a_3up_11m_n,Танець Смерті,
+При атаці по проклятій цілі крит спрацьовує на 15–18 до кінця раунду.","The cursed victim is closer to the end.
+When attacking a cursed target, critical hits occur on 15-18 until the end of the round."
+mod_a_3up_11m_n,Танець Смерті,Dance of Death
 mod_a_3up_11m_d,"Ніщо не зупинить фінальний рух.
-При атаці по проклятій цілі крит спрацьовує на 15–18 до кінця раунду, а також ігнорування реактивних рис цілі цього раунду.",
-mod_a_3up_12b_n,Лють Агонії,
+При атаці по проклятій цілі крит спрацьовує на 15–18 до кінця раунду, а також ігнорування реактивних рис цілі цього раунду.","Nothing will stop the final movement.
+When attacking a cursed target, critical hits occur on 15-18 until the end of the round, and also the target's reactive traits are ignored this round."
+mod_a_3up_12b_n,Лють Агонії,Fury of Agony
 mod_a_3up_12b_d,"Біль перетворюється на силу.
-Якщо ви в критичному стані, атака завдає +1 Impact.",
-mod_a_3up_12m_n,Удар Потойбіччя,
+Якщо ви в критичному стані, атака завдає +1 Impact.","Pain transforms into strength.
+If you are in critical condition, the attack deals +1 Impact."
+mod_a_3up_12m_n,Удар Потойбіччя,Strike from Beyond
 mod_a_3up_12m_d,"Тіло воює на межі.
-Якщо ви в критичному стані, атака завдає +2 Impact.",
-mod_a_3up_13b_n,Статичний Бар’єр,
+Якщо ви в критичному стані, атака завдає +2 Impact.","The body fights on the edge.
+If you are in critical condition, the attack deals +2 Impact."
+mod_a_3up_13b_n,Статичний Бар’єр,Static Barrier
 mod_a_3up_13b_d,"Один удар — у порожнечу.
-Ви отримуєте щит у 1 Impact до кінця цього раунду, який не впливає на стани чи переваги.",
-mod_a_3up_13m_n,Перекид Тіні,
+Ви отримуєте щит у 1 Impact до кінця цього раунду, який не впливає на стани чи переваги.","One blow - into the void.
+You gain a 1 Impact shield until the end of this round, which does not affect conditions or advantages."
+mod_a_3up_13m_n,Перекид Тіні,Shadow Flip
 mod_a_3up_13m_d,"Удар минає вас.
-Ви отримуєте щит у 1 Impact до кінця цього раунду, який не впливає на стани чи переваги, а наступна атака по вам спрямовується на прихованого парного персонажа, не активуючи жодних рис.",
-mod_a_3up_14b_n,Неминучість Болю,
+Ви отримуєте щит у 1 Impact до кінця цього раунду, який не впливає на стани чи переваги, а наступна атака по вам спрямовується на прихованого парного персонажа, не активуючи жодних рис.","The blow misses you.
+You gain a 1 Impact shield until the end of this round, which does not affect conditions or advantages, and the next attack against you is directed at the hidden paired character, not activating any traits."
+mod_a_3up_14b_n,Неминучість Болю,Inevitability of Pain
 mod_a_3up_14b_d,"Прокляття відкриває шлях удару.
-При атаці по проклятій цілі ви отримуєте +2 переваги до кінця раунду.",
-mod_a_3up_14m_n,Смертельний Ритуал,
+При атаці по проклятій цілі ви отримуєте +2 переваги до кінця раунду.","The curse opens the way for the strike.
+When attacking a cursed target, you get +2 advantage until the end of the round."
+mod_a_3up_14m_n,Смертельний Ритуал,Deadly Ritual
 mod_a_3up_14m_d,"Ритуал готує наступний удар.
-При атаці по проклятій цілі ви отримуєте +2 переваги до кінця раунду, крім того підвищений шанс активації активних рис для наступної атаки цього раунду.",
-mod_a_3up_15b_n,Неминуче Страждання,
+При атаці по проклятій цілі ви отримуєте +2 переваги до кінця раунду, крім того підвищений шанс активації активних рис для наступної атаки цього раунду.","The ritual prepares the next strike.
+When attacking a cursed target, you get +2 advantage until the end of the round, moreover increased chance to activate active traits for the next attack this round."
+mod_a_3up_15b_n,Неминуче Страждання,Inevitable Suffering
 mod_a_3up_15b_d,"Прокляття болить сильніше з кожним рухом.
-При атаці по проклятій цілі ви отримуєте +2 переваги до кінця раунду.",
-mod_a_3up_15m_n,Вічна Агонія,
+При атаці по проклятій цілі ви отримуєте +2 переваги до кінця раунду.","The curse hurts more with every move.
+When attacking a cursed target, you get +2 advantage until the end of the round."
+mod_a_3up_15m_n,Вічна Агонія,Eternal Agony
 mod_a_3up_15m_d,"Біль не спадає.
-При атаці по проклятій цілі ви отримуєте +2 переваги до кінця раунду, а прокляття гарантовано продовжує діяти до кінця раунду.",
-mod_a_3up_16b_n,Параліч,
+При атаці по проклятій цілі ви отримуєте +2 переваги до кінця раунду, а прокляття гарантовано продовжує діяти до кінця раунду.","Pain does not subside.
+When attacking a cursed target, you get +2 advantage until the end of the round, and the curse is guaranteed to continue until the end of the round."
+mod_a_3up_16b_n,Параліч,Paralysis
 mod_a_3up_16b_d,"Тіло слухається, але не рухається.
-Ціль не може рухатись і атакувати цього раунду.",
-mod_a_3up_16m_n,Пастка Безодні,
+Ціль не може рухатись і атакувати цього раунду.","The body obeys, but does not move.
+The target cannot move or attack this round."
+mod_a_3up_16m_n,Пастка Безодні,Abyss Trap
 mod_a_3up_16m_d,"Навіть інстинкти замовкають.
-Окрім паралічу, всі пасивні риси цілі вимикаються до кінця цього раунду.",
-mod_a_2up_1b_n,Гнів Мученика,
+Окрім паралічу, всі пасивні риси цілі вимикаються до кінця цього раунду.","Even instincts fall silent.
+Besides paralysis, all passive traits of the target are disabled until the end of this round."
+mod_a_2up_1b_n,Гнів Мученика,Martyr's Wrath
 mod_a_2up_1b_d,"Персонаж приймає біль на себе, щоб вдарити вдвічі сильніше.
-Ви отримуєте 1 Impact шкоди, натомість урон по цілі подвоюється.",
-mod_a_2up_1m_n,Удар Бесерка,
+Ви отримуєте 1 Impact шкоди, натомість урон по цілі подвоюється.","The character takes the pain upon themselves to strike twice as hard.
+You take 1 Impact damage, in return the damage to the target is doubled."
+mod_a_2up_1m_n,Удар Бесерка,Berserker's Strike
 mod_a_2up_1m_d,"Біль стає паливом для різанини.
-Ви отримуєте 1 Impact шкоди; урон по цілі подвоюється, а половина цього урону додатково наноситься прихованому персонажу в парі.",
-mod_a_2up_2b_n,Межа Страху,
+Ви отримуєте 1 Impact шкоди; урон по цілі подвоюється, а половина цього урону додатково наноситься прихованому персонажу в парі.","Pain becomes fuel for the slaughter.
+You take 1 Impact damage; damage to the target is doubled, and half of that damage is additionally dealt to the hidden character in the pair."
+mod_a_2up_2b_n,Межа Страху,Edge of Fear
 mod_a_2up_2b_d,"Ціль ступає на край — ще не знаючи, що вже проклята.
-Накладає прокляття на цей раунд або до першої атаки, що його активує.",
-mod_a_2up_2m_n,Ворота Пітьми,
+Накладає прокляття на цей раунд або до першої атаки, що його активує.","The target steps onto the edge - not yet knowing it is already cursed.
+Applies a curse for this round or until the first attack that triggers it."
+mod_a_2up_2m_n,Ворота Пітьми,Gates of Darkness
 mod_a_2up_2m_d,"Прокляття розкриває шлях для темних сил.
 Накладає прокляття; до кінця раунду атаки та риси по цілі легше активуються
-(базові: 14–16, посилені: 17–18).",
-mod_a_2up_3b_n,Кайдани Тіней,
+(базові: 14–16, посилені: 17–18).","The curse opens a path for dark forces.
+Applies a curse; until the end of the round attacks and traits against the target activate more easily
+(base: 14-16, enhanced: 17-18)."
+mod_a_2up_3b_n,Кайдани Тіней,Fetters of Shadows
 mod_a_2up_3b_d,"Тінь торкається ніг і тримає.
-Накладає прокляття на цей раунд або до першої атаки, що його активує.",
-mod_a_2up_3m_n,Кайдани Погибелі,
+Накладає прокляття на цей раунд або до першої атаки, що його активує.","The shadow touches the feet and holds.
+Applies a curse for this round or until the first attack that triggers it."
+mod_a_2up_3m_n,Кайдани Погибелі,Fetters of Doom
 mod_a_2up_3m_d,"Тінь стискається в ланцюги.
-Накладає прокляття на цей раунд або до першої атаки, що його активує та блокує рух цілі до кінця раунду.",
-mod_a_2up_4b_n,Клеймо Німоти,
+Накладає прокляття на цей раунд або до першої атаки, що його активує та блокує рух цілі до кінця раунду.","The shadow tightens into chains.
+Applies a curse for this round or until the first attack that triggers it and blocks the target's movement until the end of the round."
+mod_a_2up_4b_n,Клеймо Німоти,Mark of Dumbness
 mod_a_2up_4b_d,"Ціль мітять мовчанням перед ударом.
-Накладає прокляття на цей раунд або до першої атаки, що його активує.",
-mod_a_2up_4m_n,Гробова Тиша,
+Накладає прокляття на цей раунд або до першої атаки, що його активує.","The target is marked with silence before the strike.
+Applies a curse for this round or until the first attack that triggers it."
+mod_a_2up_4m_n,Гробова Тиша,Grave Silence
 mod_a_2up_4m_d,"Мовчить навіть намір.
-Накладає прокляття на цей раунд або до першої атаки, що його активує та блокує атаки цілі до кінця раунду.",
-mod_a_2up_5b_n,Кара Проклятих,
+Накладає прокляття на цей раунд або до першої атаки, що його активує та блокує атаки цілі до кінця раунду.","Even intent falls silent.
+Applies a curse for this round or until the first attack that triggers it and blocks the target's attacks until the end of the round."
+mod_a_2up_5b_n,Кара Проклятих,Scourge of the Cursed
 mod_a_2up_5b_d,"Прокляття стискає часову петлю.
-При атаці по проклятій цілі її дії зменшуються до 1 до кінця раунду.",
-mod_a_2up_5m_n,Смертельна Агонія,
+При атаці по проклятій цілі її дії зменшуються до 1 до кінця раунду.","The curse tightens the time loop.
+When attacking a cursed target, its actions are reduced to 1 until the end of the round."
+mod_a_2up_5m_n,Смертельна Агонія,Deadly Agony
 mod_a_2up_5m_d,"Прокляття стає вироком.
-При атаці по проклятій цілі її дії зменшуються до 1 до кінця раунду, а атаки по ній отримують +1 до активації рис",
-mod_a_2up_6b_n,Криваві Сутінки,
+При атаці по проклятій цілі її дії зменшуються до 1 до кінця раунду, а атаки по ній отримують +1 до активації рис","The curse becomes a sentence.
+When attacking a cursed target, its actions are reduced to 1 until the end of the round, and attacks against it get +1 to trait activation."
+mod_a_2up_6b_n,Криваві Сутінки,Bloody Twilight
 mod_a_2up_6b_d,"Над ціллю сходить темний захід.
-Накладає прокляття на цей раунд або до першої атаки, що його активує.",
-mod_a_2up_6m_n,Прокляття Кривавої Зорі,
+Накладає прокляття на цей раунд або до першої атаки, що його активує.","A dark sunset rises over the target.
+Applies a curse for this round or until the first attack that triggers it."
+mod_a_2up_6m_n,Прокляття Кривавої Зорі,Curse of the Bloody Dawn
 mod_a_2up_6m_d,"Зоря не дозволяє вбити швидко — лише болісно.
-Накладає прокляття на цей раунд або до першої атаки, що його активує, також атаки по цілі не можуть бути критичними,
-але з шансом 4–6 (1d6) завжди наносять +1 Impact.",
-mod_a_2up_7b_n,Ерозія Духу,
+Накладає прокляття на цей раунд або до першої атаки, що його активує, також атаки по цілі не можуть бути критичними, але з шансом 4–6 (1d6) завжди наносять +1 Impact.","The dawn does not allow a quick kill - only a painful one.
+Applies a curse for this round or until the first attack that triggers it, also attacks against the target cannot be critical, but with a 4-6 chance (1d6) always deal +1 Impact."
+mod_a_2up_7b_n,Ерозія Духу,Erosion of Spirit
 mod_a_2up_7b_d,"Коли напарник на межі — дух ворога тріскається.
 Якщо парний персонаж у критичному стані, кидається 1d6:
 1–4: ціль отримує –1 до захисту (на раунд)
-5–6: ціль отримує –2 до захисту (на раунд)",
-mod_a_2up_7m_n,Печать Погибелі,
+5–6: ціль отримує –2 до захисту (на раунд)","When a partner is on the edge - the enemy's spirit cracks.
+If the paired character is in critical condition, roll 1d6:
+1-4: target gets -1 to defense (for a round)
+5-6: target gets -2 to defense (for a round)."
+mod_a_2up_7m_n,Печать Погибелі,Seal of Doom
 mod_a_2up_7m_d,"Тріщина стає раною.
 Якщо парний персонаж у критичному стані, кидається 1d6:
 1–2: ціль отримує –1 до захисту (на раунд)
 3–5: ціль отримує –2 до захисту (на раунд)
-6: ціль додатково отримує +1 Impact.",
-mod_a_2up_8b_n,Печать Оберненої Люті,
+6: ціль додатково отримує +1 Impact.","The crack becomes a wound.
+If the paired character is in critical condition, roll 1d6:
+1-2: target gets -1 to defense (for a round)
+3-5: target gets -2 to defense (for a round)
+6: target additionally takes +1 Impact."
+mod_a_2up_8b_n,Печать Оберненої Люті,Seal of Inverted Fury
 mod_a_2up_8b_d,"Лють обертається проти того, хто її носить.
 Якщо парний персонаж у критичному стані, кидається 1d6:
 1–4: ціль отримує –1 до атаки (на раунд)
-5–6: ціль отримує –2 до атаки (на раунд)",
-mod_a_2up_8m_n,Егіда Пустоти,
+5–6: ціль отримує –2 до атаки (на раунд)","Fury turns against the one who bears it.
+If the paired character is in critical condition, roll 1d6:
+1-4: target gets -1 to attack (for a round)
+5-6: target gets -2 to attack (for a round)."
+mod_a_2up_8m_n,Егіда Пустоти,Aegis of Void
 mod_a_2up_8m_d,"Лють гасне — залишається захист.
 Якщо парний персонаж у критичному стані, кидається 1d6:
 1–2: ціль отримує –1 до атаки (на раунд)
 3–5: ціль отримує –2 до атаки (на раунд)
-6: створюється щит, що блокує 1 Impact цього раунду.",
-mod_a_2up_9b_n,Мітка,
+6: створюється щит, що блокує 1 Impact цього раунду.","Fury fades - only defense remains.
+If the paired character is in critical condition, roll 1d6:
+1-2: target gets -1 to attack (for a round)
+3-5: target gets -2 to attack (for a round)
+6: a shield is created that blocks 1 Impact this round."
+mod_a_2up_9b_n,Мітка,Mark
 mod_a_2up_9b_d,"Око вже наведене.
-Наступна атака по цілі має +1 переваги.",
-mod_a_2up_9m_n,Кривава Мітка,
+Наступна атака по цілі має +1 переваги.","The eye is already aimed.
+The next attack against the target has +1 advantage."
+mod_a_2up_9m_n,Кривава Мітка,Bloody Mark
 mod_a_2up_9m_d,"Мітка, що вимагає крові.
-Наступна атака по цілі має +2 переваги.",
-mod_a_2up_10b_n,Печать Крові,
+Наступна атака по цілі має +2 переваги.","A mark that demands blood.
+The next attack against the target has +2 advantage."
+mod_a_2up_10b_n,Печать Крові,Seal of Blood
 mod_a_2up_10b_d,"Кров відкриває шлях для сильнішого удару.
-Наступна атака по цілі завдає +1 Impact.",
-mod_a_2up_10m_n,Печать Смерті,
+Наступна атака по цілі завдає +1 Impact.","Blood opens the way for a stronger strike.
+The next attack against the target deals +1 Impact."
+mod_a_2up_10m_n,Печать Смерті,Seal of Death
 mod_a_2up_10m_d,"Кров більше не зупиняє втрати.
-До кінця раунду ціль отримує +1 Impact від кожної атаки",
-mod_a_2up_11b_n,Розрив Аури,
+До кінця раунду ціль отримує +1 Impact від кожної атаки","Blood no longer stops the losses.
+Until the end of the round, the target takes +1 Impact from each attack."
+mod_a_2up_11b_n,Розрив Аури,Aura Rupture
 mod_a_2up_11b_d,"Захисна оболонка тріскається.
-Вимикає всі пасивні риси цілі.",
-mod_a_2up_11m_n,Ефірна Буря,
+Вимикає всі пасивні риси цілі.","The protective shell cracks.
+Disables all passive traits of the target."
+mod_a_2up_11m_n,Ефірна Буря,Ethereal Storm
 mod_a_2up_11m_d,"Поле стає ворожим саме по собі.
-Вимикає пасивні риси та бонуси клітинок.",
-mod_a_2up_12b_n,Печать Знедоленого,
+Вимикає пасивні риси та бонуси клітинок.","The field becomes hostile on its own.
+Disables passive traits and tile bonuses."
+mod_a_2up_12b_n,Печать Знедоленого,Seal of the Forsaken
 mod_a_2up_12b_d,"Ціль позначена для неминучого удару.
-Накладає прокляття на цей раунд або до першої атаки, що його активує.",
-mod_a_2up_12m_n,Мітка Неминучості,
+Накладає прокляття на цей раунд або до першої атаки, що його активує.","The target is marked for an inevitable strike.
+Applies a curse for this round or until the first attack that triggers it."
+mod_a_2up_12m_n,Мітка Неминучості,Mark of Inevitability
 mod_a_2up_12m_d,"Втекти неможливо.
-Накладає прокляття на цей раунд або до першої атаки, що його активує, також одна наступна атака по цілі автоматично влучає.",
-mod_a_2up_13b_n,Обман Фортуни,
+Накладає прокляття на цей раунд або до першої атаки, що його активує, також одна наступна атака по цілі автоматично влучає.","Escape is impossible.
+Applies a curse for this round or until the first attack that triggers it, also one next attack against the target automatically hits."
+mod_a_2up_13b_n,Обман Фортуни,Fortune's Deceit
 mod_a_2up_13b_d,"Фортуна відвертається.
-Накладає прокляття на цей раунд або до першої атаки, що його активує.",
-mod_a_2up_13m_n,Лють Долі,
+Накладає прокляття на цей раунд або до першої атаки, що його активує.","Fortune turns away.
+Applies a curse for this round or until the first attack that triggers it."
+mod_a_2up_13m_n,Лють Долі,Wrath of Fate
 mod_a_2up_13m_d,"Доля підставляє ніж.
-Накладає прокляття на цей раунд або до першої атаки, що його активує та перекид найкращого кубика цілі при її атаці
-(береться гірше значення).",
-mod_a_2up_14b_n,Виклик Року,
+Накладає прокляття на цей раунд або до першої атаки, що його активує та перекид найкращого кубика цілі при її атаці (береться гірше значення).","Fate offers the knife.
+Applies a curse for this round or until the first attack that triggers it and forces the target to reroll its best die on its attack (taking the worse result)."
+mod_a_2up_14b_n,Виклик Року,Challenge of Fate
 mod_a_2up_14b_d,"Ціль приймає виклик, не знаючи ціни.
-Накладає прокляття на цей раунд або до першої атаки, що його активує.",
-mod_a_2up_14m_n,Клятва Фатуму,
+Накладає прокляття на цей раунд або до першої атаки, що його активує.","The target accepts the challenge, not knowing the price.
+Applies a curse for this round or until the first attack that triggers it."
+mod_a_2up_14m_n,Клятва Фатуму,Oath of Fatality
 mod_a_2up_14m_d,"Навіть захист зраджує.
-Накладає прокляття на цей раунд або до першої атаки, що його активує та перекид найгіршого кубика цілі при атаці по ній
-(береться краще значення).",
-mod_a_2up_15b_n,Тінь Безсилля,
+Накладає прокляття на цей раунд або до першої атаки, що його активує та перекид найгіршого кубика цілі при атаці по ній (береться краще значення).","Even defense betrays.
+Applies a curse for this round or until the first attack that triggers it and forces the reroll of the worst die when attacking the target (taking the better result)."
+mod_a_2up_15b_n,Тінь Безсилля,Shadow of Powerlessness
 mod_a_2up_15b_d,"Сила тане у тіні.
-Накладає прокляття на цей раунд або до першої атаки, що його активує.",
-mod_a_2up_15m_n,Печать Зламаного Духу,
+Накладає прокляття на цей раунд або до першої атаки, що його активує.","Strength fades into shadow.
+Applies a curse for this round or until the first attack that triggers it."
+mod_a_2up_15m_n,Печать Зламаного Духу,Seal of Broken Spirit
 mod_a_2up_15m_d,"Воля тріскається.
-Накладає прокляття на цей раунд або до першої атаки, що його активує, також –1 до переваги атаки цілі.",
-mod_a_2up_16b_n,Шепіт Втрати,
+Накладає прокляття на цей раунд або до першої атаки, що його активує, також –1 до переваги атаки цілі.","The will cracks.
+Applies a curse for this round or until the first attack that triggers it, also -1 to the target's attack advantage."
+mod_a_2up_16b_n,Шепіт Втрати,Whisper of Loss
 mod_a_2up_16b_d,"Тіло ще тримається — захист ні.
-Накладає прокляття на цей раунд або до першої атаки, що його активує.",
-mod_a_2up_16m_n,Мітка Коррозії,
+Накладає прокляття на цей раунд або до першої атаки, що його активує.","The body still holds - the defense does not.
+Applies a curse for this round or until the first attack that triggers it."
+mod_a_2up_16m_n,Мітка Коррозії,Mark of Corrosion
 mod_a_2up_16m_d,"Захист роз’їдає зсередини.
-Накладає прокляття на цей раунд або до першої атаки, що його активує, також –1 до переваги захисту цілі.",
-mod_a_2up_17b_n,Крок у Безодню,
+Накладає прокляття на цей раунд або до першої атаки, що його активує, також –1 до переваги захисту цілі.","The defense is eaten from within.
+Applies a curse for this round or until the first attack that triggers it, also -1 to the target's defense advantage."
+mod_a_2up_17b_n,Крок у Безодню,Step into the Abyss
 mod_a_2up_17b_d,"Ціль зникає з поля бою.
-Ціль негайно виконує заміну, стан здоров’я зберігається.",
-mod_a_2up_17m_n,Вигнання в Тінь,
+Ціль негайно виконує заміну, стан здоров’я зберігається.","The target vanishes from the battlefield.
+The target immediately swaps characters, health state is preserved."
+mod_a_2up_17m_n,Вигнання в Тінь,Exile into Shadow
 mod_a_2up_17m_d,"Повернення — з вадами.
-Ціль негайно виконує заміну, стан здоров’я зберігається, а новий активний персонаж не може атакувати і має –1 до захисту.",
-mod_a_2up_18b_n,Фазовий Зсув,
+Ціль негайно виконує заміну, стан здоров’я зберігається, а новий активний персонаж не може атакувати і має –1 до захисту.","The return has flaws.
+The target immediately swaps characters, health state is preserved, and the new active character cannot attack and has -1 to defense."
+mod_a_2up_18b_n,Фазовий Зсув,Phase Shift
 mod_a_2up_18b_d,"Примусова зміна фази.
-Ціль негайно виконує заміну, стан здоров’я зберігається.",
-mod_a_2up_18m_n,Паралізуючі Кайдани,
+Ціль негайно виконує заміну, стан здоров’я зберігається.","Forced phase change.
+The target immediately swaps characters, health state is preserved."
+mod_a_2up_18m_n,Паралізуючі Кайдани,Paralyzing Fetters
 mod_a_2up_18m_d,"Заміна без свободи.
-Ціль негайно виконує заміну, стан здоров’я зберігається, а новий активний персонаж не може рухатись і має –1 до атаки.",
-mod_a_2up_19b_n,Чумна Скверна,
+Ціль негайно виконує заміну, стан здоров’я зберігається, а новий активний персонаж не може рухатись і має –1 до атаки.","A swap without freedom.
+The target immediately swaps characters, health state is preserved, and the new active character cannot move and has -1 to attack."
+mod_a_2up_19b_n,Чумна Скверна,Plague Defilement
 mod_a_2up_19b_d,"Земля стає ворогом.
-Клітинка під ціллю + 1 сусідня стають отруєними, персонаж на них отримує 1 Impact щораунду, існує така клітинка до 6 раундів зі спадним шансом зникнення.",
-mod_a_2up_19m_n,Ареал Агонії,
+Клітинка під ціллю + 1 сусідня стають отруєними, персонаж на них отримує 1 Impact щораунду, існує така клітинка до 6 раундів зі спадним шансом зникнення.","The earth becomes an enemy.
+The tile under the target + 1 adjacent tile become poisoned, a character on them takes 1 Impact each round, such a tile exists for up to 6 rounds with a decreasing chance to disappear."
+mod_a_2up_19m_n,Ареал Агонії,Area of Agony
 mod_a_2up_19m_d,"Поле смерті розростається.
-Клітинка під ціллю + 2 сусідні стають отруєними, персонаж на них отримує 1 Impact щораунду та обмеження дій до 1, існує така клітинка до 6 раундів зі спадним шансом зникнення.",
-mod_a_2up_20b_n,Загартована Плоть,
+Клітинка під ціллю + 2 сусідні стають отруєними, персонаж на них отримує 1 Impact щораунду та обмеження дій до 1, існує така клітинка до 6 раундів зі спадним шансом зникнення.","The field of death expands.
+The tile under the target + 2 adjacent tiles become poisoned, a character on them takes 1 Impact each round and has actions limited to 1, such a tile exists for up to 6 rounds with a decreasing chance to disappear."
+mod_a_2up_20b_n,Загартована Плоть,Tempered Flesh
 mod_a_2up_20b_d,"Тіло ігнорує біль.
-До кінця раунду ігнорує всі –1 до захисту від негативних станів.",
-mod_a_2up_20m_n,Непохитний Дух,
+До кінця раунду ігнорує всі –1 до захисту від негативних станів.","The body ignores pain.
+Ignores all -1 to defense from negative conditions until the end of the round."
+mod_a_2up_20m_n,Непохитний Дух,Unbending Spirit
 mod_a_2up_20m_d,"Навіть старі рани зникають.
-До кінця раунду ігнорує всі –1 до захисту від негативних станів. а також, за наявності, знімає –1 до захисту від стану на завжди.",
-mod_a_1up_1b_n,Тавро Загибелі,
+До кінця раунду ігнорує всі –1 до захисту від негативних станів. а також, за наявності, знімає –1 до захисту від стану на завжди.","Even old wounds disappear.
+Ignores all -1 to defense from negative conditions until the end of the round, and also, if present, permanently removes -1 to defense from a condition."
+mod_a_1up_1b_n,Тавро Загибелі,Brand of Doom
 mod_a_1up_1b_d,"Проклята ціль оступається в момент удару.
-При атаці по проклятій цілі один раз за раунд відбувається перекид найгіршого кубика (береться більше значення).",
-mod_a_1up_1m_n,Окови Смерті,
+При атаці по проклятій цілі один раз за раунд відбувається перекид найгіршого кубика (береться більше значення).","The cursed target stumbles at the moment of the strike.
+When attacking a cursed target, once per round, the worst die is rerolled (taking the higher value)."
+mod_a_1up_1m_n,Окови Смерті,Fetters of Death
 mod_a_1up_1m_d,"Чужа загибель живить виконавця.
-При атаці по проклятій цілі один раз за раунд відбувається перекид найгіршого кубика (береться більше значення), а ви лікуєтесь на 1 Impact.",
-mod_a_1up_2b_n,Погибель Духу,
+При атаці по проклятій цілі один раз за раунд відбувається перекид найгіршого кубика (береться більше значення), а ви лікуєтесь на 1 Impact.","Another's demise feeds the executor.
+When attacking a cursed target, once per round, the worst die is rerolled (taking the higher value), and you heal 1 Impact."
+mod_a_1up_2b_n,Погибель Духу,Doom of Spirit
 mod_a_1up_2b_d,"Прокляття ламає волю до спротиву.
-При атаці по проклятій цілі вона отримує –2 до переваги атаки до кінця раунду.",
-mod_a_1up_2m_n,Печать Страждання,
+При атаці по проклятій цілі вона отримує –2 до переваги атаки до кінця раунду.","The curse breaks the will to resist.
+When attacking a cursed target, it gets -2 to attack advantage until the end of the round."
+mod_a_1up_2m_n,Печать Страждання,Seal of Suffering
 mod_a_1up_2m_d,"Страждання точить і удар, і захист.
-При атаці по проклятій цілі вона отримує –2 до переваги атаки та –1 до переваги захисту цілі до кінця раунду.",
-mod_a_1up_3b_n,Прокляття Болю,
+При атаці по проклятій цілі вона отримує –2 до переваги атаки та –1 до переваги захисту цілі до кінця раунду.","Suffering gnaws at both strike and defense.
+When attacking a cursed target, it gets -2 to attack advantage and -1 to defense advantage until the end of the round."
+mod_a_1up_3b_n,Прокляття Болю,Curse of Pain
 mod_a_1up_3b_d,"Захист цілі тріскається від болю.
-При атаці по проклятій цілі вона отримує –2 до переваги захисту до кінця раунду.",
-mod_a_1up_3m_n,Стигма Погибелі,
+При атаці по проклятій цілі вона отримує –2 до переваги захисту до кінця раунду.","The target's defense cracks from pain.
+When attacking a cursed target, it gets -2 to defense advantage until the end of the round."
+mod_a_1up_3m_n,Стигма Погибелі,Stigma of Doom
 mod_a_1up_3m_d,"Біль залишає клеймо на кожному русі.
-При атаці по проклятій цілі вона отримує –2 до переваги захисту та –1 до переваги атаки цілі до кінця раунду.",
-mod_a_1up_4b_n,Клемо Злого Року,
+При атаці по проклятій цілі вона отримує –2 до переваги захисту та –1 до переваги атаки цілі до кінця раунду.","Pain leaves a mark on every move.
+When attacking a cursed target, it gets -2 to defense advantage and -1 to attack advantage until the end of the round."
+mod_a_1up_4b_n,Клемо Злого Року,Mark of Evil Fate
 mod_a_1up_4b_d,"Фортуна відвертається від проклятого.
-Якщо ціль була проклята, то при подальшій атаці, протягом цього рацнда — перекид її найкращого кубика при одній атаці (береться гірший результат).",
-mod_a_1up_4m_n,Вампірський Ритуал,
+Якщо ціль була проклята, то при подальшій атаці, протягом цього рацнда — перекид її найкращого кубика при одній атаці (береться гірший результат).","Fortune turns away from the cursed.
+If the target was cursed, then on a subsequent attack this round - reroll its best die on one attack (taking the worse result)."
+mod_a_1up_4m_n,Вампірський Ритуал,Vampiric Ritual
 mod_a_1up_4m_d,"Чужа невдача стає вашою кров’ю.
-Якщо ціль була проклята, то ви лікуєтесь на 1 Impact, а при подальшій атаці, протягом цього рацнда — перекид її найкращого кубика при одній атаці (береться гірший результат).",
-mod_a_1up_5b_n,Клеймо Паралічу,
+Якщо ціль була проклята, то ви лікуєтесь на 1 Impact, а при подальшій атаці, протягом цього рацнда — перекид її найкращого кубика при одній атаці (береться гірший результат).","Another's misfortune becomes your blood.
+If the target was cursed, you heal 1 Impact, and on a subsequent attack this round - reroll its best die on one attack (taking the worse result)."
+mod_a_1up_5b_n,Клеймо Паралічу,Mark of Paralysis
 mod_a_1up_5b_d,"Тіло пам’ятає страх руху.
-Якщо ціль намагається рухатись наступного ходу, протягом цього раунду, кидається 1 кубик і на 1–3 рух скасовується, дія втрачена.",
-mod_a_1up_5m_n,Хватка Безодні,
+Якщо ціль намагається рухатись наступного ходу, протягом цього раунду, кидається 1 кубик і на 1–3 рух скасовується, дія втрачена.","The body remembers the fear of movement.
+If the target attempts to move next turn, during this round, roll 1 die and on 1-3 the movement is canceled, the action is lost."
+mod_a_1up_5m_n,Хватка Безодні,Abyss's Grasp
 mod_a_1up_5m_d,"Безодня тримає і рве.
 Якщо ціль намагається рухатись наступного ходу, протягом цього раунду, кидається 1 кубик і на:
 1–4 рух скасовується, дія втрачена;
-1–2 ціль додатково ціль отримує +1 Impact від кожної атаки по ній до кінця раунду.",
-mod_a_1up_6b_n,Шепіт Страху,
+1–2 ціль додатково ціль отримує +1 Impact від кожної атаки по ній до кінця раунду.","The Abyss holds and tears.
+If the target attempts to move next turn, during this round, roll 1 die and on:
+1-4 movement is canceled, the action is lost;
+1-2 the target additionally takes +1 Impact from each attack against it until the end of the round."
+mod_a_1up_6b_n,Шепіт Страху,Whisper of Fear
 mod_a_1up_6b_d,"Рука тремтить перед ударом.
-Якщо ціль намагається атакувати наступного ходу, протягом цього раунду, кидається 1 кубик і на 1–3 атака скасовується, дія втрачена.",
-mod_a_1up_6m_n,Ментальний Бар'єр,
+Якщо ціль намагається атакувати наступного ходу, протягом цього раунду, кидається 1 кубик і на 1–3 атака скасовується, дія втрачена.","The hand trembles before the strike.
+If the target attempts to attack next turn, during this round, roll 1 die and on 1-3 the attack is canceled, the action is lost."
+mod_a_1up_6m_n,Ментальний Бар'єр,Mental Barrier
 mod_a_1up_6m_d,"Страх стає стіною.
 Якщо ціль намагається атакувати наступного ходу, протягом цього раунду, кидається 1 кубик і на:
 1–4 атака скасовується, дія втрачена;
-1–2 ціль додатково ціль отримує +1 Impact від кожної атаки по ній до кінця раунду.",
-mod_a_1up_7b_n,Пульс Кровної Опіки,
+1–2 ціль додатково ціль отримує +1 Impact від кожної атаки по ній до кінця раунду.","Fear becomes a wall.
+If the target attempts to attack next turn, during this round, roll 1 die and on:
+1-4 the attack is canceled, the action is lost;
+1-2 the target additionally takes +1 Impact from each attack against it until the end of the round."
+mod_a_1up_7b_n,Пульс Кровної Опіки,Pulse of Bloodguard
 mod_a_1up_7b_d,"Кров знаходить того, хто найближчий до смерті.
-Лікування 1 Impact вам або союзному активному персонажу з найменшим здоров’ям (рандом при рівності).",
-mod_a_1up_7m_n,Криваве Причащання,
+Лікування 1 Impact вам або союзному активному персонажу з найменшим здоров’ям (рандом при рівності).","Blood finds the one closest to death.
+Heal 1 Impact to yourself or an allied active character with the lowest health (random if equal)."
+mod_a_1up_7m_n,Криваве Причащання,Blood Communion
 mod_a_1up_7m_d,"Кров стає щитом.
-Лікування 1 Impact вам або союзному активному персонажу з найменшим здоров’ям (рандом при рівності), а також щит на 1 Impact, який не впливає на стани та переваги.",
-mod_a_1up_8b_n,Алхімічна Отрута,
+Лікування 1 Impact вам або союзному активному персонажу з найменшим здоров’ям (рандом при рівності), а також щит на 1 Impact, який не впливає на стани та переваги.","Blood becomes a shield.
+Heal 1 Impact to yourself or an allied active character with the lowest health (random if equal), and also gain a 1 Impact shield, which does not affect conditions or advantages."
+mod_a_1up_8b_n,Алхімічна Отрута,Alchemical Poison
 mod_a_1up_8b_d,"Реакції глухнуть у венах.
-Активні риси цілі не можуть активуватись до кінця раунду.",
-mod_a_1up_8m_n,Обман Долі,
+Активні риси цілі не можуть активуватись до кінця раунду.","Reactions grow silent in the veins.
+The target's active traits cannot activate until the end of the round."
+mod_a_1up_8m_n,Обман Долі,Fate's Deceit
 mod_a_1up_8m_d,"Ви крадете шанс.
-Активні риси цілі не можуть активуватись до кінця раунду, крім того ви отримуєте випадкову пасивну рису цілі до кінця раунду (якщо є).",
-mod_a_1up_9b_n,Знедолення,
+Активні риси цілі не можуть активуватись до кінця раунду, крім того ви отримуєте випадкову пасивну рису цілі до кінця раунду (якщо є).","You steal a chance.
+The target's active traits cannot activate until the end of the round, moreover you gain a random passive trait of the target until the end of the round (if any)."
+mod_a_1up_9b_n,Знедолення,Disadvantage
 mod_a_1up_9b_d,"Удар зривається в останню мить.
-Перекид найкращого кубика цілі при першій її атаці за цей раунд (береться гірше).",
-mod_a_1up_9m_n,Прокляття Духа,
+Перекид найкращого кубика цілі при першій її атаці за цей раунд (береться гірше).","The blow falters at the last moment.
+Reroll the target's best die on its first attack this round (take the worse)."
+mod_a_1up_9m_n,Прокляття Духа,Curse of Spirit
 mod_a_1up_9m_d,"Падіння відкриває шлях для кари.
-Перекид найкращого кубика цілі при першій її атаці за цей раунд (береться гірше) та наступна атака по цілі має підвищений шанс активації активних рис.",
-mod_a_1up_10b_n,Жертва Року,
+Перекид найкращого кубика цілі при першій її атаці за цей раунд (береться гірше) та наступна атака по цілі має підвищений шанс активації активних рис.","A fall opens the way for punishment.
+Reroll the target's best die on its first attack this round (take the worse) and the next attack against the target has an increased chance to activate active traits."
+mod_a_1up_10b_n,Жертва Року,Sacrifice to Fate
 mod_a_1up_10b_d,"Навіть влучний удар тремтить.
-Перекид найгіршого кубика при першій атаці по цілі за цей раунд (береться краще).",
-mod_a_1up_10m_n,Каскад Страждань,
+Перекид найгіршого кубика при першій атаці по цілі за цей раунд (береться краще).","Even a precise strike trembles.
+Reroll the worst die on the first attack against the target this round (take the better)."
+mod_a_1up_10m_n,Каскад Страждань,Cascade of Suffering
 mod_a_1up_10m_d,"Страждання множить шанс.
-Перекид найгіршого кубика при першій атаці по цілі за цей раунд (береться краще) та підвищений шанс активації активних рис при наступній атаці.",
-mod_a_1up_11b_n,Застигла Плоть,
-mod_a_1up_11b_d,,
-mod_a_1up_11m_n,Лід у Жилах,
-mod_a_1up_11m_d,,
-mod_a_1up_12b_n,Печать Тиші,
-mod_a_1up_12b_d,,
-mod_a_1up_12m_n,Прокляття Ночі,
-mod_a_1up_12m_d,,
-mod_a_1up_13b_n,Мор,
-mod_a_1up_13b_d,,
-mod_a_1up_13m_n,Чума,
-mod_a_1up_13m_d,,
-mod_a_1up_14b_n,Стигла Кров,
-mod_a_1up_14b_d,,
-mod_a_1up_14m_n,Крижані Кайдани,
-mod_a_1up_14m_d,,
-mod_a_1up_15b_n,Порча,
-mod_a_1up_15b_d,,
-mod_a_1up_15m_n,Смертельний Заговір,
-mod_a_1up_15m_d,,
-mod_a_1up_16b_n,Прокляття,
-mod_a_1up_16b_d,,
-mod_a_1up_16m_n,Смертельна Слабкість,
-mod_a_1up_16m_d,,
-mod_a_1up_17b_n,Темний Резонанс,
-mod_a_1up_17b_d,,
-mod_a_1up_17m_n,Кривавий Симбіоз,
-mod_a_1up_17m_d,,
-mod_a_1up_18b_n,Прокляття Рівноваги,
-mod_a_1up_18b_d,,
-mod_a_1up_18m_n,Руна Смерті,
-mod_a_1up_18m_d,,
-mod_a_1up_19b_n,Хаотичний Вплив,
-mod_a_1up_19b_d,,
-mod_a_1up_19m_n,Смертний Рок,
-mod_a_1up_19m_d,,
-mod_a_1up_20b_n,Раптовий Гамбіт,
-mod_a_1up_20b_d,,
-mod_a_1up_20m_n,Безжальний Натиск,
-mod_a_1up_20m_d,,
-mod_a_1up_21b_n,Дотик Тліну,
-mod_a_1up_21b_d,,
-mod_a_1up_21m_n,Ентропія Духу,
-mod_a_1up_21m_d,,
-mod_a_1up_22b_n,Вампіризм,
-mod_a_1up_22b_d,,
-mod_a_1up_22m_n,Пожирач Життя,
-mod_a_1up_22m_d,,
-mod_a_1up_23b_n,Сліпий Гнів,
-mod_a_1up_23b_d,,
-mod_a_1up_23m_n,Абсолютний Хаос,
-mod_a_1up_23m_d,,
-mod_a_1up_24b_n,Кривавий Контракт,
-mod_a_1up_24b_d,,
-mod_a_1up_24m_n,Фатальний Тріумф,
-mod_a_1up_24m_d,,
-mod_p_5up_1_n,Мстивий Оберіг,
-mod_p_5up_1_d,"Коли ваш резервний персонаж у критичному стані або комі, ви оточені відплатною печаттю.
-При кожній атаці по вас кидається 1d6:
+Перекид найгіршого кубика при першій атаці по цілі за цей раунд (береться краще) та підвищений шанс активації активних рис при наступній атаці.","Suffering multiplies the chance.
+Reroll the worst die on the first attack against the target this round (take the better) and increased chance to activate active traits on the next attack."
+mod_a_1up_11b_n,Застигла Плоть,Frozen Flesh
+mod_a_1up_11b_d,"М’язи не слухаються.
+Ціль отримує штраф –1 до атаки.","Muscles do not obey.
+The target gets a -1 penalty to attack."
+mod_a_1up_11m_n,Лід у Жилах,Ice in Veins
+mod_a_1up_11m_d,"Рух зупиняється остаточно.
+Ціль отримує штраф –1 до атаки та не може рухатись.","Movement stops completely.
+The target gets a -1 penalty to attack and cannot move."
+mod_a_1up_12b_n,Печать Тиші,Seal of Silence
+mod_a_1up_12b_d,"Захист слабшає в мовчанні.
+Ціль отримує штраф –1 до захисту.","Defense weakens in silence.
+The target gets a -1 penalty to defense."
+mod_a_1up_12m_n,Прокляття Ночі,Curse of Night
+mod_a_1up_12m_d,"Тиша ковтає удар.
+Ціль отримує штраф –1 до захисту та не може атакувати.","Silence swallows the strike.
+The target gets a -1 penalty to defense and cannot attack."
+mod_a_1up_13b_n,Мор,Pestilence
+mod_a_1up_13b_d,"Хвороба точить силу.
+Ціль отримує штраф –1 до атаки.","Disease gnaws at strength.
+The target gets a -1 penalty to attack."
+mod_a_1up_13m_n,Чума,Plague
+mod_a_1up_13m_d,"Слабкість відкриває шлях до кари.
+Ціль отримує штраф –1 до атаки, а наступна атака по цілі має підвищений шанс активації активних рис.","Weakness opens the way to punishment.
+The target gets a -1 penalty to attack, and the next attack against the target has an increased chance to activate active traits."
+mod_a_1up_14b_n,Стигла Кров,Congealed Blood
+mod_a_1up_14b_d,"Кров холоне — захист падає.
+Ціль отримує штраф –1 до захисту.","Blood grows cold - defense falls.
+The target gets a -1 penalty to defense."
+mod_a_1up_14m_n,Крижані Кайдани,Ice Shackles
+mod_a_1up_14m_d,"Холод фіксує жертву.
+Ціль отримує штраф –1 до захисту, а наступна атака по цілі має підвищений шанс активації активних рис.","The cold immobilizes the victim.
+The target gets a -1 penalty to defense, and the next attack against the target has an increased chance to activate active traits."
+mod_a_1up_15b_n,Порча,Blight
+mod_a_1up_15b_d,"Сила гниє.
+Ціль отримує штраф –1 до атаки.","Strength rots.
+The target gets a -1 penalty to attack."
+mod_a_1up_15m_n,Смертельний Заговір,Deadly Conspiracy
+mod_a_1up_15m_d,"Удар зламано повністю.
+Ціль отримує штраф –2 до атаки.","The strike is completely broken.
+The target gets a -2 penalty to attack."
+mod_a_1up_16b_n,Прокляття,Hex
+mod_a_1up_16b_d,"Захист тріскається.
+Ціль отримує штраф –1 до захисту.","The defense cracks.
+The target gets a -1 penalty to defense."
+mod_a_1up_16m_n,Смертельна Слабкість,Deadly Weakness
+mod_a_1up_16m_d,"Захист майже зникає.
+Ціль отримує штраф –2 до захисту.","The defense almost disappears.
+The target gets a -2 penalty to defense."
+mod_a_1up_17b_n,Темний Резонанс,Dark Resonance
+mod_a_1up_17b_d,"Удар відлунює не там, де чекають.
+При атаці кидається 1 кубик:
+1–3: шкода йде прихованому парному персонажу цілі
+4–6: ви лікуєтесь на 1 Impact","The strike echoes not where expected.
+When attacking, roll 1 die:
+1-3: damage goes to the target's hidden paired character
+4-6: you heal 1 Impact."
+mod_a_1up_17m_n,Кривавий Симбіоз,Bloody Symbiosis
+mod_a_1up_17m_d,"Біль ділиться навпіл.
+При атаці кидається 1 кубик:
+1–3: шкода йде прихованому парному персонажу цілі
+4–6: ви лікуєтесь на 1 Impact
+Крім того протягом цього раунду вся шкода по вам дублюється по зв’язаній цілі.","Pain is shared in half.
+When attacking, roll 1 die:
+1-3: damage goes to the target's hidden paired character
+4-6: you heal 1 Impact.
+Also, during this round all damage to you is duplicated onto the linked target."
+mod_a_1up_18b_n,Прокляття Рівноваги,Curse of Equilibrium
+mod_a_1up_18b_d,"Баланс зламано.
+Ціль отримує штраф –1 до переваги атаки і захисту цілі.","Balance is broken.
+The target gets a -1 penalty to attack and defense advantage."
+mod_a_1up_18m_n,Руна Смерті,Rune of Death
+mod_a_1up_18m_d,"Баланс знищено.
+Ціль отримує штраф –1 до переваги атаки і захисту цілі, крім того вимкнення всіх пасивних бонусів.","Balance is destroyed.
+The target gets a -1 penalty to attack and defense advantage, moreover all passive bonuses are disabled."
+mod_a_1up_19b_n,Хаотичний Вплив,Chaotic Influence
+mod_a_1up_19b_d,"Доля кидає вдруге.
+До кінця раунду, коли ворог атакуватиме, він перекидуватиме кубики (береться друге значення).","Fate rolls a second time.
+Until the end of the round, when an enemy attacks, they reroll the dice (taking the second value)."
+mod_a_1up_19m_n,Смертний Рок,Deadly Fate
+mod_a_1up_19m_d,"Другий шанс стає вироком.
+До кінця раунду, коли ворог атакуватиме, він перекидуватиме кубики (береться менше значення).","A second chance becomes a verdict.
+Until the end of the round, when an enemy attacks, they reroll the dice (taking the lower value)."
+mod_a_1up_20b_n,Раптовий Гамбіт,Sudden Gambit
+mod_a_1up_20b_d,"Хто перший — той ріже.
+В разі, якщо це перша дія в раунді, ціль отримує –1 до захисту.","Whoever is first - strikes.
+If this is the first action in the round, the target gets -1 to defense."
+mod_a_1up_20m_n,Безжальний Натиск,Ruthless Onslaught
+mod_a_1up_20m_d,"Перший удар рве глибше.
+В разі, якщо це перша дія в раунді, ціль отримує –1 до захисту, а при влучанні кидається ще 1 кубик і при 1–2: +1 Impact шкоди.","The first strike cuts deeper.
+If this is the first action in the round, the target gets -1 to defense, and on a hit roll another die and on 1-2: +1 Impact damage."
+mod_a_1up_21b_n,Дотик Тліну,Touch of Decay
+mod_a_1up_21b_d,"Ефект вирішує випадок.
+При атаці, додатково кидається кубик:
+1–2: нічого не відбувається
+3–4: ціль отримує штраф –2 до атаки
+5–6: ціль отримує штраф –2 до захисту","The effect decides the case.
+On attack, additionally roll a die:
+1-2: nothing happens
+3-4: target gets a -2 penalty to attack
+5-6: target gets a -2 penalty to defense."
+mod_a_1up_21m_n,Ентропія Духу,Entropy of Spirit
+mod_a_1up_21m_d,"Хаос розкривається повністю.
+При атаці, додатково кидається кубик:
+1: ваш персонаж лікується на 1 Impact
+2: ціль отримує додаткову шкоду 1 Impact
+3–4: ціль отримує штраф –2 до атаки
+5–6: ціль отримує штраф –2 до захисту","Chaos unfolds fully.
+On attack, additionally roll a die:
+1: your character heals 1 Impact
+2: target takes additional 1 Impact damage
+3-4: target gets a -2 penalty to attack
+5-6: target gets a -2 penalty to defense."
+mod_a_1up_22b_n,Вампіризм,Vampirism
+mod_a_1up_22b_d,"Кров повертається.
+При атаці ви відновлюєте 1 Impact.","Blood returns.
+On attack, you heal 1 Impact."
+mod_a_1up_22m_n,Пожирач Життя,Life Devourer
+mod_a_1up_22m_d,"Життя поглинається жадібно.
+При атаці ви відновлюєте 2 Impact та можити отримати щит, якщо буде надлишкове лікування.","Life is consumed greedily.
+On attack, you heal 2 Impact and may gain a shield if there is excess healing."
+mod_a_1up_23b_n,Сліпий Гнів,Blind Fury
+mod_a_1up_23b_d,"Лють не завжди влучає.
+При атаці кидається кубик:
+1–3: шкоди немає
+4–6: додатковий +1 Impact","Fury does not always hit.
+On attack, roll a die:
+1-3: no damage
+4-6: additional +1 Impact."
+mod_a_1up_23m_n,Абсолютний Хаос,Absolute Chaos
+mod_a_1up_23m_d,"Лють спотворює все.
+При атаці ціль отримує штраф –1 до атаки і захисту, а також кидається кубик:
+1–2: шкоди немає
+3-4: додатковий +1 Impact
+5-6: додатковий +2 Impact","Fury distorts everything.
+On attack, the target gets -1 to attack and defense, and also roll a die:
+1-2: no damage
+3-4: additional +1 Impact
+5-6: additional +2 Impact."
+mod_a_1up_24b_n,Кривавий Контракт,Bloody Contract
+mod_a_1up_24b_d,"Кров вимагає плату.
+При атаці кидається кубик:
+1–3: ви отримуєте 1 Impact
+4–6: ціль отримує +1 Impact","Blood demands payment.
+On attack, roll a die:
+1-3: you take 1 Impact
+4-6: target takes +1 Impact."
+mod_a_1up_24m_n,Фатальний Тріумф,Fatal Triumph
+mod_a_1up_24m_d,"Контракт майже завжди вигідний.
+При атаці кидається кубик:
+1-2: ви отримуєте 1 Impact
+3-4: ціль отримує +1 Impact
+5-6: ціль отримує +2 Impact","The contract is almost always profitable.
+On attack, roll a die:
+1-2: you take 1 Impact
+3-4: target takes +1 Impact
+5-6: target takes +2 Impact."
+mod_p_5up_1_n,Мстивий Оберіг,Vengeful Talisman
+mod_p_5up_1_d,"Біль резервного породжує проклятий щит: він гасить удари, віддзеркалює шкоду, а інколи зв’язує ворога з вами спільною кров’ю.
+Коли ваш резервний персонаж у критичному стані або комі, ви оточені відплатною печаттю.
+При кожній атаці по вас кидається один кубик:
 1–3 — отримуєте на 1 Impact менше;
 4–5 — шкода віддзеркалюється назад атакуючому з тим самим результатом кидка;
-6 — ви пов’язуєтесь з атакуючим, і до кінця раунду вся шкода по вам автоматично дублюється по ньому.",
-mod_p_5up_2_n,Симбіоз Душ,
-mod_p_5up_2_d,"Поки резервний персонаж неушкоджений, ви отримуєте +1 до атаки й захисту.
+6 — ви пов’язуєтесь з атакуючим, і до кінця раунду вся шкода по вам автоматично дублюється по ньому.","The reserve's pain spawns a cursed shield: it dampens blows, reflects damage, and sometimes binds the enemy to you with shared blood.
+When your reserve character is in critical condition or coma, you are surrounded by a retaliatory seal.
+On each attack against you, roll one die:
+1–3 — you take 1 less Impact;
+4–5 — the damage is reflected back at the attacker with the same roll result;
+6 — you become linked with the attacker, and until the end of the round all damage to you is automatically duplicated onto them."
+mod_p_5up_2_n,Симбіоз Душ,Symbiosis of Souls
+mod_p_5up_2_d,"Пара живе як єдине тіло: сила і захист зростають разом, смерть переноситься, а вторгнення карається контрударом.
+Поки резервний персонаж неушкоджений, ви отримуєте +1 до атаки й захисту.
 Якщо ж активний персонаж мав би загинути або впасти в кому — він лікує 1 Impact, а всю цю шкоду замість нього приймає резервний, який замінює активного, роблячи таким чином безжкоштовний обмін.
-Коли резервний персонаж у критичному стані, будь-який ворог, що входить у його зону, ризикує контратакою (2d6 на 10–12).",
-mod_p_5up_3_n,Пульс Розділеної Долі,
-mod_p_5up_3_d,"Стан резервного персонажа змінює сам ритм бою:
-Повне здоров’я — на початку раунду 1d6, на 1–3 активний персонаж лікує 1 Impact.
-Легке поранення / поранення — на початку раунду 1d6, на 1–2 створюється щит, що ігнорує 1 Impact від першої атаки цього раунду.
-Критичний стан або кома — при атаці по резервному 1d6, на 1–3 та сама атака з тим самим кидком повертається по атакуючому.",
-mod_p_5up_4_n,Перст Долі,
-mod_p_5up_4_d,"Ви слабші за формою, але недосяжні для випадку: –1 до атаки й захисту,
-затім кожна ваша атака кидається двічі й бере кращий результат,
-а кожна атака по вам — двічі й бере гірший.",
-mod_p_4up_1_n,Егіда Відчаю,
-mod_p_4up_1_d,"Коли резервний персонаж у критичному стані, ви отримуєте щит:
-при отриманні шкоди 1d6, на 1–3 блокується 1 Impact.",
-mod_p_4up_2_n,Ритуаліст,
-mod_p_4up_2_d,"Активна клітинка ніколи не дає вам одного дару — ви отримуєте одразу два різні бонуси, доступні цій клітинці.",
-mod_p_4up_3_n,Регенерація,
-mod_p_4up_3_d,"На початку кожного раунду кидається 1d6:
+Коли резервний персонаж у критичному стані, будь-який ворог, що входить у його зону, ризикує контратакою (2d6 на 10–12).","The pair lives as a single body: strength and defense grow together, death is transferred, and intrusion is punished with a counterstrike.
+While the reserve character is unharmed, you get +1 to attack and defense.
+If the active character would die or fall into coma — they heal 1 Impact, and all that damage is instead taken by the reserve character, who replaces the active one, thus performing a free swap.
+When the reserve character is in critical condition, any enemy entering their zone risks a counterattack (2d6 on 10–12)."
+mod_p_5up_3_n,Пульс Розділеної Долі,Pulse of Divided Fate
+mod_p_5up_3_d,"Доля дихає станом пари: вона або лікує, або мститься, або створює захисну оболонку — залежно від того, хто слабший.
+Стан резервного персонажа змінює сам ритм бою:
+Повне здоров’я — на початку раунду кидається один кубик, на 1–3 активний персонаж лікує 1 Impact.
+Легке поранення / поранення — на початку раунду кидається один кубик, на 1–2 створюється щит, що ігнорує 1 Impact від першої атаки цього раунду.
+Критичний стан або кома — при атаці по резервному кидається один кубик, на 1–3 та сама атака з тим самим кидком повертається по атакуючому.","Fate breathes with the pair's condition: it either heals, takes vengeance, or creates a protective shell — depending on who is weaker.
+The reserve character's state changes the very rhythm of battle:
+Full health — at the start of the round roll one die, on 1–3 the active character heals 1 Impact.
+Lightly wounded / Wounded — at the start of the round roll one die, on 1–2 a shield is created that ignores 1 Impact from the first attack this round.
+Critical condition or coma — when attacking the reserve character, roll one die, on 1–3 the same attack with the same roll returns against the attacker."
+mod_p_5up_4_n,Перст Долі,Finger of Fate
+mod_p_5up_4_d,"Ви слабші за інших — але саме доля грає за вас: вам завжди дістається кращий результат, ворогам — гірший.
+Ви слабші за формою, але недосяжні для випадку: –1 до атаки й захисту, затім кожна ваша атака кидається двічі й бере кращий результат, а кожна атака по вам — двічі й бере гірший.","You are weaker than others — but it is fate that plays for you: you always get the better result, enemies get the worse.
+You are weaker in form, but unreachable by chance: –1 to attack and defense, then each of your attacks is rolled twice and the better result is taken, and each attack against you is rolled twice and the worse result is taken."
+mod_p_4up_1_n,Егіда Відчаю,Aegis of Despair
+mod_p_4up_1_d,"Критичний стан союзника породжує щит відчаю, що часом зупиняє саму смерть.
+Коли резервний персонаж у критичному стані, ви отримуєте щит:
+при отриманні шкоди кидається один кубик на 1–3 блокується 1 Impact.","An ally's critical condition spawns a shield of despair that sometimes stops death itself.
+When the reserve character is in critical condition, you gain a shield:
+when taking damage roll one die, on 1–3, 1 Impact is blocked."
+mod_p_4up_2_n,Ритуаліст,Ritualist
+mod_p_4up_2_d,"Клітинки сили дають подвійний дар — ви завжди берете більше, ніж дозволено.
+Активна клітинка ніколи не дає вам одного дару — ви отримуєте одразу два різні бонуси, доступні цій клітинці.","Power tiles give a double gift — you always take more than is allowed.
+An active tile never gives you just one gift — you immediately receive two different bonuses available on that tile."
+mod_p_4up_3_n,Регенерація,Regeneration
+mod_p_4up_3_d,"Тіло саме обирає форму виживання: лікування, агресія або захист.
+На початку кожного раунду кидається один кубик:
 3–6 — лікує 1 Impact;
 1 — +1 до атаки на раунд;
-2 — +1 до захисту на раунд.",
-mod_p_4up_4_n,Клинок Неминучості,
-mod_p_4up_4_d,"На початку раунду кидається 2d6 і до кінця раунду ви отримуєте:
+2 — +1 до захисту на раунд.","The body itself chooses the form of survival: healing, aggression, or defense.
+At the start of each round, roll one die:
+3–6 — heal 1 Impact;
+1 — +1 to attack for the round;
+2 — +1 to defense for the round."
+mod_p_4up_4_n,Клинок Неминучості,Blade of Inevitability
+mod_p_4up_4_d,"Кожен раунд — нова фаза зростаючої смертоносності.
+На початку раунду кидаються два кубика і до кінця раунду ви отримуєте:
 1–8 — +1 до атаки;
 9–11 — +2 до атаки;
-12 — +3 до атаки.",
-mod_p_4up_5_n,Буря Захисту,
-mod_p_4up_5_d,"На початку раунду кидається 2d6 і до кінця раунду ви отримуєте:
+12 — +3 до атаки.","Each round is a new phase of increasing lethality.
+At the start of the round, roll two dice and until the end of the round you get:
+1–8 — +1 to attack;
+9–11 — +2 to attack; 
+12 — +3 to attack."
+mod_p_4up_5_n,Буря Захисту,Storm of Defense
+mod_p_4up_5_d,"Оборона наростає хвилями, перетворюючись на шторм.
+На початку раунду кидаються два кубика і до кінця раунду ви отримуєте:
 1–8 — +1 до захисту;
 9–11 — +2 до захисту;
-12 — +3 до захисту.",
-mod_p_4up_6_n,Астральна Рівновага,
-mod_p_4up_6_d,"При отриманні шкоди кидається 1d6:
+12 — +3 до захисту.","Defense builds in waves, turning into a storm.
+At the start of the round, roll two dice and until the end of the round you get:
+1–8 — +1 to defense;
+9–11 — +2 to defense;
+12 — +3 to defense."
+mod_p_4up_6_n,Астральна Рівновага,Astral Equilibrium
+mod_p_4up_6_d,"Шкода ніколи не стабільна — вона тече туди, де доля вважає рівновагу справедливою.
+При отриманні шкоди кидається один кубик:
 1–3 — шкода переходить на парного персонажа з кращим здоров’ям;
 4–5 — шкода застосовується як зазвичай;
 6 — шкода переходить на парного персонажа з гіршим здоров’ям.
-(Примусова шкода по прихованому персонажу не скасовується.)",
-mod_p_3up_1_n,Танець Долі,
-mod_p_3up_1_d,"На початку раунду 1d6:
+(Примусова шкода по прихованому персонажу не скасовується.)","Damage is never stable — it flows where fate deems the balance fair.
+When taking damage, roll one die:
+1–3 — damage transfers to the paired character with better health;
+4–5 — damage applies as usual;
+6 — damage transfers to the paired character with worse health.
+(Forced damage to the hidden character is not canceled.)"
+mod_p_3up_1_n,Танець Долі,Dance of Fate
+mod_p_3up_1_d,"Сили пари можуть тимчасово стати вашими — від пасивних відлунь до повного злиття.
+На початку раунду кидається один кубик:
 1–3 — без ефекту;
 4–5 — активний персонаж отримуєте пасивні риси резервного персонажа на цей раунд;
-6 — активний персонаж отримуєте і пасивні, і активні риси резервного персонажа на цей раунд.",
-mod_p_3up_2_n,Ехо Присутності,
-mod_p_3up_2_d,"Поки резервний персонаж неушкоджений, заміна персонажів не коштує дії.",
-mod_p_3up_3_n,Резонансний Бар’єр,
-mod_p_3up_3_d,Перша атака по вам у раунді ігнорує 1 Impact шкоди.,
-mod_p_3up_4_n,Кров Зірок,
-mod_p_3up_4_d,Постійно: +1 до атаки та захисту.,
-mod_p_3up_5_n,Хаотичний Влив,
-mod_p_3up_5_d,Усі переваги й перешкоди атакуючого інвертуються.,
-mod_p_3up_6_n,Інстинкт Хижака,
-mod_p_3up_6_d,Критичний удар спрацьовує на 16–18.,
-mod_p_3up_7_n,"Доля, Викута у Сталі",
-mod_p_3up_7_d,Критичні удари по вам не додають +1 Impact.,
-mod_p_3up_8_n,Дзеркальний Транс,
-mod_p_3up_8_d,"Якщо резервний персонаж неушкоджений — ви ігноруєте всі штрафи до атаки, але маєте –1 до захисту.
-Якщо резервний персонаж  у критичному стані або комі — ви ігноруєте всі штрафи до захисту, але маєте –1 до атаки.",
-mod_p_2up_1_n,Шепіт Колеса Фортуни,
+6 — активний персонаж отримуєте і пасивні, і активні риси резервного персонажа на цей раунд.","The pair's powers can temporarily become yours — from passive echoes to full fusion.
+At the start of the round, roll one die:
+1–3 — no effect;
+4–5 — the active character gains the reserve character's passive traits for this round;
+6 — the active character gains both the passive and active traits of the reserve character for this round."
+mod_p_3up_2_n,Ехо Присутності,Echo of Presence
+mod_p_3up_2_d,"Заміна стає інстинктом, а не дією.
+Поки резервний персонаж неушкоджений, заміна персонажів не коштує дії.","Swapping becomes instinct, not action.
+While the reserve character is unharmed, swapping characters does not cost an action."
+mod_p_3up_3_n,Резонансний Бар’єр,Resonant Barrier
+mod_p_3up_3_d,"Перший удар завжди гасне у резонансі.
+Перша атака по вам у раунді наносить на 1 Impact менше шкоди.","The first strike always fades in resonance.
+The first attack against you in the round deals 1 less Impact damage."
+mod_p_3up_4_n,Кров Зірок,Blood of Stars
+mod_p_3up_4_d,"Чиста, стабільна перевага в усьому.
+Постійно: +1 до атаки та захисту.","Pure, stable advantage in everything.
+Permanently: +1 to attack and defense."
+mod_p_3up_5_n,Хаотичний Влив,Chaotic Influx
+mod_p_3up_5_d,"Сила ворога обертається проти нього.
+Усі переваги й перешкоди атакуючого інвертуються.","The enemy's strength turns against them.
+All attacker's advantages and disadvantages are inverted."
+mod_p_3up_6_n,Інстинкт Хижака,Predator's Instinct
+mod_p_3up_6_d,"Критичний інстинкт — природна риса.
+Критичний удар спрацьовує на 16–18.","Critical instinct is a natural trait.
+Critical hits occur on 16–18."
+mod_p_3up_7_n,"Доля, Викута у Сталі",Fate Forged in Steel
+mod_p_3up_7_d,"Навіть критичний удар більше не смертельний.
+Критичні удари по вам не додають +1 Impact.","Even a critical strike is no longer fatal.
+Critical hits against you do not add +1 Impact."
+mod_p_3up_8_n,Дзеркальний Транс,Mirror Trance
+mod_p_3up_8_d,"Стан пари змінює вашу природу: або атака без страху, або захист без слабкості.
+Якщо резервний персонаж неушкоджений — ви ігноруєте всі штрафи до атаки, але маєте –1 до захисту.
+Якщо резервний персонаж  у критичному стані або комі — ви ігноруєте всі штрафи до захисту, але маєте –1 до атаки.","The pair's state changes your nature: either attack without fear, or defense without weakness.
+If the reserve character is unharmed — you ignore all penalties to attack, but have –1 to defense.
+If the reserve character is in critical condition or coma — you ignore all penalties to defense, but have –1 to attack."
+mod_p_2up_1_n,Шепіт Колеса Фортуни,Whisper of the Wheel of Fortune
 mod_p_2up_1_d,"Колесо долі тихо скрипить — і найгірший шанс зникає.
-При атаці ви перекидаєте найнижчий кубик.",
-mod_p_2up_2_n,Оберт Сансари,
+При атаці ви перекидаєте найнижчий кубик.","The wheel of fate quietly creaks — and the worst chance disappears.
+On attack, you reroll the lowest die."
+mod_p_2up_2_n,Оберт Сансари,Turn of Samsara
 mod_p_2up_2_d,"Удар ворога повертається до витоку, змушуючи його спробувати ще раз.
-При атаці по вам атакуючий перекидає найвищий кубик.",
-mod_p_2up_3_n,Сторожовий Дух,
+При атаці по вам атакуючий перекидає найвищий кубик.","The enemy's strike returns to its source, forcing them to try again.
+On attack against you, the attacker rerolls the highest die."
+mod_p_2up_3_n,Сторожовий Дух,Guardian Spirit
 mod_p_2up_3_d,"Невидимий вартовий карає кожного, хто переступає межу.
-Ворог, що входить у вашу зону, може отримати контратаку (2d6 на 10–12).",
-mod_p_2up_4_n,Коваль Долі,
+Ворог, що входить у вашу зону, може отримати контратаку (2d6 на 10–12).","An invisible guardian punishes anyone who crosses the boundary.
+An enemy entering your zone may receive a counterattack (2d6 on 10–12)."
+mod_p_2up_4_n,Коваль Долі,Forger of Fate
 mod_p_2up_4_d,"Доля викувана нерівно — інколи вона шкодить усім, інколи лише ворогу.
-На початку раунду кидається 2d6:
+На початку раунду кидається два кубика:
 1–8 — –1 до спрацювання ваших активних рис і –1 до спрацювання активних рис проти вас на цей раунд;
 9–11 — –1 до спрацювання активних рис проти вас на цей раунд;
-12 — +1 до спрацювання ваших активних рис і –1 до спрацювання активних рис проти вас на цей раунд.",
-mod_p_2up_5_n,Відлуння Фатуму,
+12 — +1 до спрацювання ваших активних рис і –1 до спрацювання активних рис проти вас на цей раунд.","Fate is forged unevenly — sometimes it harms everyone, sometimes only the enemy.
+At the start of the round, roll two dice:
+1–8 — –1 to activation of your active traits and –1 to activation of active traits against you this round;
+9–11 — –1 to activation of active traits against you this round;
+12 — +1 to activation of your active traits and –1 to activation of active traits against you this round."
+mod_p_2up_5_n,Відлуння Фатуму,Echo of Fatality
 mod_p_2up_5_d,"Коли кров ллється в парі, луна долі змінює траєкторію бою.
-Якщо резервний персонаж поранений, на початку раунду кидається 1d6:
+Якщо резервний персонаж поранений, на початку раунду кидається один кубик:
 1–3 — при атаці по вам атакуючий перекидає найкращий кубик на цей раунд;
-4–6 — при вашій атаці перекидається найнижчий кубик на цей раунд.",
-mod_p_2up_6_n,Зміна Реальності,
+4–6 — при вашій атаці перекидається найнижчий кубик на цей раунд.","When blood is shed in the pair, fate's echo changes the trajectory of battle.
+If the reserve character is wounded, at the start of the round roll one die:
+1–3 — on attack against you, the attacker rerolls their best die this round;
+4–6 — on your attack, the lowest die is rerolled this round."
+mod_p_2up_6_n,Зміна Реальності,Reality Shift
 mod_p_2up_6_d,"Світ коливається: те, що допомагає, може водночас шкодити.
-На початку раунду кидається 2d6:
+На початку раунду кидається два кубика:
 1–8 — +1 до спрацювання ваших активних рис і +1 до спрацювання активних рис проти вас на цей раунд;
 9–11 — +1 до спрацювання ваших активних рис на цей раунд;
-12 — +1 до спрацювання ваших активних рис і –1 до спрацювання активних рис проти вас на цей раунд.",
-mod_p_2up_7_n,Гнів Воїна,
+12 — +1 до спрацювання ваших активних рис і –1 до спрацювання активних рис проти вас на цей раунд.","The world wavers: what helps can also harm simultaneously.
+At the start of the round, roll two dice:
+1–8 — +1 to activation of your active traits and +1 to activation of active traits against you this round;
+9–11 — +1 to activation of your active traits this round;
+12 — +1 to activation of your active traits and –1 to activation of active traits against you this round."
+mod_p_2up_7_n,Гнів Воїна,Warrior's Wrath
 mod_p_2up_7_d,"Перший промах лише розпалює лють.
-Після першого промаху по вам у раунді ви отримуєте +1 до атаки до кінця раунду.",
-mod_p_2up_8_n,Пам’ять Битви,
+Після першого промаху по вам у раунді ви отримуєте +1 до атаки до кінця раунду.","The first miss only fuels the fury.
+After the first miss against you in the round, you get +1 to attack until the end of the round."
+mod_p_2up_8_n,Пам’ять Битви,Battle Memory
 mod_p_2up_8_d,"Тіло пам’ятає удар і більше не повторює помилку.
-Після першого промаху по вам у раунді ви отримуєте +1 до захисту до кінця раунду.",
-mod_p_2up_9_n,Кривавий Пульс,
+Після першого промаху по вам у раунді ви отримуєте +1 до захисту до кінця раунду.","The body remembers the blow and no longer repeats the mistake.
+After the first miss against you in the round, you get +1 to defense until the end of the round."
+mod_p_2up_9_n,Кривавий Пульс,Bloody Pulse
 mod_p_2up_9_d,"Серця в парі б’ються не в унісон — одне може врятувати, інше приректи.
-На початку раунду кидається 1d6:
+На початку раунду кидається один кубик:
 1–3 — резервний персонаж лікує 1 Impact;
-6 — активний персонаж отримує 1 Impact шкоди.",
-mod_p_2up_10_n,Реакція Болі,
+6 — активний персонаж отримує 1 Impact шкоди.","Hearts in the pair beat out of sync — one may save, the other may doom.
+At the start of the round, roll one die:
+1–3 — the reserve character heals 1 Impact;
+6 — the active character takes 1 Impact damage."
+mod_p_2up_10_n,Реакція Болі,Pain Reaction
 mod_p_2up_10_d,"Біль не стихає — він відповідає.
-При отриманні шкоди кидається 1d6; на 5–6 ви завдаєте 1 Impact контратакою.",
-mod_p_1up_1_n,Темний Оберіг,
+При отриманні шкоди кидається один кубик; на 5–6 ви завдаєте 1 Impact контратакою.","Pain does not fade — it responds.
+When taking damage, roll one die; on 5–6 you deal 1 Impact as a counterattack."
+mod_p_1up_1_n,Темний Оберіг,Dark Talisman
 mod_p_1up_1_d,"Перший удар розчиняється в тіні, не залишаючи сліду.
-Ви ігноруєте всі дебафи від першої атаки по вам протягом цього раунду.",
-mod_p_1up_2_n,Астральна Рука,
+Ви ігноруєте всі дебафи від першої атаки по вам протягом цього раунду.","The first strike dissolves in shadow, leaving no trace.
+You ignore all debuffs from the first attack against you this round."
+mod_p_1up_2_n,Астральна Рука,Astral Hand
 mod_p_1up_2_d,"Невидима сила легенько підштовхує зброю в потрібний момент.
-При влучанні підсумкове значення кидка збільшується на +1.",
-mod_p_1up_3_n,Сліпа Фортуна,
+При влучанні підсумкове значення кидка збільшується на +1.","An invisible force gently nudges the weapon at the right moment.
+On a hit, the final roll value is increased by +1."
+mod_p_1up_3_n,Сліпа Фортуна,Blind Fortune
 mod_p_1up_3_d,"Удар неточний, але доля дозволяє виправити помилку.
-–1 перевага до атаки, але перекидається кубик з найнижчим значенням.",
-mod_p_1up_4_n,Воля до Життя,
+–1 перевага до атаки, але при вашій атаці перекидається кубик з найнижчим значенням.","The strike is inaccurate, but fate allows you to correct the mistake.
+–1 advantage to attack, but on your attack the die with the lowest value is rerolled."
+mod_p_1up_4_n,Воля до Життя,Will to Live
 mod_p_1up_4_d,"Тіло слабшає, але інстинкт виживання бере своє.
-–1 перевага до захисту, але перекидається кубик з найвищим значенням.",
-mod_p_1up_5_n,Нескорений Дух,
+–1 перевага до захисту, але при атаці по вам у атакуючого перекидається кубик з найвищим значенням.","The body weakens, but the survival instinct takes over.
+–1 advantage to defense, but on attack against you, the attacker rerolls the die with the highest value."
+mod_p_1up_5_n,Нескорений Дух,Unbroken Spirit
 mod_p_1up_5_d,"Біль не зупиняє того, хто відмовився зламатися.
-Ігнорує один мінус переваги до атаки при пораненні.",
-mod_p_1up_6_n,Кров з Льоду,
+Ігнорує один мінус переваги до атаки при пораненні.","Pain does not stop the one who refused to break.
+Ignores one minus advantage to attack when wounded."
+mod_p_1up_6_n,Кров з Льоду,Blood from Ice
 mod_p_1up_6_d,"Рани не уповільнюють — вони лише загартовують.
-Ігнорує один мінус переваги до захисту при пораненні.",
-mod_p_1up_7_n,Пекельний Меч,
+Ігнорує один мінус переваги до захисту при пораненні.","Wounds do not slow down — they only temper.
+Ignores one minus advantage to defense when wounded."
+mod_p_1up_7_n,Пекельний Меч,Infernal Blade
 mod_p_1up_7_d,"Зброя, що прагне крові навіть у слабких руках.
-Постійно дає +1 перевагу до атаки.",
-mod_p_1up_8_n,Небесний Щит,
+Постійно дає +1 перевагу до атаки.","A weapon that thirsts for blood even in weak hands.
+Permanently gives +1 advantage to attack."
+mod_p_1up_8_n,Небесний Щит,Heavenly Shield
 mod_p_1up_8_d,"Тонка, але надійна завіса між тілом і смертю.
-Постійно дає +1 перевагу до захисту.",
-mod_p_1up_9_n,Плетиво Провидіння,
+Постійно дає +1 перевагу до захисту.","A thin but reliable veil between the body and death.
+Permanently gives +1 advantage to defense."
+mod_p_1up_9_n,Плетиво Провидіння,Weave of Providence
 mod_p_1up_9_d,"Доля плете нитки, не питаючи згоди.
-На початку раунду кидається d6:
+На початку раунду кидається один кубик:
 • 1–2: –1 до атаки й захисту
 • 3–4: без ефекту
-• 5–6: +1 до атаки й захисту на раунд",
-mod_p_1up_10_n,Дзеркальна Завіса,
+• 5–6: +1 до атаки й захисту на раунд","Fate weaves threads without asking for consent.
+At the start of the round, roll one die:
+• 1–2: –1 to attack and defense
+• 3–4: no effect
+• 5–6: +1 to attack and defense for the round."
+mod_p_1up_10_n,Дзеркальна Завіса,Mirror Veil
 mod_p_1up_10_d,"Промах може обернутися покаранням.
-При промаху атакуючого: кидок d6, на 5–6 він отримує 1 Impact.",
-mod_p_1up_11_n,Мутація,
+При промаху атакуючого: кидається один кубик, на 5–6 він отримує 1 Impact.","A miss can turn into punishment.
+When an attacker misses: roll one die, on 5–6 they take 1 Impact."
+mod_p_1up_11_n,Мутація,Mutation
 mod_p_1up_11_d,"Сила змінюється — разом із ризиком.
-На початку раунду кидається d6:
+На початку раунду кидається один кубик:
 • 1–3: –1 до спрацювання активних рис (і ваших, і по вас) протягом цього раунду
-• 4–6: +1 до спрацювання активних рис (і ваших, і по вас) протягом цього раунду",
-mod_p_1up_12_n,Адаптивний Захист,
+• 4–6: +1 до спрацювання активних рис (і ваших, і по вас) протягом цього раунду","Strength changes — along with risk.
+At the start of the round, roll one die:
+• 1–3: –1 to activation of active traits (both yours and against you) this round
+• 4–6: +1 to activation of active traits (both yours and against you) this round."
+mod_p_1up_12_n,Адаптивний Захист,Adaptive Defense
 mod_p_1up_12_d,"Після болю тіло вчиться виживати швидше.
-Після критичного влучання ви отримуєте перевагу +2 до захисту до кінця раунду.",
+Після критичного влучання ви отримуєте перевагу +2 до захисту до кінця раунду.","After pain, the body learns to survive faster.
+After a critical hit, you gain +2 defense advantage until the end of the round."
 char_name_001,Адепт,Adept
 char_name_002,Алхімік,Alchemist
 char_name_003,Амазонка,Amazon
