@@ -9,6 +9,7 @@ public class CardDeckController : MonoBehaviour
     [SerializeField] private PlayerModel _playerModel;
     
     [SerializeField] private List<CardSlot> _cardDeck;
+    [SerializeField] private List<CardDragHandler> _cards;
     [SerializeField] private List<ModDragHandler> _mods;
 
     private void Awake()
@@ -17,18 +18,38 @@ public class CardDeckController : MonoBehaviour
         CheckDeck();
     }
 
+    public void RegisterCard(CardDragHandler card)
+    {
+        if (card == null) return;
+        if (!_cards.Contains(card)) _cards.Add(card);
+    }
+
+    public void RegisterMod(ModDragHandler mod)
+    {
+        if (mod == null) return;
+        
+        // Відписуємося про всяк випадок, щоб не було подвійних підписок
+        mod.ModAttachHere -= _playerModel.SpendPoints;
+        mod.ModDetachHere -= _playerModel.RefundPoints;
+        
+        mod.ModAttachHere += _playerModel.SpendPoints;
+        mod.ModDetachHere += _playerModel.RefundPoints;
+        
+        if (!_mods.Contains(mod)) _mods.Add(mod);
+    }
+
     private void SubscribeSlots()
     {
         foreach (CardSlot slot in _cardDeck)
         {
+            if (slot == null) continue;
             slot.CardAdded += CheckDeck;
             slot.CardRemoved += CheckDeck;
         }
 
         foreach (ModDragHandler mod in _mods)
         {
-            mod.ModAttachHere += _playerModel.SpendPoints;
-            mod.ModDetachHere += _playerModel.RefundPoints;
+            RegisterMod(mod);
         }
     }
 

@@ -3,14 +3,6 @@ using TMPro;
 using Photon.Pun;
 using System;
 
-public enum SceneState
-{
-    Undefined,
-    Multiplayer,
-    Hotseat,
-    PlayerVSBot
-}
-
 public class GameSceneState : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _gameStateText;
@@ -23,8 +15,18 @@ public class GameSceneState : MonoBehaviour
     [SerializeField] private PlayerVsBotSettings playerVsBotSettings;
 
     public GameSettings _currentSettings;
-    private GameSetupStep _currentStep = GameSetupStep.Cards;
-    public GameSetupStep CurrentStep => _currentStep;
+    private int _flowIndex = 0;
+
+    public GameSetupStep CurrentStep
+    {
+        get
+        {
+            var flow = _currentSettings.GetFlow();
+            if (flow != null && _flowIndex >= 0 && _flowIndex < flow.Length)
+                return flow[_flowIndex];
+            return GameSetupStep.Cards;
+        }
+    }
 
     private void Awake()
     {
@@ -38,20 +40,38 @@ public class GameSceneState : MonoBehaviour
 
     public void StartFlow(GameUIController ui)
     {
-        _currentStep = GameSetupStep.Cards;
-        ui.EnableDeckListening();
-        _currentSettings.OnFlowStarted(ui);
-        ui.OpenCards();
+        _flowIndex = 0;
+        var flow = _currentSettings.GetFlow();
+        if (flow.Length > 0)
+        {
+            _currentSettings.PrepareStep(flow[0], ui);
+            ui.EnableDeckListening();
+            _currentSettings.OnFlowStarted(ui);
+            ui.OpenCards();
+        }
     }
 
     public void Next(GameUIController ui)
     {
-        _currentStep++;
+        var flow = _currentSettings.GetFlow();
+        _flowIndex++;
 
-        switch (_currentStep)
+        if (_flowIndex >= flow.Length) return;
+
+        GameSetupStep nextStep = flow[_flowIndex];
+        Debug.Log($"GameSceneState: Switching to {nextStep} step");
+
+        // 1. Готуємо дані для кроку
+        _currentSettings.PrepareStep(nextStep, ui);
+
+        // 2. Виконуємо UI логіку
+        switch (nextStep)
         {
+            case GameSetupStep.Cards:
+                ui.OpenCards();
+                break;
+
             case GameSetupStep.Mods:
-                Debug.Log($"GameSceneState: Switching to Mods step");
                 ui.OpenMods();
                 _currentSettings.OnFlowFinished(ui);
                 break;
@@ -59,12 +79,15 @@ public class GameSceneState : MonoBehaviour
             case GameSetupStep.ModeSpecific:
                 _currentSettings.OpenModeSpecific(ui);
                 break;
+            
+            case GameSetupStep.Map:
+                ui.OpenMap();
+                break;
         }
     }
 
     private void SelectSettings()
     {
-        // Спочатку визначаємо режим
         if (GameSettingsManager.Instance != null && GameSettingsManager.Instance.CurrentSettings != null)
         {
             _sceneState = GameSettingsManager.Instance.CurrentMode;
@@ -74,7 +97,6 @@ public class GameSceneState : MonoBehaviour
             _sceneState = SceneState.Multiplayer;
         }
 
-        // Призначаємо _currentSettings на один з готових об'єктів в інспекторі
         switch (_sceneState)
         {
             case SceneState.Multiplayer: _currentSettings = multiplayerSettings; break;
@@ -88,13 +110,11 @@ public class GameSceneState : MonoBehaviour
             return;
         }
 
-        // Копіюємо дані з менеджера (якщо вони там є)
         if (GameSettingsManager.Instance != null && GameSettingsManager.Instance.CurrentSettings != null)
         {
             CopyValues(GameSettingsManager.Instance.CurrentSettings, _currentSettings);
         }
 
-        // Якщо мультіплеєр — докачуємо дані з Photon
         if (_sceneState == SceneState.Multiplayer && PhotonNetwork.InRoom)
         {
             SyncMultiplayerSettings();
@@ -146,9 +166,7 @@ public class GameSceneState : MonoBehaviour
     {
         if (_sceneState == SceneState.Undefined || _currentSettings == null)
         {
-            _gameStateText.text =
-                "Mode: Undefined\n" +
-                "Game settings are not initialized.";
+            _gameStateText.text = "Mode: Undefined\nGame settings are not initialized.";
             return;
         }
 
@@ -171,11 +189,7 @@ public class GameSceneState : MonoBehaviour
             sb.AppendLine($"Room Name: {mp.RoomName}");
             sb.AppendLine($"Your Name: {mp.YourName}");
             sb.AppendLine("Players:");
-
-            foreach (var player in mp.PlayerList)
-            {
-                sb.AppendLine($"- {player}");
-            }
+            foreach (var player in mp.PlayerList) sb.AppendLine($"- {player}");
         }
 
         if (_currentSettings is HotseatSettings hs)

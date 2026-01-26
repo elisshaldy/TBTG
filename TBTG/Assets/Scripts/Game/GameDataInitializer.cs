@@ -1,15 +1,27 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 using Photon.Pun;
+using System.Collections;
 
 public class GameDataInitializer : MonoBehaviour
 {
     [Header("Data Source")]
     [SerializeField] private GameDataLibrary _library;
+    
+    [SerializeField] private GameObject _cardPrefab;
+    [SerializeField] private GameObject _modPrefab;
+    
+    [SerializeField] private LayoutGroup _cardContainer;
+    [SerializeField] private LayoutGroup _modContainer;
+    [SerializeField] private CardDeckController _deckController;
 
-    [Header("Scene Instances")]
-    [SerializeField] private CardInfo[] _cardsInstances = new CardInfo[10];
-    [SerializeField] private ModInfo[] _modsInstances = new ModInfo[35];
+    [Header("Generation Settings")]
+    [SerializeField] private int _cardsToSpawn = 10;
+    [SerializeField] private int _modsToSpawn = 35;
+
+    private List<CardInfo> _cardsInstances = new List<CardInfo>();
+    private List<ModInfo> _modsInstances = new List<ModInfo>();
 
     private void Start()
     {
@@ -34,9 +46,8 @@ public class GameDataInitializer : MonoBehaviour
         }
 
         int playerIndex = GetPlayerIndex(mode);
-        Debug.Log($"[Initializer] Initializing for player {playerIndex}");
 
-        // 2. Отримуємо ПЕРЕМІШАНІ індекси персонажів саме для цього гравця
+        // 2. Отримуємо індекси персонажів
         int[] myIndices = (settings != null) ? settings.GetIndicesForPlayer(playerIndex) : null;
         List<CharacterData> myChars = new List<CharacterData>();
 
@@ -50,53 +61,103 @@ public class GameDataInitializer : MonoBehaviour
         }
         else
         {
-            // Фоллбек, якщо налаштування чомусь не прийшли
-            myChars = _library.GetRandomCharacters(_cardsInstances.Length);
+            myChars = _library.GetRandomCharacters(_cardsToSpawn);
         }
 
         // ===== CHARACTERS =====
-        if (myChars.Count < _cardsInstances.Length)
-            Debug.LogWarning($"Not enough characters! Need {_cardsInstances.Length}, got {myChars.Count}");
+        ClearContainer(_cardContainer.transform);
+        _cardsInstances.Clear();
 
-        // 3. Присвоюємо дані
-        for (int i = 0; i < _cardsInstances.Length; i++)
+        for (int i = 0; i < _cardsToSpawn; i++)
         {
-            if (_cardsInstances[i] == null) continue;
+            GameObject cardObj = Instantiate(_cardPrefab, _cardContainer.transform);
+            CardInfo cardInfo = cardObj.GetComponent<CardInfo>();
+            if (cardInfo != null)
+            {
+                if (i < myChars.Count) cardInfo.CharData = myChars[i];
+                cardInfo.Initialize();
+                _cardsInstances.Add(cardInfo);
 
-            if (i < myChars.Count)
-                _cardsInstances[i].CharData = myChars[i];
-        }
-
-        // 4. Ініціалізуємо UI
-        foreach (var card in _cardsInstances)
-        {
-            if (card == null || card.CharData == null) continue;
-            card.Initialize();
+                // Реєструємо картку у контролері деки
+                if (_deckController != null)
+                {
+                    var dragHandler = cardObj.GetComponent<CardDragHandler>();
+                    _deckController.RegisterCard(dragHandler);
+                }
+            }
         }
 
         // ===== MODIFIERS =====
+        ClearContainer(_modContainer.transform);
+        _modsInstances.Clear();
         List<ModData> randomMods = _library.GetModsByBalanceRules();
 
-        if (randomMods.Count < _modsInstances.Length)
-            Debug.LogWarning($"Not enough mods! Need {_modsInstances.Length}, got {randomMods.Count}");
-
-        // 1️⃣ Присвоюємо ModData
-        for (int i = 0; i < _modsInstances.Length; i++)
+        for (int i = 0; i < _modsToSpawn; i++)
         {
-            if (_modsInstances[i] == null) continue;
-
-            if (i < randomMods.Count)
-                _modsInstances[i].ModData = randomMods[i];
+            GameObject modObj = Instantiate(_modPrefab, _modContainer.transform);
+            ModInfo modInfo = modObj.GetComponent<ModInfo>();
+            if (modInfo != null)
+            {
+                if (i < randomMods.Count) modInfo.ModData = randomMods[i];
+                modInfo.Initialize();
+                _modsInstances.Add(modInfo);
+                
+                // Реєструємо модифікатор у контролері деки, щоб він міг списувати очки
+                if (_deckController != null)
+                {
+                    var dragHandler = modObj.GetComponent<ModDragHandler>();
+                    _deckController.RegisterMod(dragHandler);
+                }
+            }
         }
 
-        // 2️⃣ Ініціалізуємо UI
-        foreach (var mod in _modsInstances)    
+        // ПОВЕРТАЄМО КОРУТИНУ
+        StartCoroutine(DisableLayouts());
+
+        Debug.Log("Game Data Initialized SUCCESS");
+    }
+
+    private IEnumerator DisableLayouts()
+    {
+        // Якщо контейнер модів вимкнений, леайут-група не прораховується.
+        // На мить вмикаємо його, щоб Unity встигла розставити моди.
+        bool modsOriginallyActive = _modContainer.gameObject.activeInHierarchy;
+        if (!modsOriginallyActive) _modContainer.gameObject.SetActive(true);
+
+        yield return new WaitForEndOfFrame();
+        
+        // Форсуємо прорахунок, щоб позиції точно були вірні
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_cardContainer.transform as RectTransform);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_modContainer.transform as RectTransform);
+
+        if (_cardContainer != null) _cardContainer.enabled = false;
+        if (_modContainer != null) _modContainer.enabled = false;
+
+        // Повертаємо стан активності контейнера модів назад
+        if (!modsOriginallyActive) _modContainer.gameObject.SetActive(false);
+
+        // Тепер фіксуємо домашні позиції
+        foreach (var card in _cardsInstances)
         {
-            if (mod == null || mod.ModData == null) continue;
-            mod.Initialize();
+            var handler = card.GetComponent<CardDragHandler>();
+            if (handler != null) handler.InitializeHome();
         }
 
-        Debug.Log("Game Data Initialized SUCCESSFULLY");
+        foreach (var mod in _modsInstances)
+        {
+            var handler = mod.GetComponent<ModDragHandler>();
+            if (handler != null) handler.InitializeHome();
+        }
+
+        Debug.Log("Layout Groups DISABLED and Home Positions FIXED");
+    }
+
+    private void ClearContainer(Transform container)
+    {
+        foreach (Transform child in container)
+        {
+            Destroy(child.gameObject);
+        }
     }
 
     private int GetPlayerIndex(SceneState mode)
@@ -104,22 +165,7 @@ public class GameDataInitializer : MonoBehaviour
         switch (mode)
         {
             case SceneState.Multiplayer:
-                if (PhotonNetwork.InRoom)
-                {
-                    // Many developers use ActorNumber - 1 as a 0-indexed player ID
-                    return PhotonNetwork.LocalPlayer.ActorNumber - 1;
-                }
-                return 0;
-
-            case SceneState.Hotseat:
-                // If it's hotseat, we might need to track current player turn.
-                // For now, let's assume we logic handles sequential initialization if needed.
-                // Or if it's strictly 2 players on same screen, index 0 is used.
-                return 0; 
-
-            case SceneState.PlayerVSBot:
-                return 0; // Player is always 0, Bot is 1 (if bot needs cards)
-
+                return PhotonNetwork.InRoom ? PhotonNetwork.LocalPlayer.ActorNumber - 1 : 0;
             default:
                 return 0;
         }

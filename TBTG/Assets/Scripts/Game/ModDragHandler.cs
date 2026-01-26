@@ -23,6 +23,12 @@ public class ModDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         rectTransform = GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
         canvasGroup = GetComponent<CanvasGroup>();
+    }
+
+    public void InitializeHome()
+    {
+        if (rectTransform == null) rectTransform = GetComponent<RectTransform>();
+        if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
 
         homeParent = transform.parent;
         homeLocalPosition = rectTransform.localPosition;
@@ -32,8 +38,6 @@ public class ModDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (ModTooltip.Instance != null) ModTooltip.Instance.Hide();
-
         if (ModTooltip.Instance != null) ModTooltip.Instance.Hide();
 
         // Оновлюємо canvas перед кожним drag (бо модифікатор міг бути в іншій ієрархії)
@@ -123,7 +127,7 @@ public class ModDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         ReturnHome();
     }
 
-    private void ReturnHome()
+    public void ReturnHome()
     {
         transform.SetParent(homeParent, false);
 

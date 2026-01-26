@@ -7,6 +7,8 @@ public class ModsCardContainer : MonoBehaviour
     
     [SerializeField] private Image[] _modsIcon = new Image[6]; // 2x6
 
+    private GameSceneState _gameSceneState;
+
     private void Awake()
     {
         for (int i = 0; i < _modsIcon.Length; i++)
@@ -26,8 +28,19 @@ public class ModsCardContainer : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        _gameSceneState = FindObjectOfType<GameSceneState>();
+    }
+
     private void OnIconClick(int index)
     {
+        if (_gameSceneState != null && _gameSceneState.CurrentStep == GameSetupStep.Map)
+        {
+            Debug.Log("Cannot remove mods when Map is open!");
+            return;
+        }
+
         // Шукаємо вимкнений об'єкт модифікатора всередині слота іконки
         var dragHandler = _modsIcon[index].GetComponentInChildren<ModDragHandler>(true);
         if (dragHandler != null)

@@ -85,10 +85,14 @@ public class GameUIController : MonoBehaviour
 
     public void OpenHotseatWindow()
     {
-        // open window for player 2, after he done OpenMap();
+        // open window for player 2
         _hotseatPlayerNameTxt.gameObject.SetActive(true);
+        Debug.Log("REINITIALIZE");
+        _containerCards.SetActive(false);
+        _containerMods.SetActive(false);
         // here Hotseat Important !!!!!
-        // here Next Step();
+        // here Next Step
+        // reinitialize for 2 player
     }
     
     public void ShowHotseatPlayer(string playerName)

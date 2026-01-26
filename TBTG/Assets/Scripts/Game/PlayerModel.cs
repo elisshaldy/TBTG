@@ -26,4 +26,10 @@ public class PlayerModel : MonoBehaviour
         _modPoints += value;
         OnModPointsChanged?.Invoke(_modPoints);
     }
+
+    public void ResetModPoints(int value = 24)
+    {
+        _modPoints = value;
+        OnModPointsChanged?.Invoke(_modPoints);
+    }
 }
