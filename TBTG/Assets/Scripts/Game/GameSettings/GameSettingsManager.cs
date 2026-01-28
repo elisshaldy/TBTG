@@ -6,6 +6,8 @@ public class GameSettingsManager : MonoBehaviour
     
     public SceneState CurrentMode { get; set; }
     public GameSettings CurrentSettings { get; set; }
+    
+    [SerializeField] public bool IsDebug = true;
 
     private void Awake()
     {

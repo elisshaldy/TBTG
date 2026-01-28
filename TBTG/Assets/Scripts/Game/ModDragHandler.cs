@@ -53,6 +53,7 @@ public class ModDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
         transform.SetParent(canvas.transform, true);
         transform.SetAsLastSibling();
+        
         canvasGroup.blocksRaycasts = false;
     }
 

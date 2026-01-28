@@ -47,6 +47,8 @@ public abstract class GameSettings
     public virtual void PrepareStep(GameSetupStep step, GameUIController ui) {}
 
     public virtual void OnFlowStarted(GameUIController ui) {}
+    public virtual int CurrentPlayerIndex => 0;
+    public virtual void TakeSnapshot(List<GameObject> selectedCards) {}
     public abstract void OpenModeSpecific(GameUIController ui);
     public virtual void OnFlowFinished(GameUIController ui) {}
 }
@@ -107,7 +109,6 @@ public class PlayerVsBotSettings : GameSettings
 public class PlayerSnapshot
 {
     public List<GameObject> SelectedCards = new List<GameObject>();
-    public int ModPoints;
     public int PlayerIndex;
 }
 
@@ -125,11 +126,19 @@ public class HotseatSettings : GameSettings
     public override GameSetupStep[] GetFlow() => new[] { 
         GameSetupStep.Cards, 
         GameSetupStep.Mods, 
-        GameSetupStep.ModeSpecific, 
         GameSetupStep.Cards, 
         GameSetupStep.Mods, 
         GameSetupStep.Map 
     };
+
+    public override int CurrentPlayerIndex => _playerSelectionCycle == 0 ? 0 : _playerSelectionCycle - 1;
+
+    public override void TakeSnapshot(List<GameObject> selectedCards)
+    {
+        PlayerSnapshot target = (_playerSelectionCycle == 1) ? Player1Snapshot : Player2Snapshot;
+        target.SelectedCards = new List<GameObject>(selectedCards);
+        target.PlayerIndex = _playerSelectionCycle - 1;
+    }
 
     public override void PrepareStep(GameSetupStep step, GameUIController ui)
     {
@@ -141,6 +150,31 @@ public class HotseatSettings : GameSettings
         }
     }
     
+    public override void OnFlowFinished(GameUIController ui)
+    {
+        // 1. Ховаємо карти другого гравця (він щойно закінчив)
+        if (Player2Snapshot != null && Player2Snapshot.SelectedCards != null)
+        {
+            foreach (var card in Player2Snapshot.SelectedCards)
+            {
+                if (card != null) card.SetActive(false);
+            }
+        }
+
+        // 2. Вмикаємо карти першого гравця
+        if (Player1Snapshot != null && Player1Snapshot.SelectedCards != null)
+        {
+            foreach (var card in Player1Snapshot.SelectedCards)
+            {
+                if (card != null) card.SetActive(true);
+            }
+        }
+
+        // 3. Оновлюємо ім'я гравця на перший
+        ui.ShowHotseatPlayer(Player1Name);
+        Debug.Log($"Flow finished. Switched back to {Player1Name} for the game.");
+    }
+
     public override void OpenModeSpecific(GameUIController ui)
     {
         ui.OpenHotseatWindow(); 

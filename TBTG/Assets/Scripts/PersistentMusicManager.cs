@@ -1,31 +1,39 @@
-using UnityEngine;
+п»їusing UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
 public class PersistentMusicManager : MonoBehaviour
 {
-    [Header("Налаштування музики")]
+    [Header("Background Music")]
     [SerializeField] private AudioClip backgroundMusic;
     [SerializeField] private float fadeInDuration = 2f;
     [SerializeField] private float fadeOutDuration = 3f;
     [SerializeField] private float maxVolume = 0.8f;
 
-    [Header("Перехід між сценами")]
-    [SerializeField] private float sceneSwitchFadeDelay = 10f; // Затримка перед затуханням при зміні сцени
-    [SerializeField] private bool stopMusicOnSceneChange = true; // Чи зупиняти музику при зміні сцени
+    [Header("Scene Transition Settings")]
+    [SerializeField] private float sceneSwitchFadeDelay = 10f; 
+    [SerializeField] private bool stopMusicOnSceneChange = true;
 
-    private AudioSource audioSource;
-    private string currentSceneName;
-    private Coroutine fadeOutCoroutine;
-    private static PersistentMusicManager instance;
+    [Header("SFX Clips")]
+    [SerializeField] private AudioClip _cardPickup;
+    [SerializeField] private AudioClip _cardHover;
+    [SerializeField] private AudioClip _cardPlaced;
+    [SerializeField] private AudioClip _cardReturned;
+    [SerializeField] private AudioClip _tooltipShow;
+
+    private AudioSource _musicSource;
+    private AudioSource _sfxSource;
+    private string _currentSceneName;
+    private Coroutine _fadeOutCoroutine;
+    
+    public static PersistentMusicManager Instance { get; private set; }
 
     void Awake()
     {
-        // Реалізація Singleton патерну
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);
             Initialize();
         }
@@ -38,148 +46,146 @@ public class PersistentMusicManager : MonoBehaviour
 
     void Initialize()
     {
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
+        _musicSource = GetComponent<AudioSource>();
+        if (_musicSource == null) _musicSource = gameObject.AddComponent<AudioSource>();
+        
+        _sfxSource = gameObject.AddComponent<AudioSource>();
 
-        SetupAudioSource();
-        currentSceneName = SceneManager.GetActiveScene().name;
+        SetupAudioSources();
+        _currentSceneName = SceneManager.GetActiveScene().name;
 
-        // Підписуємось на події зміни сцени
         SceneManager.sceneLoaded += OnSceneLoaded;
-        SceneManager.sceneUnloaded += OnSceneUnloaded;
     }
 
-    void SetupAudioSource()
+    void SetupAudioSources()
     {
-        audioSource.clip = backgroundMusic;
-        audioSource.loop = true;
-        audioSource.playOnAwake = false;
-        audioSource.volume = 0f;
+        _musicSource.clip = backgroundMusic;
+        _musicSource.loop = true;
+        _musicSource.playOnAwake = false;
+        _musicSource.volume = 0f;
+
+        _sfxSource.playOnAwake = false;
+        _sfxSource.loop = false;
     }
 
     void Start()
     {
-        // Починаємо музику з плавним наростанням
         StartCoroutine(FadeInMusic());
+    }
+
+    public void PlayCardPickup() => PlaySFX(_cardPickup);
+    public void PlayCardHover() => PlaySFX(_cardHover);
+    public void PlayCardPlaced() => PlaySFX(_cardPlaced);
+    public void PlayCardReturned() => PlaySFX(_cardReturned);
+    public void PlayTooltipShow() => PlaySFX(_tooltipShow);
+
+    private void PlaySFX(AudioClip clip)
+    {
+        if (clip != null && _sfxSource != null)
+        {
+            _sfxSource.PlayOneShot(clip);
+        }
     }
 
     IEnumerator FadeInMusic()
     {
-        audioSource.Play();
+        _musicSource.Play();
 
         float elapsedTime = 0f;
         while (elapsedTime < fadeInDuration)
         {
             elapsedTime += Time.deltaTime;
             float t = elapsedTime / fadeInDuration;
-            audioSource.volume = Mathf.Lerp(0f, maxVolume, t);
+            _musicSource.volume = Mathf.Lerp(0f, maxVolume, t);
             yield return null;
         }
 
-        audioSource.volume = maxVolume;
+        _musicSource.volume = maxVolume;
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         string newSceneName = scene.name;
 
-        // Якщо це перша сцена або ми не хочемо зупиняти музику
         if (!stopMusicOnSceneChange)
         {
-            currentSceneName = newSceneName;
+            _currentSceneName = newSceneName;
             return;
         }
 
-        // Якщо сцена змінилась
-        if (currentSceneName != newSceneName)
+        if (_currentSceneName != newSceneName)
         {
-            // Скасовуємо попередній fade out якщо він був
-            if (fadeOutCoroutine != null)
+            if (_fadeOutCoroutine != null)
             {
-                StopCoroutine(fadeOutCoroutine);
+                StopCoroutine(_fadeOutCoroutine);
             }
 
-            // Запускаємо затримку перед затуханням
-            fadeOutCoroutine = StartCoroutine(DelayedFadeOut());
-
-            currentSceneName = newSceneName;
+            _fadeOutCoroutine = StartCoroutine(DelayedFadeOut());
+            _currentSceneName = newSceneName;
         }
-    }
-
-    void OnSceneUnloaded(Scene scene)
-    {
-        // Додаткові дії при вивантаженні сцени
     }
 
     IEnumerator DelayedFadeOut()
     {
-        // Чекаємо заданий час
         yield return new WaitForSeconds(sceneSwitchFadeDelay);
-
-        // Плавно затухаємо
         yield return StartCoroutine(FadeOutMusic());
     }
 
     IEnumerator FadeOutMusic()
     {
-        float startVolume = audioSource.volume;
+        float startVolume = _musicSource.volume;
         float elapsedTime = 0f;
 
         while (elapsedTime < fadeOutDuration)
         {
             elapsedTime += Time.deltaTime;
             float t = elapsedTime / fadeOutDuration;
-            audioSource.volume = Mathf.Lerp(startVolume, 0f, t);
+            _musicSource.volume = Mathf.Lerp(startVolume, 0f, t);
             yield return null;
         }
 
-        audioSource.volume = 0f;
-        audioSource.Stop();
+        _musicSource.volume = 0f;
+        _musicSource.Stop();
     }
-
-    // Публічні методи для ручного керування
 
     public void StopMusicWithFade(float duration = -1)
     {
-        if (fadeOutCoroutine != null)
+        if (_fadeOutCoroutine != null)
         {
-            StopCoroutine(fadeOutCoroutine);
+            StopCoroutine(_fadeOutCoroutine);
         }
 
-        fadeOutCoroutine = StartCoroutine(FadeOutMusic(duration > 0 ? duration : fadeOutDuration));
+        _fadeOutCoroutine = StartCoroutine(FadeOutMusic(duration > 0 ? duration : fadeOutDuration));
     }
 
     IEnumerator FadeOutMusic(float duration)
     {
-        float startVolume = audioSource.volume;
+        float startVolume = _musicSource.volume;
         float elapsedTime = 0f;
 
         while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
             float t = elapsedTime / duration;
-            audioSource.volume = Mathf.Lerp(startVolume, 0f, t);
+            _musicSource.volume = Mathf.Lerp(startVolume, 0f, t);
             yield return null;
         }
 
-        audioSource.volume = 0f;
-        audioSource.Stop();
-        fadeOutCoroutine = null;
+        _musicSource.volume = 0f;
+        _musicSource.Stop();
+        _fadeOutCoroutine = null;
     }
 
     public void RestartMusic()
     {
-        if (audioSource.isPlaying)
+        if (_musicSource.isPlaying)
         {
             StopAllCoroutines();
-            audioSource.Stop();
+            _musicSource.Stop();
         }
 
-        audioSource.volume = 0f;
-        audioSource.Play();
+        _musicSource.volume = 0f;
+        _musicSource.Play();
         StartCoroutine(FadeInMusic());
     }
 
@@ -191,62 +197,56 @@ public class PersistentMusicManager : MonoBehaviour
     IEnumerator CrossfadeMusic(AudioClip newMusic, float duration)
     {
         float halfDuration = duration / 2f;
-        float startVolume = audioSource.volume;
+        float startVolume = _musicSource.volume;
 
-        // Затухаємо поточну музику
         for (float t = 0; t < halfDuration; t += Time.deltaTime)
         {
-            audioSource.volume = Mathf.Lerp(startVolume, 0f, t / halfDuration);
+            _musicSource.volume = Mathf.Lerp(startVolume, 0f, t / halfDuration);
             yield return null;
         }
 
-        // Змінюємо музику
-        audioSource.clip = newMusic;
-        audioSource.Play();
+        _musicSource.clip = newMusic;
+        _musicSource.Play();
 
-        // Наростає нова музика
         for (float t = 0; t < halfDuration; t += Time.deltaTime)
         {
-            audioSource.volume = Mathf.Lerp(0f, maxVolume, t / halfDuration);
+            _musicSource.volume = Mathf.Lerp(0f, maxVolume, t / halfDuration);
             yield return null;
         }
 
-        audioSource.volume = maxVolume;
+        _musicSource.volume = maxVolume;
     }
 
     void OnDestroy()
     {
-        // Відписуємось від подій при знищенні
-        if (instance == this)
+        if (Instance == this)
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
-            SceneManager.sceneUnloaded -= OnSceneUnloaded;
         }
     }
 
-    // Статичні методи для зручного доступу з будь-якого місця
     public static void StopMusic()
     {
-        if (instance != null && instance.audioSource.isPlaying)
+        if (Instance != null && Instance._musicSource.isPlaying)
         {
-            instance.StopMusicWithFade();
+            Instance.StopMusicWithFade();
         }
     }
 
     public static void PlayMusic()
     {
-        if (instance != null && !instance.audioSource.isPlaying)
+        if (Instance != null && !Instance._musicSource.isPlaying)
         {
-            instance.RestartMusic();
+            Instance.RestartMusic();
         }
     }
 
     public static void SetVolume(float volume)
     {
-        if (instance != null)
+        if (Instance != null)
         {
-            instance.maxVolume = Mathf.Clamp01(volume);
-            instance.audioSource.volume = instance.maxVolume;
+            Instance.maxVolume = Mathf.Clamp01(volume);
+            Instance._musicSource.volume = Instance.maxVolume;
         }
     }
 }

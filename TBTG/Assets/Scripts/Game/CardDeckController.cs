@@ -24,6 +24,27 @@ public class CardDeckController : MonoBehaviour
         if (!_cards.Contains(card)) _cards.Add(card);
     }
 
+    public void ResetController()
+    {
+        foreach (var card in _cards)
+        {
+            if (card != null) card.gameObject.SetActive(false);
+        }
+        
+        foreach (var slot in _cardDeck)
+        {
+            if (slot != null && slot.IsOccupied)
+            {
+                slot.ClearSlot();
+            }
+        }
+
+        _cards.Clear();
+        _mods.Clear();
+        CheckDeck();
+    }
+
+
     public void RegisterMod(ModDragHandler mod)
     {
         if (mod == null) return;
@@ -70,6 +91,40 @@ public class CardDeckController : MonoBehaviour
         // {
         //     mod.ModAttachHere -= _playerModel.SpendPoints;
         // }
+    }
+
+    public List<GameObject> GetSelectedCards()
+    {
+        List<GameObject> selected = new List<GameObject>();
+        foreach (var slot in _cardDeck)
+        {
+            if (slot.IsOccupied && slot.CurrentCard != null)
+            {
+                selected.Add(slot.CurrentCard.gameObject);
+            }
+        }
+        return selected;
+    }
+
+    public void AutoFillSlots()
+    {
+        int cardIdx = 0;
+        foreach (var slot in _cardDeck)
+        {
+            if (slot == null || slot.IsOccupied) continue;
+
+            // Шукаємо першу вільну карту, яка ще не в слоті
+            while (cardIdx < _cards.Count && (_cards[cardIdx] == null || _cards[cardIdx].CurrentSlot != null || !_cards[cardIdx].gameObject.activeInHierarchy))
+            {
+                cardIdx++;
+            }
+
+            if (cardIdx < _cards.Count)
+            {
+                slot.SetCardManually(_cards[cardIdx]);
+                cardIdx++;
+            }
+        }
     }
 
     private void CheckDeck()

@@ -92,6 +92,7 @@ public class ModTooltip : MonoBehaviour
     {
         if (modData == null) return;
 
+        if (PersistentMusicManager.Instance != null) PersistentMusicManager.Instance.PlayTooltipShow();
         _tooltipPanel.SetActive(true);
         _rectTransform.SetAsLastSibling();
         

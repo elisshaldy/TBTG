@@ -73,7 +73,6 @@ public class GameSceneState : MonoBehaviour
 
             case GameSetupStep.Mods:
                 ui.OpenMods();
-                _currentSettings.OnFlowFinished(ui);
                 break;
 
             case GameSetupStep.ModeSpecific:
@@ -82,6 +81,7 @@ public class GameSceneState : MonoBehaviour
             
             case GameSetupStep.Map:
                 ui.OpenMap();
+                _currentSettings.OnFlowFinished(ui);
                 break;
         }
     }
@@ -164,6 +164,11 @@ public class GameSceneState : MonoBehaviour
 
     private void UpdateUI()
     {
+        if (GameSettingsManager.Instance != null)
+        {
+            _gameStateText.gameObject.SetActive(GameSettingsManager.Instance.IsDebug);
+        }
+
         if (_sceneState == SceneState.Undefined || _currentSettings == null)
         {
             _gameStateText.text = "Mode: Undefined\nGame settings are not initialized.";

@@ -25,7 +25,6 @@ public class GameDataInitializer : MonoBehaviour
 
     private void Start()
     {
-        InitializeGame();
     }
 
     public void InitializeGame()
@@ -36,18 +35,35 @@ public class GameDataInitializer : MonoBehaviour
             return;
         }
 
-        // 1. Отримуємо налаштування та індекс поточного гравця
-        SceneState mode = SceneState.Undefined;
+        // 1. Отримуємо налаштування та індекс поточного гравця із GameSceneState (джерело правди в сцені)
+        GameSceneState sceneState = FindObjectOfType<GameSceneState>();
         GameSettings settings = null;
-        if (GameSettingsManager.Instance != null && GameSettingsManager.Instance.CurrentSettings != null)
+        SceneState mode = SceneState.Undefined;
+
+        if (sceneState != null && sceneState._currentSettings != null)
+        {
+            settings = sceneState._currentSettings;
+            mode = sceneState.CurrentStep == GameSetupStep.Cards ? SceneState.Hotseat : SceneState.Undefined; // Placeholder logic
+            // Але краще візьмемо режим прямо з менеджера, якщо він є
+            if (GameSettingsManager.Instance != null) mode = GameSettingsManager.Instance.CurrentMode;
+        }
+        else if (GameSettingsManager.Instance != null && GameSettingsManager.Instance.CurrentSettings != null)
         {
             settings = GameSettingsManager.Instance.CurrentSettings;
             mode = GameSettingsManager.Instance.CurrentMode;
         }
 
-        int playerIndex = GetPlayerIndex(mode);
+        int playerIndex = GetPlayerIndex(mode, settings);
+        Debug.Log($"InitializeGame: PlayerIndex = {playerIndex}, Mode = {mode}");
 
         // 2. Отримуємо індекси персонажів
+        // Якщо індекси ще не згенеровані (наприклад, у Hotseat або на старті), генеруємо їх один раз для сесії
+        if (settings != null && (settings.CharacterPoolIndices == null || settings.CharacterPoolIndices.Length == 0))
+        {
+            settings.CharacterPoolIndices = _library.GetShuffledIndices();
+            Debug.Log($"Generated CharacterPoolIndices for session. Total characters: {settings.CharacterPoolIndices.Length}");
+        }
+
         int[] myIndices = (settings != null) ? settings.GetIndicesForPlayer(playerIndex) : null;
         List<CharacterData> myChars = new List<CharacterData>();
 
@@ -61,10 +77,12 @@ public class GameDataInitializer : MonoBehaviour
         }
         else
         {
+            // Якщо налаштувань немає взагалі, беремо просто рандом
             myChars = _library.GetRandomCharacters(_cardsToSpawn);
         }
 
         // ===== CHARACTERS =====
+        if (_cardContainer != null) _cardContainer.enabled = true;
         ClearContainer(_cardContainer.transform);
         _cardsInstances.Clear();
 
@@ -88,6 +106,7 @@ public class GameDataInitializer : MonoBehaviour
         }
 
         // ===== MODIFIERS =====
+        if (_modContainer != null) _modContainer.enabled = true;
         ClearContainer(_modContainer.transform);
         _modsInstances.Clear();
         List<ModData> randomMods = _library.GetModsByBalanceRules();
@@ -156,12 +175,17 @@ public class GameDataInitializer : MonoBehaviour
     {
         foreach (Transform child in container)
         {
-            Destroy(child.gameObject);
+            child.gameObject.SetActive(false);
         }
     }
 
-    private int GetPlayerIndex(SceneState mode)
+    private int GetPlayerIndex(SceneState mode, GameSettings settings)
     {
+        if (settings != null)
+        {
+            return settings.CurrentPlayerIndex;
+        }
+
         switch (mode)
         {
             case SceneState.Multiplayer:

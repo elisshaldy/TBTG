@@ -3653,11 +3653,9 @@ MonoBehaviour:
     Player2Name: Undefined
     Player1Snapshot:
       SelectedCards: []
-      ModPoints: 0
       PlayerIndex: 0
     Player2Snapshot:
       SelectedCards: []
-      ModPoints: 0
       PlayerIndex: 0
   playerVsBotSettings:
     TurnTime: 0
@@ -3712,6 +3710,9 @@ MonoBehaviour:
   _gameSceneState: {fileID: 818084965}
   _cardDeckController: {fileID: 818084966}
   _playerModel: {fileID: 818084968}
+  _dataInitializer: {fileID: 2092572708}
+  _hoverLayer: {fileID: 0}
+  _dragLayer: {fileID: 0}
 --- !u!114 &818084968
 MonoBehaviour:
   m_ObjectHideFlags: 0

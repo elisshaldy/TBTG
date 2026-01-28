@@ -154,6 +154,7 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             return;
 
         isHovered = true;
+        if (PersistentMusicManager.Instance != null) PersistentMusicManager.Instance.PlayCardHover();
 
         // Завершуємо будь-яку поточну анімацію повернення ДО оновлення домашньої позиції
         if (returningHome)

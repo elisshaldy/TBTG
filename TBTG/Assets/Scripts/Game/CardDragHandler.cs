@@ -87,6 +87,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
 
         _canDrag = true;
+        if (PersistentMusicManager.Instance != null) PersistentMusicManager.Instance.PlayCardPickup();
 
         LastSlot = CurrentSlot;
         if (CurrentSlot != null)
@@ -151,6 +152,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void ReturnHome()
     {
+        if (PersistentMusicManager.Instance != null) PersistentMusicManager.Instance.PlayCardReturned();
         SetRaycastTarget(true);
         transform.SetParent(homeParent, false);
 
@@ -187,6 +189,8 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         if (scaler != null)
             scaler.UpdateHome(); 
+            
+        if (PersistentMusicManager.Instance != null) PersistentMusicManager.Instance.PlayCardPlaced();
     }
 
     public void OnDrop(PointerEventData eventData)
