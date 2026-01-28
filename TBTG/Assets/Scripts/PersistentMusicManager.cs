@@ -24,6 +24,7 @@ public class PersistentMusicManager : MonoBehaviour
 
     private AudioSource _musicSource;
     private AudioSource _sfxSource;
+    private AudioSource _hoverSource;
     private string _currentSceneName;
     private Coroutine _fadeOutCoroutine;
     
@@ -50,6 +51,7 @@ public class PersistentMusicManager : MonoBehaviour
         if (_musicSource == null) _musicSource = gameObject.AddComponent<AudioSource>();
         
         _sfxSource = gameObject.AddComponent<AudioSource>();
+        _hoverSource = gameObject.AddComponent<AudioSource>();
 
         SetupAudioSources();
         _currentSceneName = SceneManager.GetActiveScene().name;
@@ -66,6 +68,9 @@ public class PersistentMusicManager : MonoBehaviour
 
         _sfxSource.playOnAwake = false;
         _sfxSource.loop = false;
+
+        _hoverSource.playOnAwake = false;
+        _hoverSource.loop = false;
     }
 
     void Start()
@@ -74,7 +79,16 @@ public class PersistentMusicManager : MonoBehaviour
     }
 
     public void PlayCardPickup() => PlaySFX(_cardPickup);
-    public void PlayCardHover() => PlaySFX(_cardHover);
+    
+    public void PlayCardHover()
+    {
+        if (_cardHover != null && _hoverSource != null)
+        {
+            _hoverSource.Stop();
+            _hoverSource.PlayOneShot(_cardHover);
+        }
+    }
+
     public void PlayCardPlaced() => PlaySFX(_cardPlaced);
     public void PlayCardReturned() => PlaySFX(_cardReturned);
     public void PlayTooltipShow() => PlaySFX(_tooltipShow);
