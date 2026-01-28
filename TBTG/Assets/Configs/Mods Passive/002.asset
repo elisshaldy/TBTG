@@ -16,7 +16,7 @@ MonoBehaviour:
   ModificatorDescription: mod_p_5up_2_d
   Icon: {fileID: 21300000, guid: a630285bf68b02b44aec31a4e2aa744b, type: 3}
   ModType: 2
-  Background: {fileID: 21300000, guid: e293a667fb0b4204693c25bfedb2dbd0, type: 3}
+  Background: {fileID: 21300000, guid: 84fcd19b23e77564b9854404842036b3, type: 3}
   Price: 5
   ReactiveParameters: []
   Critical: []

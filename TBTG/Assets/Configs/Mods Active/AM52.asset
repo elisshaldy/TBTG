@@ -16,7 +16,7 @@ MonoBehaviour:
   ModificatorDescription: mod_a_2up_16b_d
   Icon: {fileID: 21300000, guid: 49ac3d76cd29ae047bc1317132601462, type: 3}
   ModType: 1
-  Background: {fileID: 21300000, guid: 6304df39c2785924795990a5972f7d17, type: 3}
+  Background: {fileID: 21300000, guid: 27175872cf429fd4fb466dda5d28545b, type: 3}
   Price: 2
   ReactiveParameters:
   - MinValue: 15
