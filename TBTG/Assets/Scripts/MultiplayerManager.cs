@@ -6,6 +6,9 @@ public class MultiplayerManager : MonoBehaviourPunCallbacks
 {
     public static MultiplayerManager Instance { get; private set; }
 
+    public event System.Action OnPlayerDisconnected;
+    public event System.Action OnDisconnectedFromServer;
+
     private bool _quickMatchRequested;
 
     private void Awake()
@@ -95,6 +98,18 @@ public class MultiplayerManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Joined Room");
         _quickMatchRequested = false;
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        Debug.Log($"Player {otherPlayer.NickName} left the room.");
+        OnPlayerDisconnected?.Invoke();
+    }
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        Debug.Log($"Disconnected from Photon: {cause}");
+        OnDisconnectedFromServer?.Invoke();
     }
 
     #endregion

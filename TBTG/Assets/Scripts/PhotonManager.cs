@@ -25,36 +25,43 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     
     public void ConnectToPhoton()
     {
-        if (PhotonNetwork.IsConnected)
+        if (Instance != null && Instance != this)
         {
-            Debug.Log("Already connected");
+            Instance.ConnectToPhoton();
             return;
         }
 
-        Debug.Log("Connect to Photon...");
+        if (PhotonNetwork.IsConnectedAndReady)
+        {
+            Debug.Log("Already connected to Photon Master Server");
+            OnConnectedToMasterEvent?.Invoke();
+            return;
+        }
+
+        Debug.Log("Connecting to Photon...");
         PhotonNetwork.ConnectUsingSettings();
         
         PhotonNetwork.NickName = "Player_" + UnityEngine.Random.Range(1000, 9999);
-        Debug.Log(PhotonNetwork.NickName);
+        Debug.Log($"Generated temporary NickName: {PhotonNetwork.NickName}");
         PhotonNetwork.AutomaticallySyncScene = true;
     }
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Connected до Photon");
+        Debug.Log("Connected to Photon");
         PhotonNetwork.JoinLobby();
         OnConnectedToMasterEvent?.Invoke();
     }
 
     public override void OnJoinedLobby()
     {
-        Debug.Log("Enter lobby");
+        Debug.Log("Joined lobby");
     }
     
     public override void OnJoinedRoom()
     {
         CurrentRoomName = PhotonNetwork.CurrentRoom.Name;
-        Debug.Log($"Join to room {CurrentRoomName} as {PhotonNetwork.NickName}");
+        Debug.Log($"Joined to room {CurrentRoomName} as {PhotonNetwork.NickName}");
         
         OnRoomJoined?.Invoke(CurrentRoomName, PhotonNetwork.NickName);
     }
