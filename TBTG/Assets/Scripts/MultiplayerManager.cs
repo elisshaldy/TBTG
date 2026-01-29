@@ -26,7 +26,6 @@ public class MultiplayerManager : MonoBehaviourPunCallbacks
     public void QuickMatch()
     {
         _quickMatchRequested = true;
-
         if (!PhotonNetwork.IsConnected)
         {
             PhotonNetwork.ConnectUsingSettings();
@@ -36,7 +35,7 @@ public class MultiplayerManager : MonoBehaviourPunCallbacks
             StartMatchmaking();
         }
     }
-    
+
     public void LeaveRoomOnly()
     {
         if (!PhotonNetwork.InRoom)
@@ -69,6 +68,8 @@ public class MultiplayerManager : MonoBehaviourPunCallbacks
 
     private void StartMatchmaking()
     {
+        PhotonNetwork.AutomaticallySyncScene = true;
+
         if (!PhotonNetwork.InLobby)
             PhotonNetwork.JoinLobby();
         else

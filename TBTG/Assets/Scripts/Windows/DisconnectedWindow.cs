@@ -19,8 +19,10 @@ public class DisconnectedWindow : UIWindow
     {
         if (PhotonNetwork.InRoom)
         {
+            PhotonNetwork.AutomaticallySyncScene = false;
             PhotonNetwork.LeaveRoom();
         }
+        
         SceneManager.LoadScene("Menu");
     }
 }

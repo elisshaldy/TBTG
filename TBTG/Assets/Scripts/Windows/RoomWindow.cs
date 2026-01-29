@@ -23,6 +23,10 @@ public class RoomWindow : UIWindow
 
     private void OnEnable()
     {
+        // Re-find references if they are missing (e.g. after scene reload)
+        if (roomNetworkService == null)
+            roomNetworkService = FindObjectOfType<RoomNetworkService>();
+
         if (_windowManager != null)
         {
             _windowManager.OnSceneStateSelected += OnSceneStateSelected;
@@ -33,8 +37,6 @@ public class RoomWindow : UIWindow
             roomNetworkService.OnPlayerListUpdated += RefreshPlayerList;
             roomNetworkService.OnHostStatusChanged += UpdateHostUI;
             roomNetworkService.OnRoomNameSet += UpdateRoomNameDisplay;
-            
-            roomNetworkService.RefreshState();
         }
 
         if (_roomParameters != null)
@@ -122,9 +124,22 @@ public class RoomWindow : UIWindow
         }
     }
 
+    public override void OnHide()
+    {
+        base.OnHide();
+        if (_sceneState == SceneState.Multiplayer && PhotonNetwork.InRoom)
+        {
+            PhotonNetwork.LeaveRoom();
+        }
+    }
+
     public override void OnShow()
     {
         base.OnShow();
+        // Re-find references if they are missing (e.g. after scene reload)
+        if (roomNetworkService == null)
+            roomNetworkService = FindObjectOfType<RoomNetworkService>();
+
         if (roomNetworkService != null)
         {
              roomNetworkService.RefreshState();

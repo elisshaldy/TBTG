@@ -31,6 +31,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             return;
         }
 
+        // Завжди вмикаємо синхронізацію сцен при спробі підключення/входу в меню,
+        // бо вона могла бути вимкнена при виході (в PauseMenu/DisconnectedWindow)
+        PhotonNetwork.AutomaticallySyncScene = true;
+
         if (PhotonNetwork.IsConnectedAndReady)
         {
             Debug.Log("Already connected to Photon Master Server");
@@ -43,7 +47,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         
         PhotonNetwork.NickName = "Player_" + UnityEngine.Random.Range(1000, 9999);
         Debug.Log($"Generated temporary NickName: {PhotonNetwork.NickName}");
-        PhotonNetwork.AutomaticallySyncScene = true;
     }
 
     public override void OnConnectedToMaster()

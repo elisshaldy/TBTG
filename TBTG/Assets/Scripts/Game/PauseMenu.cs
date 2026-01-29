@@ -79,6 +79,7 @@ public class PauseMenu : MonoBehaviour
     {
         if (PhotonNetwork.InRoom)
         {
+            PhotonNetwork.AutomaticallySyncScene = false;
             PhotonNetwork.LeaveRoom();
         }
         
