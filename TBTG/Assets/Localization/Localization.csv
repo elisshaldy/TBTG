@@ -1184,7 +1184,7 @@ audio_btn,Аудіо,Audio
 play_btn,Грати,Play
 localization_label,Локалізація,Localization
 turn_time_param,Час на хід,Turn time
-turn_time_param_tip,15 - 180 сек діапазон,15 sec - 180 sec range
+turn_time_param_tip,15 - 180 сек діапазон,15 - 180 sec range
 field_size_param,Розмір поля,Field size
 party_count_param,Розмір команди,Party count
 boss_count_param,Кількість боссів,Boss count
@@ -1210,3 +1210,4 @@ hotseat_current_player,Поточний гравець,Current player
 enum_mod_am,Активний,Active
 enum_mod_pm,Пасивний,Passive
 enum_mod_cm,Критичний варіант,Critical
+initiative_label,Ініціатива,Initiative

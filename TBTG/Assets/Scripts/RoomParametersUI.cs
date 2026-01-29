@@ -12,6 +12,7 @@ public class RoomParametersUI : MonoBehaviour
     [SerializeField] private GameObject _partyCountUI;
     [SerializeField] private GameObject _bossCountUI;
     [SerializeField] private GameObject _bossDificultyUI;
+    [SerializeField] private GameObject _initiativeUI;
     // show if PlayerVSBot state
     [SerializeField] private GameObject _botDificultyUI;
     // show if hotseat
@@ -27,6 +28,7 @@ public class RoomParametersUI : MonoBehaviour
     [SerializeField] private TMP_Dropdown _botDifficultyDropdown;
     [SerializeField] private TMP_InputField _namePlayer1;
     [SerializeField] private TMP_InputField _namePlayer2;
+    [SerializeField] private Toggle _initiative;
 
     public event System.Action OnParametersChanged;
 
@@ -45,6 +47,7 @@ public class RoomParametersUI : MonoBehaviour
 
         _namePlayer1.onValueChanged.AddListener(_ => OnParametersChanged?.Invoke());
         _namePlayer2.onValueChanged.AddListener(_ => OnParametersChanged?.Invoke());
+        _initiative.onValueChanged.AddListener(_ => OnParametersChanged?.Invoke());
     }
     
     public void SetInteractable(bool isHost, SceneState state)
@@ -61,6 +64,7 @@ public class RoomParametersUI : MonoBehaviour
 
         _namePlayer1.interactable = interactable;
         _namePlayer2.interactable = interactable;
+        _initiative.interactable = interactable;
     }
 
     private void ValidateTurnTime(string value)
@@ -83,6 +87,7 @@ public class RoomParametersUI : MonoBehaviour
         _partyCountUI.SetActive(true);
         _bossCountUI.SetActive(true);
         _bossDificultyUI.SetActive(true);
+        _initiativeUI.SetActive(true);
         
         _botDificultyUI.SetActive(false);
         
@@ -98,6 +103,7 @@ public class RoomParametersUI : MonoBehaviour
         _partyCountUI.SetActive(true);
         _bossCountUI.SetActive(true);
         _bossDificultyUI.SetActive(true);
+        _initiativeUI.SetActive(true);
         
         _botDificultyUI.SetActive(true);
         
@@ -154,6 +160,7 @@ public class RoomParametersUI : MonoBehaviour
             settings.BossCount = ExtractNumber(_bossCountDropdown.options[_bossCountDropdown.value].text, _bossCountDropdown.value);
 
             settings.BossDifficulty = (BossDifficulty)(_bossDifficultyDropdown.value + 1);
+            settings.InfluenceInitiative = _initiative.isOn;
         }
 
         return settings;

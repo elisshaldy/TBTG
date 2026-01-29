@@ -27,6 +27,7 @@ public abstract class GameSettings
     public int PartyCount;
     public int[] CharacterPoolIndices;
     public BossDifficulty BossDifficulty;
+    public bool InfluenceInitiative;
 
     public int[] GetIndicesForPlayer(int playerIndex)
     {
