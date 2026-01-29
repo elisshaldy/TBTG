@@ -59,7 +59,7 @@ public class GameSceneState : MonoBehaviour
         if (_flowIndex >= flow.Length) return;
 
         GameSetupStep nextStep = flow[_flowIndex];
-        Debug.Log($"GameSceneState: Switching to {nextStep} step");
+        //Debug.Log($"GameSceneState: Switching to {nextStep} step");
 
         // 1. Готуємо дані для кроку
         _currentSettings.PrepareStep(nextStep, ui);

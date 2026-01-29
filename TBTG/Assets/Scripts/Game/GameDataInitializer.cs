@@ -23,10 +23,6 @@ public class GameDataInitializer : MonoBehaviour
     private List<CardInfo> _cardsInstances = new List<CardInfo>();
     private List<ModInfo> _modsInstances = new List<ModInfo>();
 
-    private void Start()
-    {
-    }
-
     public void InitializeGame()
     {
         if (_library == null)
@@ -54,14 +50,14 @@ public class GameDataInitializer : MonoBehaviour
         }
 
         int playerIndex = GetPlayerIndex(mode, settings);
-        Debug.Log($"InitializeGame: PlayerIndex = {playerIndex}, Mode = {mode}");
+        // Debug.Log($"InitializeGame: PlayerIndex = {playerIndex}, Mode = {mode}");
 
         // 2. Отримуємо індекси персонажів
         // Якщо індекси ще не згенеровані (наприклад, у Hotseat або на старті), генеруємо їх один раз для сесії
         if (settings != null && (settings.CharacterPoolIndices == null || settings.CharacterPoolIndices.Length == 0))
         {
             settings.CharacterPoolIndices = _library.GetShuffledIndices();
-            Debug.Log($"Generated CharacterPoolIndices for session. Total characters: {settings.CharacterPoolIndices.Length}");
+            // Debug.Log($"Generated CharacterPoolIndices for session. Total characters: {settings.CharacterPoolIndices.Length}");
         }
 
         int[] myIndices = (settings != null) ? settings.GetIndicesForPlayer(playerIndex) : null;
@@ -134,7 +130,7 @@ public class GameDataInitializer : MonoBehaviour
         // ПОВЕРТАЄМО КОРУТИНУ
         StartCoroutine(DisableLayouts());
 
-        Debug.Log("Game Data Initialized SUCCESS");
+        // Debug.Log("Game Data Initialized SUCCESS");
     }
 
     private IEnumerator DisableLayouts()
@@ -169,14 +165,22 @@ public class GameDataInitializer : MonoBehaviour
             if (handler != null) handler.InitializeHome();
         }
 
-        Debug.Log("Layout Groups DISABLED and Home Positions FIXED");
+        // Debug.Log("Layout Groups DISABLED and Home Positions FIXED");
+    }
+
+    public void CleanUpContainers()
+    {
+        if (_cardContainer != null) ClearContainer(_cardContainer.transform);
+        if (_modContainer != null) ClearContainer(_modContainer.transform);
+        _cardsInstances.Clear();
+        _modsInstances.Clear();
     }
 
     private void ClearContainer(Transform container)
     {
-        foreach (Transform child in container)
+        for (int i = container.childCount - 1; i >= 0; i--)
         {
-            child.gameObject.SetActive(false);
+            Destroy(container.GetChild(i).gameObject);
         }
     }
 

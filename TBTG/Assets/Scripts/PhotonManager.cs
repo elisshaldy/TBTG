@@ -37,34 +37,34 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsConnectedAndReady)
         {
-            Debug.Log("Already connected to Photon Master Server");
+            // Debug.Log("Already connected to Photon Master Server");
             OnConnectedToMasterEvent?.Invoke();
             return;
         }
 
-        Debug.Log("Connecting to Photon...");
+        // Debug.Log("Connecting to Photon...");
         PhotonNetwork.ConnectUsingSettings();
         
         PhotonNetwork.NickName = "Player_" + UnityEngine.Random.Range(1000, 9999);
-        Debug.Log($"Generated temporary NickName: {PhotonNetwork.NickName}");
+        // Debug.Log($"Generated temporary NickName: {PhotonNetwork.NickName}");
     }
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Connected to Photon");
+        // Debug.Log("Connected to Photon");
         PhotonNetwork.JoinLobby();
         OnConnectedToMasterEvent?.Invoke();
     }
 
     public override void OnJoinedLobby()
     {
-        Debug.Log("Joined lobby");
+        // Debug.Log("Joined lobby");
     }
     
     public override void OnJoinedRoom()
     {
         CurrentRoomName = PhotonNetwork.CurrentRoom.Name;
-        Debug.Log($"Joined to room {CurrentRoomName} as {PhotonNetwork.NickName}");
+        // Debug.Log($"Joined to room {CurrentRoomName} as {PhotonNetwork.NickName}");
         
         OnRoomJoined?.Invoke(CurrentRoomName, PhotonNetwork.NickName);
     }

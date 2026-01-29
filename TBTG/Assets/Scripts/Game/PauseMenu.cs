@@ -50,11 +50,8 @@ public class PauseMenu : MonoBehaviour
             
             if (isActive)
             {
-                // Скидаємо скейлер для всіх карток, щоб вони не залишалися збільшеними
-                foreach (var scaler in Object.FindObjectsByType<CardScaler>(FindObjectsSortMode.None))
-                {
-                    scaler.ResetHover();
-                }
+                // Скидаємо скейлер для всіх карток (оптимізовано)
+                CardScaler.ResetAll();
             }
             else
             {

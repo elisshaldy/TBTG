@@ -48,7 +48,7 @@ public class RoomWindow : UIWindow
     private void OnSceneStateSelected(SceneState state)
     {
         _sceneState = state;
-        Debug.Log($"[RoomWindow] SceneState updated to: {_sceneState}");
+        //Debug.Log($"[RoomWindow] SceneState updated to: {_sceneState}");
 
         switch (_sceneState)
         {

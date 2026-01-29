@@ -45,21 +45,21 @@ public class LobbyController : MonoBehaviourPunCallbacks
     
     private void JoinRoom(string roomName)
     {
-        Debug.Log($"Joining room: {roomName}");
+        // Debug.Log($"Joining room: {roomName}");
         PhotonNetwork.JoinRoom(roomName);
     }
     
     public override void OnJoinedRoom()
     { 
-        Debug.Log($"Joined room: {PhotonNetwork.CurrentRoom.Name}");
+        // Debug.Log($"Joined room: {PhotonNetwork.CurrentRoom.Name}");
         
         if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("Я хост (MasterClient)");
+            // Debug.Log("Я хост (MasterClient)");
         }
         else
         {
-            Debug.Log("Я клієнт");
+            // Debug.Log("Я клієнт");
         }
         // Тут можна відкривати інше вікно або стартувати гру
     }

@@ -61,7 +61,7 @@ public class RoomNetworkService : MonoBehaviour, IInRoomCallbacks
         if (!PhotonNetwork.IsMasterClient)
             return;
 
-        Debug.Log("Host started the game");
+        // Debug.Log("Host started the game");
         PhotonNetwork.LoadLevel("Game");
     }
 
@@ -77,7 +77,7 @@ public class RoomNetworkService : MonoBehaviour, IInRoomCallbacks
 
     public void OnMasterClientSwitched(Player newMasterClient)
     {
-        Debug.Log($"New host: {newMasterClient.NickName}");
+        // Debug.Log($"New host: {newMasterClient.NickName}");
         UpdateHostStatus();
     }
 

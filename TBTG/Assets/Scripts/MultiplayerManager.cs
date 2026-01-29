@@ -40,11 +40,11 @@ public class MultiplayerManager : MonoBehaviourPunCallbacks
     {
         if (!PhotonNetwork.InRoom)
         {
-            Debug.Log("Not in room");
+            // Debug.Log("Not in room");
             return;
         }
 
-        Debug.Log("Leaving room only...");
+        // Debug.Log("Leaving room only...");
         _quickMatchRequested = false;
         PhotonNetwork.LeaveRoom();
     }
@@ -97,19 +97,19 @@ public class MultiplayerManager : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        Debug.Log("Joined Room");
+        // Debug.Log("Joined Room");
         _quickMatchRequested = false;
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        Debug.Log($"Player {otherPlayer.NickName} left the room.");
+        // Debug.Log($"Player {otherPlayer.NickName} left the room.");
         OnPlayerDisconnected?.Invoke();
     }
 
     public override void OnDisconnected(DisconnectCause cause)
     {
-        Debug.Log($"Disconnected from Photon: {cause}");
+        // Debug.Log($"Disconnected from Photon: {cause}");
         OnDisconnectedFromServer?.Invoke();
     }
 

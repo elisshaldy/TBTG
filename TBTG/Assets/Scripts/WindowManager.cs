@@ -59,7 +59,7 @@ public class WindowManager : MonoBehaviour
 
     public void SelectSceneState(SceneState state)
     {
-        Debug.Log($"[WindowManager] SelectSceneState called with: {state}");
+        //Debug.Log($"[WindowManager] SelectSceneState called with: {state}");
         CurrentSceneState = state;
         OnSceneStateSelected?.Invoke(state);
     }

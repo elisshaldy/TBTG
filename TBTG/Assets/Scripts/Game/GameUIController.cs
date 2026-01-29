@@ -144,18 +144,20 @@ public class GameUIController : MonoBehaviour
     
     public void OpenMap()
     {
-        Debug.Log("Map opened");
+        // Debug.Log("Map opened");
         _containerMods.SetActive(false);
         _modPointsTxt.gameObject.SetActive(false);
         _applyBtn.gameObject.SetActive(false);
         _map.SetActive(true);
+        
+        if (_dataInitializer != null) _dataInitializer.CleanUpContainers();
     }
 
     public void OpenHotseatWindow()
     {
         // open window for player 2
         _hotseatPlayerNameTxt.gameObject.SetActive(true);
-        Debug.Log("REINITIALIZE");
+        // Debug.Log("REINITIALIZE");
         _containerCards.SetActive(false);
         _containerMods.SetActive(false);
         // here Hotseat Important !!!!!

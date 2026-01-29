@@ -7,6 +7,12 @@ public class DisconnectedWindow : UIWindow
 {
     [SerializeField] private Button _backToMenuBtn;
 
+    private void OnEnable()
+    {
+        // Скидаємо скейлер для всіх карток (оптимізовано)
+        CardScaler.ResetAll();
+    }
+
     private void Awake()
     {
         if (_backToMenuBtn != null)

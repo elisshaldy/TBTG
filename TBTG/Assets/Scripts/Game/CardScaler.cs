@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -26,6 +27,17 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private bool isHovered;
     
     private Vector3 initialGlobalScale;
+    private static readonly List<CardScaler> ActiveScalers = new List<CardScaler>();
+
+    private void OnEnable()
+    {
+        ActiveScalers.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        ActiveScalers.Remove(this);
+    }
 
     private void Awake()
     {
@@ -69,6 +81,17 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (isHovered && !isDraggingSelf)
         {
             KeepOnScreen();
+        }
+    }
+    
+    public static void ResetAll()
+    {
+        for (int i = ActiveScalers.Count - 1; i >= 0; i--)
+        {
+            if (ActiveScalers[i] != null)
+            {
+                ActiveScalers[i].ResetHover();
+            }
         }
     }
 
