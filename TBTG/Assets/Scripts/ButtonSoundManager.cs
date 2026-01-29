@@ -39,7 +39,7 @@ public class ButtonSoundManager : MonoBehaviour
             SetupButtonSounds(button);
         }
 
-        Debug.Log($"ButtonSoundManager: Налаштовано {sceneButtons.Count} кнопок на сцені");
+        //Debug.Log($"ButtonSoundManager: Налаштовано {sceneButtons.Count} кнопок на сцені");
     }
 
     void SetupButtonSounds(Button button)

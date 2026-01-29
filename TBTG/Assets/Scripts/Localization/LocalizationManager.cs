@@ -107,7 +107,7 @@ public class LocalizationManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"[LocalizationManager] Loaded {_translations.Count} keys and {_availableLanguages.Count} languages: {string.Join(", ", _availableLanguages)}");
+        //Debug.Log($"[LocalizationManager] Loaded {_translations.Count} keys and {_availableLanguages.Count} languages: {string.Join(", ", _availableLanguages)}");
     }
 
     private void InitializeDropdown()
