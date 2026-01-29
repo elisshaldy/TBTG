@@ -13,14 +13,39 @@ public class MultiplayerWindow : UIWindow
     [SerializeField] private Button _createRoomBtn;
     [SerializeField] private Button _joinRoomBtn;
 
-    private void Start()
+    private void OnEnable()
     {
         SetButtonsInteractable(false);
         
+        if (PhotonManager.Instance != null)
+            PhotonManager.Instance.OnConnectedToMasterEvent += OnPhotonConnected;
+
+        // If we are already connected, manually trigger the UI update
+        if (PhotonNetwork.IsConnectedAndReady)
+        {
+            OnPhotonConnected();
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (PhotonManager.Instance != null)
+            PhotonManager.Instance.OnConnectedToMasterEvent -= OnPhotonConnected;
+    }
+
+    private void Start()
+    {
         _enterName.onClick.AddListener(OnEnterNameClicked);
         _quickMatchBtn.onClick.AddListener(OnQuickMatchClicked);
+    }
 
-        PhotonManager.Instance.OnConnectedToMasterEvent += OnPhotonConnected;
+    /// <summary>
+    /// Use this method for the "Multiplayer" button in the Main Menu to avoid broken references
+    /// if PhotonManager gets destroyed/respawned.
+    /// </summary>
+    public void ConnectToPhotonSafe()
+    {
+        PhotonManager.Instance.ConnectToPhoton();
     }
     
     private void OnEnterNameClicked()
@@ -42,12 +67,6 @@ public class MultiplayerWindow : UIWindow
 
         Debug.Log($"Player name set to: {PhotonNetwork.NickName}");
         _inputFieldName.text = "";
-    }
-
-    private void OnDestroy()
-    {
-        if (PhotonManager.Instance != null)
-            PhotonManager.Instance.OnConnectedToMasterEvent -= OnPhotonConnected;
     }
 
     private void OnPhotonConnected()

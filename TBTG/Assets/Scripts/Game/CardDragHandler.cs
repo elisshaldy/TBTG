@@ -13,6 +13,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     private GameSceneState gameSceneState;
     private CardDeckController cardDeckController;
+    private Image cardImage;
 
     private Transform homeParent;
 
@@ -34,6 +35,16 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         canvas = GetComponentInParent<Canvas>();
         canvasGroup = GetComponent<CanvasGroup>();
         scaler = GetComponent<CardScaler>();
+        cardImage = GetComponent<Image>();
+    }
+
+    public void SetDependencies(GameSceneState sceneState, CardDeckController deckController)
+    {
+        gameSceneState = sceneState;
+        cardDeckController = deckController;
+
+        var modsContainer = GetComponent<ModsCardContainer>();
+        if (modsContainer != null) modsContainer.SetDependencies(sceneState);
     }
 
     public void InitializeHome()
@@ -55,30 +66,18 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (scaler != null)
             scaler.UpdateHome();
     }
-
-    private void Start()
-    {
-        if (gameSceneState == null)
-            gameSceneState = FindObjectOfType<GameSceneState>(); // OPTIMIZE
-        if (cardDeckController == null)
-            cardDeckController = FindObjectOfType<CardDeckController>(); // OPTIMIZE
-    }
     
     public void SetRaycastTarget(bool value)
     {
         if (canvasGroup != null)
             canvasGroup.blocksRaycasts = value;
         
-        var image = GetComponent<Image>(); // OPTIMIZE
-        if (image != null) image.raycastTarget = value;
+        if (cardImage != null) cardImage.raycastTarget = value;
     }
     
     public void OnBeginDrag(PointerEventData eventData)
     {
         _canDrag = false;
-
-        if (gameSceneState == null)
-            gameSceneState = FindObjectOfType<GameSceneState>();
 
         if (gameSceneState != null && gameSceneState.CurrentStep != GameSetupStep.Cards)
         {

@@ -5,7 +5,9 @@ using System;
 [CreateAssetMenu(fileName = "NewMod", menuName = "Game Data/Mod")]
 public class ModData : ScriptableObject
 {
+    [LocalizedKey]
     public string ModificatorName;
+    [LocalizedKey]
     public string ModificatorDescription;
     public Sprite Icon;
     public ModType ModType;

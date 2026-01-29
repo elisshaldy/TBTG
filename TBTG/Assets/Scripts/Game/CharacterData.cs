@@ -5,6 +5,7 @@ using System;
 public class CharacterData : ScriptableObject
 {
     [Header("Visuals")]
+    [LocalizedKey]
     public string CharacterName;
     public Sprite CharacterSprite;
     

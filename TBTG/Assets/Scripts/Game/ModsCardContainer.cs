@@ -28,9 +28,9 @@ public class ModsCardContainer : MonoBehaviour
         }
     }
 
-    private void Start()
+    public void SetDependencies(GameSceneState sceneState)
     {
-        _gameSceneState = FindObjectOfType<GameSceneState>();
+        _gameSceneState = sceneState;
     }
 
     private void OnIconClick(int index)

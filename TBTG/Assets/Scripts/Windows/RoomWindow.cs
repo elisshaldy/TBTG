@@ -191,6 +191,7 @@ public class RoomWindow : UIWindow
                 props.Add("BossCount", settings.BossCount);
                 props.Add("BossDifficulty", (int)settings.BossDifficulty);
                 props.Add("CharIndices", settings.CharacterPoolIndices);
+                props.Add("Initiative", settings.InfluenceInitiative);
             
                 PhotonNetwork.CurrentRoom.SetCustomProperties(props);
                 

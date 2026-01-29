@@ -213,4 +213,9 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             targetScale = normalScale;
         }
     }
+
+    public void ResetHover()
+    {
+        OnPointerExit(null);
+    }
 }
