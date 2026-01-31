@@ -1211,5 +1211,5 @@ enum_mod_am,Активний,Active
 enum_mod_pm,Пасивний,Passive
 enum_mod_cm,Критичний варіант,Critical
 initiative_label,Ініціатива,Initiative
-player_disconected_text,Ваш соперник від'єднався,You enemy disconected
+player_disconected_text,Ваш супротивник від'єднався,You enemy disconected
 disconect_btn,Відключитись,Disconect
