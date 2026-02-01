@@ -14,29 +14,50 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     // Key is GridCoordinates, Value is (OwnerID, CardID)
     private Dictionary<Vector2Int, (int, int)> _tileOccupants = new Dictionary<Vector2Int, (int, int)>();
 
-    private GameObject _previewInstance;
+    // Preview logic
+    private GameObject _localPreviewInstance;
+    private Dictionary<int, GameObject> _remotePreviewInstances = new Dictionary<int, GameObject>();
+    
     private CardDragHandler _currentPreviewCard;
     private Tile _currentPreviewTile;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
+        
+        // Auto-find library if not assigned
+        if (_library == null)
+        {
+            var initializer = FindObjectOfType<GameDataInitializer>();
+            if (initializer != null)
+            {
+                // Using reflection or just finding the asset is hard, 
+                // but we can try to find it on the initializer if it was public.
+                // For now, we assume user assigns it or we find it via Resources if possible.
+            }
+        }
     }
+
+    private void Start()
+    {
+        if (photonView == null)
+        {
+            Debug.LogError("[CharacterPlacementManager] MISSING PhotonView! Please add PhotonView component to this GameObject for multiplayer to work.");
+        }
+    }
+
+    #region PLACEMENT LOGIC
 
     public bool TryPlaceCharacter(CardDragHandler card, Tile tile)
     {
-        if (tile == null || tile.Type == TileType.Impassable) 
-        {
-            Debug.Log("[Placement] Cannot place on null or impassable tile.");
-            return false;
-        }
+        if (tile == null || tile.Type == TileType.Impassable) return false;
 
         // Check if tile is occupied by another character
         if (_tileOccupants.TryGetValue(tile.GridCoordinates, out var occupant))
         {
             if (occupant.Item1 != card.OwnerID || occupant.Item2 != card.CardID)
             {
-                Debug.Log("[Placement] Tile already occupied by another character!");
+                Debug.Log("[Placement] Tile occupied!");
                 return false;
             }
         }
@@ -44,13 +65,13 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         var cardInfo = card.GetComponent<CardInfo>();
         if (cardInfo == null || cardInfo.CharData == null) return false;
 
-        int charLibraryIndex = _library != null ? _library.AllCharacters.IndexOf(cardInfo.CharData) : -1;
+        int charLibraryIndex = GetLibraryIndex(cardInfo.CharData);
         int ownerID = card.OwnerID;
 
-        // Perform local placement using the tile we already have
+        // Perform local placement
         PerformPlacement(ownerID, card.CardID, charLibraryIndex, tile.GridCoordinates, tile);
 
-        // Sync with others if in multiplayer
+        // Sync with others
         if (PhotonNetwork.InRoom && photonView != null)
         {
             photonView.RPC("RPC_PlaceCharacter", RpcTarget.Others, ownerID, card.CardID, charLibraryIndex, tile.GridCoordinates.x, tile.GridCoordinates.y);
@@ -62,19 +83,9 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void RPC_PlaceCharacter(int ownerID, int cardID, int libIdx, int tx, int ty)
     {
+        Debug.Log($"[Placement] Received RPC from Player {ownerID} for Card {cardID} at ({tx}, {ty})");
         Vector2Int targetPos = new Vector2Int(tx, ty);
-        Tile targetTile = null;
-
-        // Fallback: If GridManager is missing, find tile manually by coordinates
-        if (GridManager.Instance != null)
-        {
-            targetTile = GridManager.Instance.GetTile(targetPos);
-        }
-        else
-        {
-            targetTile = FindObjectsOfType<Tile>().FirstOrDefault(t => t.GridCoordinates == targetPos);
-        }
-
+        Tile targetTile = FindTileAt(targetPos);
         PerformPlacement(ownerID, cardID, libIdx, targetPos, targetTile);
     }
 
@@ -83,28 +94,21 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         if (tile == null) return;
         var key = (ownerID, cardID);
 
-        // Clear this character's previous position if any (but NOT other players' characters)
         ClearPlacementInternal(ownerID, cardID);
 
-        // Spawn/Place new character
         if (_library != null && libIdx >= 0 && libIdx < _library.AllCharacters.Count)
         {
             CharacterData data = _library.AllCharacters[libIdx];
-            GameObject prefab = data.CharacterModel;
-
-            if (prefab != null)
+            if (data.CharacterModel != null)
             {
-                GameObject characterInstance = Instantiate(prefab, tile.transform.position, Quaternion.Euler(-90, 0, 0));
+                GameObject characterInstance = Instantiate(data.CharacterModel, tile.transform.position, Quaternion.Euler(-90, 0, 0));
                 FitToTile(characterInstance, tile);
                 
-                // Setup character icon
                 var iconWorld = characterInstance.GetComponentInChildren<PlayerIconWorld>();
                 if (iconWorld != null) iconWorld.SetIcon(data.CharacterSprite);
 
                 _spawnedCharacters[key] = characterInstance;
                 _tileOccupants[gridPos] = key;
-                
-                Debug.Log($"[Placement] Placed {data.CharacterName} (Owner {ownerID}) on tile {gridPos}");
             }
         }
     }
@@ -112,18 +116,12 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     public void ClearPlacement(CardDragHandler card)
     {
         ClearPlacementInternal(card.OwnerID, card.CardID);
-        
         if (PhotonNetwork.InRoom && photonView != null)
-        {
             photonView.RPC("RPC_ClearPlacement", RpcTarget.Others, card.OwnerID, card.CardID);
-        }
     }
 
     [PunRPC]
-    private void RPC_ClearPlacement(int ownerID, int cardID)
-    {
-        ClearPlacementInternal(ownerID, cardID);
-    }
+    private void RPC_ClearPlacement(int ownerID, int cardID) => ClearPlacementInternal(ownerID, cardID);
 
     private void ClearPlacementInternal(int ownerID, int cardID)
     {
@@ -133,18 +131,14 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
             Destroy(oldChar);
             _spawnedCharacters.Remove(key);
             
-            // Using a temporary list to avoid modification while enumerating
-            List<Vector2Int> keysToRemove = new List<Vector2Int>();
-            foreach (var kvp in _tileOccupants)
-            {
-                if (kvp.Value == key)
-                {
-                    keysToRemove.Add(kvp.Key);
-                }
-            }
+            var keysToRemove = _tileOccupants.Where(kvp => kvp.Value == key).Select(kvp => kvp.Key).ToList();
             foreach (var k in keysToRemove) _tileOccupants.Remove(k);
         }
     }
+
+    #endregion
+
+    #region PREVIEW / HOLOGRAM LOGIC (Networked)
 
     public void ShowPreview(CardDragHandler card, Tile tile)
     {
@@ -164,28 +158,88 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         var cardInfo = card.GetComponent<CardInfo>();
         if (cardInfo == null || cardInfo.CharData == null) return;
 
-        GameObject prefab = cardInfo.CharData.CharacterModel;
-        if (prefab != null)
-        {
-            _previewInstance = Instantiate(prefab, tile.transform.position, Quaternion.Euler(-90, 0, 0));
-            FitToTile(_previewInstance, tile);
-            ApplyHologramEffect(_previewInstance);
+        int libIdx = GetLibraryIndex(cardInfo.CharData);
+        
+        // Local preview
+        _localPreviewInstance = SpawnPreviewInstance(libIdx, tile);
 
-            // Setup character icon for preview
-            var iconWorld = _previewInstance.GetComponentInChildren<PlayerIconWorld>();
-            if (iconWorld != null) iconWorld.SetIcon(cardInfo.CharData.CharacterSprite);
+        // Notify others
+        if (PhotonNetwork.InRoom && photonView != null)
+        {
+            int myActor = PhotonNetwork.LocalPlayer.ActorNumber;
+            photonView.RPC("RPC_ShowRemotePreview", RpcTarget.Others, myActor, libIdx, tile.GridCoordinates.x, tile.GridCoordinates.y);
         }
     }
 
     public void HidePreview()
     {
-        if (_previewInstance != null)
+        if (_localPreviewInstance != null)
         {
-            Destroy(_previewInstance);
-            _previewInstance = null;
+            Destroy(_localPreviewInstance);
+            _localPreviewInstance = null;
         }
         _currentPreviewCard = null;
         _currentPreviewTile = null;
+
+        if (PhotonNetwork.InRoom && photonView != null)
+        {
+            photonView.RPC("RPC_HideRemotePreview", RpcTarget.Others, PhotonNetwork.LocalPlayer.ActorNumber);
+        }
+    }
+
+    [PunRPC]
+    private void RPC_ShowRemotePreview(int actorNum, int libIdx, int tx, int ty)
+    {
+        if (_remotePreviewInstances.TryGetValue(actorNum, out GameObject existing))
+        {
+            Destroy(existing);
+        }
+
+        Tile tile = FindTileAt(new Vector2Int(tx, ty));
+        if (tile != null)
+        {
+            GameObject preview = SpawnPreviewInstance(libIdx, tile);
+            _remotePreviewInstances[actorNum] = preview;
+        }
+    }
+
+    [PunRPC]
+    private void RPC_HideRemotePreview(int actorNum)
+    {
+        if (_remotePreviewInstances.TryGetValue(actorNum, out GameObject preview))
+        {
+            Destroy(preview);
+            _remotePreviewInstances.Remove(actorNum);
+        }
+    }
+
+    private GameObject SpawnPreviewInstance(int libIdx, Tile tile)
+    {
+        if (_library == null || libIdx < 0 || libIdx >= _library.AllCharacters.Count) return null;
+
+        CharacterData data = _library.AllCharacters[libIdx];
+        if (data == null || data.CharacterModel == null) return null;
+
+        GameObject preview = Instantiate(data.CharacterModel, tile.transform.position, Quaternion.Euler(-90, 0, 0));
+        FitToTile(preview, tile);
+        ApplyHologramEffect(preview);
+
+        var iconWorld = preview.GetComponentInChildren<PlayerIconWorld>();
+        if (iconWorld != null) iconWorld.SetIcon(data.CharacterSprite);
+
+        return preview;
+    }
+
+    #endregion
+
+    #region HELPERS
+
+    private int GetLibraryIndex(CharacterData data) => _library != null ? _library.AllCharacters.IndexOf(data) : -1;
+
+    private Tile FindTileAt(Vector2Int pos)
+    {
+        if (GridManager.Instance != null) return GridManager.Instance.GetTile(pos);
+        return FindObjectsOfType<Tile>().FirstOrDefault(t => t.GridCoordinates == pos);
     }
 
     private void ApplyHologramEffect(GameObject obj)
@@ -195,20 +249,14 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         {
             foreach (var mat in r.materials)
             {
-                // Set to Fade/Transparent mode (Standard Shader hack)
                 mat.SetFloat("_Mode", 2); 
                 mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
                 mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                 mat.SetInt("_ZWrite", 0);
-                mat.DisableKeyword("_ALPHATEST_ON");
-                mat.EnableKeyword("_ALPHABLEND_ON");
-                mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
                 mat.renderQueue = 3000;
-
-                Color hologramColor = Color.green;
-                hologramColor.a = 0.4f;
-                if (mat.HasProperty("_Color")) mat.color = hologramColor;
-                if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", hologramColor);
+                Color col = Color.green; col.a = 0.4f;
+                if (mat.HasProperty("_Color")) mat.color = col;
+                if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", col);
             }
         }
     }
@@ -223,20 +271,14 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         if (renderers.Length == 0) return;
 
         Bounds bounds = renderers[0].bounds;
-        foreach (var r in renderers)
-        {
-            bounds.Encapsulate(r.bounds);
-        }
+        foreach (var r in renderers) bounds.Encapsulate(r.bounds);
 
-        float charWidth = bounds.size.x;
-        float charDepth = bounds.size.z;
-        float maxCharSize = Mathf.Max(charWidth, charDepth);
-
+        float maxCharSize = Mathf.Max(bounds.size.x, bounds.size.z);
         if (maxCharSize > 0)
         {
-            float targetSize = tileSize * 0.8f;
-            float scaleFactor = targetSize / maxCharSize;
+            float scaleFactor = (tileSize * 0.8f) / maxCharSize;
             character.transform.localScale *= scaleFactor;
         }
     }
+    #endregion
 }
