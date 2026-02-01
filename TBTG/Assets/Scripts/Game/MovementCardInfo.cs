@@ -17,17 +17,12 @@ public class MovementCardInfo : MonoBehaviour
 
     public void Initialize()
     {
-        // _cardName.SetKey(MoveCard.CardName); // Only if CardName exists, user removed it?
-        // User removed CardName and CardSprite from MovementCard.cs in the diff?
-        // Let's check the diff again.
-        // Yes, user removed CardName and CardSprite.
-        
-        //UpdateMovementGrid();
+        UpdateMovementGrid();
     }
 
     private void UpdateMovementGrid()
     {
-        if (MoveCard.MovementPatternGrid == null) return;
+        if (MoveCard == null || MoveCard.MovementPatternGrid == null) return;
         if (_gridCells == null || _gridCells.Length == 0)
         {
             Debug.LogWarning($"Grid cells not assigned in {gameObject.name}", gameObject);

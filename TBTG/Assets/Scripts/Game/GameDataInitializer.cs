@@ -133,31 +133,36 @@ public class GameDataInitializer : MonoBehaviour
             }
         }
 
-        // ===== MOVEMENT CARDS =====
-        if (_movementCardContainer != null) _movementCardContainer.enabled = true;
-        //ClearContainer(_movementCardContainer.transform);
-        //_movementCardsInstances.Clear();
-        List<MovementCard> randomMoveCards = _library.GetRandomMovementCards(_movementCardsToSpawn);
-        
-        for (int i = 0; i < _movementCardsToSpawn; i++)
+        if (_movementCardContainer != null && _movementCardContainer.transform.childCount > 0)
         {
-            GameObject mcObj = Instantiate(_movementCardPrefab, _movementCardContainer.transform);
-            MovementCardInfo mcInfo = mcObj.GetComponent<MovementCardInfo>();
-            if (mcInfo != null)
+             // Movement cards already initialized, skip to next parts
+        }
+        else
+        {
+            if (_movementCardContainer != null) _movementCardContainer.enabled = true;
+            _movementCardsInstances.Clear();
+            List<MovementCard> randomMoveCards = _library.GetRandomMovementCards(_movementCardsToSpawn);
+            
+            for (int i = 0; i < _movementCardsToSpawn; i++)
             {
-                if (i < randomMoveCards.Count) mcInfo.MoveCard = randomMoveCards[i];
-                mcInfo.Initialize();
-                _movementCardsInstances.Add(mcInfo);
+                GameObject mcObj = Instantiate(_movementCardPrefab, _movementCardContainer.transform);
+                MovementCardInfo mcInfo = mcObj.GetComponent<MovementCardInfo>();
+                if (mcInfo != null)
+                {
+                    if (i < randomMoveCards.Count) mcInfo.MoveCard = randomMoveCards[i];
+                    mcInfo.Initialize();
+                    _movementCardsInstances.Add(mcInfo);
+                }
             }
         }
 
-        // ВИМИКАЄМО ЛЕАЙУТИ СИНХРОННО
-        DisableLayouts();
+        // ВИМИКАЄМО ЛЕАЙУТИ ПІСЛЯ ПАУЗИ (щоб Unity встигла розставити елементи)
+        StartCoroutine(DisableLayoutsRoutine());
 
         // Debug.Log("Game Data Initialized SUCCESS");
     }
 
-    private void DisableLayouts()
+    private IEnumerator DisableLayoutsRoutine()
     {
         // Якщо контейнер вимкнений, леайут-група не прораховується.
         // На мить вмикаємо його, щоб Unity встигла розставити елементи.
@@ -172,6 +177,12 @@ public class GameDataInitializer : MonoBehaviour
         LayoutRebuilder.ForceRebuildLayoutImmediate(_modContainer.transform as RectTransform);
         if (_movementCardContainer != null) LayoutRebuilder.ForceRebuildLayoutImmediate(_movementCardContainer.transform as RectTransform);
 
+        // Даємо Unity закінчити прорахунок геометрії в кінці кадру
+        yield return new WaitForEndOfFrame();
+
+        // Повторно форсуємо для карток ходьби
+        if (_movementCardContainer != null) LayoutRebuilder.ForceRebuildLayoutImmediate(_movementCardContainer.transform as RectTransform);
+
         if (_cardContainer != null) _cardContainer.enabled = false;
         if (_modContainer != null) _modContainer.enabled = false;
         if (_movementCardContainer != null) _movementCardContainer.enabled = false;
@@ -183,30 +194,36 @@ public class GameDataInitializer : MonoBehaviour
         // Тепер фіксуємо домашні позиції
         foreach (var card in _cardsInstances)
         {
+            if (card == null) continue;
             var handler = card.GetComponent<CardDragHandler>();
             if (handler != null) handler.InitializeHome();
         }
 
         foreach (var mod in _modsInstances)
         {
+            if (mod == null) continue;
             var handler = mod.GetComponent<ModDragHandler>();
             if (handler != null) handler.InitializeHome();
         }
-        
-        // For movement cards, we haven't implemented drag handler yet, but if they have one:
-        // foreach (var mc in _movementCardsInstances) { ... }
 
-        // Debug.Log("Layout Groups DISABLED and Home Positions FIXED");
+        foreach (var mc in _movementCardsInstances)
+        {
+            if (mc == null) continue;
+            var handler = mc.GetComponent<CardDragHandler>();
+            if (handler != null) handler.InitializeHome();
+            var modHandler = mc.GetComponent<ModDragHandler>();
+            if (modHandler != null) modHandler.InitializeHome();
+        }
+        
+        // Debug.Log("[Initializer] Layouts updated and home positions captured.");
     }
 
     public void CleanUpContainers()
     {
         if (_cardContainer != null) ClearContainer(_cardContainer.transform);
         if (_modContainer != null) ClearContainer(_modContainer.transform);
-        //if (_movementCardContainer != null) ClearContainer(_movementCardContainer.transform);
         _cardsInstances.Clear();
         _modsInstances.Clear();
-        //_movementCardsInstances.Clear();
     }
 
     private void ClearContainer(Transform container)

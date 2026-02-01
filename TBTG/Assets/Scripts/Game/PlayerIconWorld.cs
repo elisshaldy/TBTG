@@ -4,7 +4,6 @@ using UnityEngine.UI;
 public class PlayerIconWorld : MonoBehaviour
 {
     [SerializeField] private Image _face1;
-    [SerializeField] private Image _face2;
 
     private Transform _mainCameraTransform;
 
@@ -17,7 +16,6 @@ public class PlayerIconWorld : MonoBehaviour
     public void SetIcon(Sprite icon)
     {
         if (_face1 != null) _face1.sprite = icon;
-        if (_face2 != null) _face2.sprite = icon;
     }
 
     private void LateUpdate()
@@ -34,6 +32,5 @@ public class PlayerIconWorld : MonoBehaviour
 
         // Apply rotation only to the icon images
         if (_face1 != null) _face1.transform.rotation = targetRotation;
-        if (_face2 != null) _face2.transform.rotation = targetRotation;
     }
 }
