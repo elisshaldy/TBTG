@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 using Photon.Pun;
 using System.Linq;
 
@@ -42,7 +43,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         }
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
         if (photonView == null)
         {
@@ -50,10 +51,26 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         }
 
         _localPlayerIndex = PhotonNetwork.InRoom ? PhotonNetwork.LocalPlayer.ActorNumber - 1 : 0;
+        
+        Debug.Log($"[Placement] Manager started. LocalPlayerIndex: {_localPlayerIndex}. Waiting for grid...");
+
+        // Wait for GridManager and tiles to be ready
+        float timeout = 5f;
+        while (timeout > 0)
+        {
+            if (GridManager.Instance != null && GridManager.Instance.GetAllRegisteredCoords().Any())
+                break;
+            
+            yield return null;
+            timeout -= Time.deltaTime;
+        }
+
+        // Extra small delay to ensure all tiles are fully registered
+        yield return new WaitForSeconds(0.2f);
 
         if (PhotonNetwork.InRoom && photonView != null)
         {
-            Debug.Log("[Placement] Requesting current placements from others...");
+            Debug.Log("[Placement] Grid ready. Requesting current placements from others...");
             photonView.RPC("RPC_RequestCurrentPlacements", RpcTarget.Others);
         }
     }
@@ -95,10 +112,36 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void RPC_PlaceCharacter(int ownerID, int cardID, int libIdx, int tx, int ty)
     {
-        Debug.Log($"[Placement] Received RPC from Player {ownerID} for Card {cardID} at ({tx}, {ty})");
+        Debug.Log($"[Placement] Received RPC for Player {ownerID}, Card {cardID} at ({tx}, {ty})");
         Vector2Int targetPos = new Vector2Int(tx, ty);
-        Tile targetTile = FindTileAt(targetPos);
-        PerformPlacement(ownerID, cardID, libIdx, targetPos, targetTile);
+        
+        // Use a coroutine to handle cases where the grid might not be ready yet
+        StartCoroutine(WaitAndPlace(ownerID, cardID, libIdx, targetPos));
+    }
+
+    private IEnumerator WaitAndPlace(int ownerID, int cardID, int libIdx, Vector2Int gridPos)
+    {
+        Tile targetTile = null;
+        float timeout = 5f;
+        
+        while (targetTile == null && timeout > 0)
+        {
+            targetTile = FindTileAt(gridPos);
+            if (targetTile == null)
+            {
+                yield return new WaitForSeconds(0.1f);
+                timeout -= 0.1f;
+            }
+        }
+
+        if (targetTile != null)
+        {
+            PerformPlacement(ownerID, cardID, libIdx, gridPos, targetTile);
+        }
+        else
+        {
+            Debug.LogError($"[Placement] CRITICAL: Could not find tile at {gridPos} for character placement (Owner:{ownerID}, Card:{cardID})!");
+        }
     }
 
     private void PerformPlacement(int ownerID, int cardID, int libIdx, Vector2Int gridPos, Tile tile)
