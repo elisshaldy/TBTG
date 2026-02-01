@@ -23,6 +23,8 @@ public class CardSlot : MonoBehaviour, IDropHandler
     {
         CardDragHandler incomingCard = eventData.pointerDrag.GetComponent<CardDragHandler>();
         if (incomingCard == null) return;
+        
+        if (incomingCard.IsLockedInSlot && incomingCard.LastSlot != this) return;
 
         if (IsOccupied)
         {

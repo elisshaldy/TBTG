@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 2292302183046334164}
   - component: {fileID: 6435718062300529100}
   - component: {fileID: 3564481627659503419}
-  - component: {fileID: 8258980437957236237}
+  - component: {fileID: 5320709011575301347}
+  - component: {fileID: 8272565855118881622}
   m_Layer: 0
   m_Name: TilePrefab
   m_TagString: Untagged
@@ -84,7 +85,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &8258980437957236237
+--- !u!114 &5320709011575301347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1733741896200809712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb5c8cf8eab7bd5418baf17e86f97efd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GridCoordinates: {x: 0, y: 0}
+  Type: 0
+--- !u!65 &8272565855118881622
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

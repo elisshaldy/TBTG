@@ -7,6 +7,10 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public CardSlot CurrentSlot { get; set; }
     public CardSlot LastSlot { get; private set; }
 
+    public bool IsLockedInSlot => gameSceneState != null && gameSceneState.CurrentStep == GameSetupStep.Map;
+    public int CardID { get; set; } = -1;
+    public int OwnerID { get; set; } = -1;
+
     private RectTransform rectTransform;
     private Canvas canvas;
     private CanvasGroup canvasGroup;
@@ -79,7 +83,9 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         _canDrag = false;
 
-        if (gameSceneState != null && gameSceneState.CurrentStep != GameSetupStep.Cards)
+        if (gameSceneState != null && 
+            gameSceneState.CurrentStep != GameSetupStep.Cards && 
+            gameSceneState.CurrentStep != GameSetupStep.Map)
         {
             eventData.pointerDrag = null;
             return;
@@ -119,6 +125,9 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             scaler.SetDragging(true);
 
         ToggleOtherCardsInSlotsRaycasts(false);
+        PlayerCameraController.BlockCameraControl = true;
+
+        if (canvasGroup != null) canvasGroup.alpha = 0.5f;
     }
 
     private void ToggleOtherCardsInSlotsRaycasts(bool value)
@@ -131,6 +140,35 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         if (!_canDrag) return;
         rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+
+        if (IsLockedInSlot)
+        {
+            UpdatePreview(eventData);
+        }
+    }
+
+    private void UpdatePreview(PointerEventData eventData)
+    {
+        if (Camera.main == null) return;
+
+        Ray ray = Camera.main.ScreenPointToRay(eventData.position);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            Tile tile = hit.collider.GetComponent<Tile>();
+            if (tile == null) tile = hit.collider.GetComponentInParent<Tile>();
+
+            if (tile != null)
+            {
+                if (CharacterPlacementManager.Instance != null)
+                {
+                    CharacterPlacementManager.Instance.ShowPreview(this, tile);
+                    return;
+                }
+            }
+        }
+
+        if (CharacterPlacementManager.Instance != null)
+            CharacterPlacementManager.Instance.HidePreview();
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -143,10 +181,51 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (scaler != null)
             scaler.SetDragging(false);
 
+        bool placedSuccessfully = false;
+        if (IsLockedInSlot)
+        {
+            placedSuccessfully = TryPlaceOnMapTile(eventData);
+        }
+
         if (CurrentSlot == null)
+        {
+            if (IsLockedInSlot && LastSlot != null)
+            {
+                LastSlot.SetCardManually(this);
+            }
+            else
+            {
                 ReturnHome();
+            }
+        }
         
         _canDrag = false;
+        PlayerCameraController.BlockCameraControl = false;
+        if (canvasGroup != null) canvasGroup.alpha = 1.0f;
+
+        if (CharacterPlacementManager.Instance != null)
+            CharacterPlacementManager.Instance.HidePreview();
+    }
+
+    private bool TryPlaceOnMapTile(PointerEventData eventData)
+    {
+        if (Camera.main == null) return false;
+
+        Ray ray = Camera.main.ScreenPointToRay(eventData.position);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            Tile tile = hit.collider.GetComponent<Tile>();
+            if (tile == null) tile = hit.collider.GetComponentInParent<Tile>();
+
+            if (tile != null)
+            {
+                if (CharacterPlacementManager.Instance != null)
+                {
+                    return CharacterPlacementManager.Instance.TryPlaceCharacter(this, tile);
+                }
+            }
+        }
+        return false;
     }
 
     public void ReturnHome()

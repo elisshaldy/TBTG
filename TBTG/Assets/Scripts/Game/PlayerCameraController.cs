@@ -3,6 +3,8 @@ using UnityEngine.EventSystems;
 
 public class PlayerCameraController : MonoBehaviour
 {
+    public static bool BlockCameraControl = false;
+    
     [SerializeField] private Transform _cameraRef;
 
     [Header("Settings")]
@@ -26,13 +28,15 @@ public class PlayerCameraController : MonoBehaviour
             // _currentZoom = Vector3.Distance(transform.position, _cameraRef.position);
         }
     }
-
+    
     private void LateUpdate()
     {
         if (_cameraRef == null) return;
 
-        // Блокуємо керування камерою, якщо курсор знаходиться над UI
-        if (EventSystem.current == null || !EventSystem.current.IsPointerOverGameObject())
+        // Блокуємо керування камерою, якщо вона заблокована ззовні або курсор знаходиться над UI
+        bool isPointerOverUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+        
+        if (!BlockCameraControl && !isPointerOverUI)
         {
             HandleZoom();
             HandleRotation();

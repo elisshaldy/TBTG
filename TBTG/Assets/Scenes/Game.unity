@@ -3925,6 +3925,7 @@ GameObject:
   - component: {fileID: 818084966}
   - component: {fileID: 818084967}
   - component: {fileID: 818084968}
+  - component: {fileID: 818084969}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -4058,6 +4059,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _modPoints: 24
   _cardDeckPlayerModelFinal: []
+--- !u!114 &818084969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 818084963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 756de677902cecf40a9374a452f41779, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _library: {fileID: 11400000, guid: 3b40fb580eef8ac43b4026e490f9a4a6, type: 2}
 --- !u!1001 &822579217
 PrefabInstance:
   m_ObjectHideFlags: 0

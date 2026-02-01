@@ -148,6 +148,7 @@ public class GameUIController : MonoBehaviour
     
     public void OpenMap()
     {
+        DisableDeckListening();
         // Debug.Log("Map opened");
         _containerMods.SetActive(false);
         _modPointsTxt.gameObject.SetActive(false);

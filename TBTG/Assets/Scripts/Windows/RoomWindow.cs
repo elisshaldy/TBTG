@@ -166,7 +166,7 @@ public class RoomWindow : UIWindow
         switch (_sceneState)
         {
             case SceneState.Multiplayer:
-                canStart = PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.PlayerCount >= 1; // TEMP, DEBUG
+                canStart = PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.PlayerCount == 2; 
                 break;
             case SceneState.Hotseat:
                 canStart = _roomParameters != null && _roomParameters.AreHotseatNamesValid();
