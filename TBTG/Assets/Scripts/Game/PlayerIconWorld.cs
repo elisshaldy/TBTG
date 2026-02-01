@@ -28,9 +28,9 @@ public class PlayerIconWorld : MonoBehaviour
             else return;
         }
 
-        // Calculate the rotation to face the camera
-        Quaternion targetRotation = Quaternion.LookRotation(_mainCameraTransform.rotation * Vector3.forward,
-                         _mainCameraTransform.rotation * Vector3.up);
+        // Calculate the rotation to face the camera (only Y axis to avoid tilting)
+        Vector3 cameraEuler = _mainCameraTransform.eulerAngles;
+        Quaternion targetRotation = Quaternion.Euler(0, cameraEuler.y, 0);
 
         // Apply rotation only to the icon images
         if (_face1 != null) _face1.transform.rotation = targetRotation;
