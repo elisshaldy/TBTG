@@ -8,6 +8,24 @@ public class CharacterData : ScriptableObject
     [LocalizedKey]
     public string CharacterName;
     public Sprite CharacterSprite;
+    [SerializeField] private GameObject _characterModel;
+
+    // temprorary solution
+    public GameObject CharacterModel
+    {
+        get
+        {
+            if (_characterModel != null) return _characterModel;
+
+#if UNITY_EDITOR
+            // Спеціально для редактора
+            var defaultModel = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Base.prefab");
+            if (defaultModel != null) return defaultModel;
+#endif
+            // Фолбек для рантайма (якщо префаб буде в папці Resources)
+            return Resources.Load<GameObject>("Base");
+        }
+    }
     
     [Header("Base Stats")]
     public int AttackBase = 0;

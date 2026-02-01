@@ -12,6 +12,7 @@ public class CharacterDataEditor : Editor
 
         SerializedProperty spriteProp = serializedObject.FindProperty("CharacterSprite");
         EditorGUILayout.PropertyField(spriteProp);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("_characterModel"));
         
         if (spriteProp.objectReferenceValue != null)
         {

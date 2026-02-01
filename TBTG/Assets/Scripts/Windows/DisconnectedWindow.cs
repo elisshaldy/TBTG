@@ -19,6 +19,8 @@ public class DisconnectedWindow : UIWindow
         {
             _backToMenuBtn.onClick.AddListener(OnBackToMenuClicked);
         }
+
+        gameObject.SetActive(false);
     }
 
     private void OnBackToMenuClicked()

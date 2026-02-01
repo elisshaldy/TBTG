@@ -12,6 +12,8 @@ public class GameDataLibrary : ScriptableObject
     public List<CharacterData> AllCharacters;
     public List<ModData> AllMods;
 
+    public List<MovementCard> AllMovementCards;
+
     // Перемішує всі доступні карти і повертає їх індекси
     public int[] GetShuffledIndices()
     {
@@ -23,6 +25,11 @@ public class GameDataLibrary : ScriptableObject
     public List<CharacterData> GetRandomCharacters(int count)
     {
         return AllCharacters.OrderBy(x => System.Guid.NewGuid()).Take(count).ToList();
+    }
+
+    public List<MovementCard> GetRandomMovementCards(int count)
+    {
+        return AllMovementCards.OrderBy(x => System.Guid.NewGuid()).Take(count).ToList();
     }
 
     // Метод для рандомного вибору модів (тут вже без Critical)
@@ -83,6 +90,9 @@ public class GameDataLibrary : ScriptableObject
         // Автоматично шукаємо всі CharacterData в папці Assets/Configs
         AllCharacters = FindAssetsByType<CharacterData>("Assets/Configs/Character Data");
         
+        // Шукаємо Movement cards
+        AllMovementCards = FindAssetsByType<MovementCard>("Assets/Configs/Movement Cards");
+
         // Шукаємо лише Active та Passive моди
         AllMods = new List<ModData>();
         AllMods.AddRange(FindAssetsByType<ModData>("Assets/Configs/Mods Active"));
@@ -91,7 +101,7 @@ public class GameDataLibrary : ScriptableObject
 
         EditorUtility.SetDirty(this);
         AssetDatabase.SaveAssets();
-        Debug.Log($"Library updated! Found {AllCharacters.Count} characters and {AllMods.Count} mods.");
+        Debug.Log($"Library updated! Found {AllCharacters.Count} characters, {AllMovementCards.Count} movement cards, and {AllMods.Count} mods.");
     }
 
     private List<T> FindAssetsByType<T>(string folderPath) where T : UnityEngine.Object

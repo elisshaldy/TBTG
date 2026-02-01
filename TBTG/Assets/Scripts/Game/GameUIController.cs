@@ -7,6 +7,7 @@ public class GameUIController : MonoBehaviour
     [SerializeField] private GameObject _containerCards;
     [SerializeField] private GameObject _containerMods;
     [SerializeField] private GameObject _map;
+    [SerializeField] private GameObject _mapUIGameLoop;
     [Header("UI")]
     [SerializeField] private LocalizationLabel _hotseatPlayerNameTxt;
     [SerializeField] private LocalizationLabel _modPointsTxt;
@@ -47,6 +48,9 @@ public class GameUIController : MonoBehaviour
         
         _gameSceneState.StartFlow(this);
         if (GameSettingsManager.Instance != null && GameSettingsManager.Instance.IsDebug) CreateDebugButton();
+        
+        _map.SetActive(false);
+        _mapUIGameLoop.SetActive(false);
     }
 
     private void CreateDebugButton()
@@ -149,6 +153,7 @@ public class GameUIController : MonoBehaviour
         _modPointsTxt.gameObject.SetActive(false);
         _applyBtn.gameObject.SetActive(false);
         _map.SetActive(true);
+        _mapUIGameLoop.SetActive(true);
         
         if (_dataInitializer != null) _dataInitializer.CleanUpContainers();
     }

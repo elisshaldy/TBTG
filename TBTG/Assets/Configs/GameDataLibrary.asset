@@ -234,3 +234,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9d8b9b167b594ff42a7804635ea80b00, type: 2}
   - {fileID: 11400000, guid: cff042cbc79f17e4e96b87d8806adb1d, type: 2}
   - {fileID: 11400000, guid: 1dd577b024c2fc14ea5f1fa82cf80346, type: 2}
+  AllMovementCards:
+  - {fileID: 11400000, guid: 50cfcce254ab104478ef6550a6f64b65, type: 2}

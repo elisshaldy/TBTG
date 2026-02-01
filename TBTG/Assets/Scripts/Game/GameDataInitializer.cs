@@ -11,17 +11,21 @@ public class GameDataInitializer : MonoBehaviour
     
     [SerializeField] private GameObject _cardPrefab;
     [SerializeField] private GameObject _modPrefab;
+    [SerializeField] private GameObject _movementCardPrefab;
     
     [SerializeField] private LayoutGroup _cardContainer;
     [SerializeField] private LayoutGroup _modContainer;
+    [SerializeField] private LayoutGroup _movementCardContainer;
     [SerializeField] private CardDeckController _deckController;
 
     [Header("Generation Settings")]
     [SerializeField] private int _cardsToSpawn = 10;
     [SerializeField] private int _modsToSpawn = 35;
+    [SerializeField] private int _movementCardsToSpawn = 6;
 
     private List<CardInfo> _cardsInstances = new List<CardInfo>();
     private List<ModInfo> _modsInstances = new List<ModInfo>();
+    private List<MovementCardInfo> _movementCardsInstances = new List<MovementCardInfo>();
 
     public void InitializeGame()
     {
@@ -127,30 +131,52 @@ public class GameDataInitializer : MonoBehaviour
             }
         }
 
-        // ПОВЕРТАЄМО КОРУТИНУ
-        StartCoroutine(DisableLayouts());
+        // ===== MOVEMENT CARDS =====
+        if (_movementCardContainer != null) _movementCardContainer.enabled = true;
+        //ClearContainer(_movementCardContainer.transform);
+        //_movementCardsInstances.Clear();
+        List<MovementCard> randomMoveCards = _library.GetRandomMovementCards(_movementCardsToSpawn);
+        
+        for (int i = 0; i < _movementCardsToSpawn; i++)
+        {
+            GameObject mcObj = Instantiate(_movementCardPrefab, _movementCardContainer.transform);
+            MovementCardInfo mcInfo = mcObj.GetComponent<MovementCardInfo>();
+            if (mcInfo != null)
+            {
+                if (i < randomMoveCards.Count) mcInfo.MoveCard = randomMoveCards[i];
+                mcInfo.Initialize();
+                _movementCardsInstances.Add(mcInfo);
+            }
+        }
+
+        // ВИМИКАЄМО ЛЕАЙУТИ СИНХРОННО
+        DisableLayouts();
 
         // Debug.Log("Game Data Initialized SUCCESS");
     }
 
-    private IEnumerator DisableLayouts()
+    private void DisableLayouts()
     {
-        // Якщо контейнер модів вимкнений, леайут-група не прораховується.
-        // На мить вмикаємо його, щоб Unity встигла розставити моди.
-        bool modsOriginallyActive = _modContainer.gameObject.activeInHierarchy;
+        // Якщо контейнер вимкнений, леайут-група не прораховується.
+        // На мить вмикаємо його, щоб Unity встигла розставити елементи.
+        bool modsOriginallyActive = _modContainer.gameObject.activeSelf;
         if (!modsOriginallyActive) _modContainer.gameObject.SetActive(true);
-
-        yield return new WaitForEndOfFrame();
         
+        bool movesOriginallyActive = _movementCardContainer != null && _movementCardContainer.gameObject.activeSelf;
+        if (_movementCardContainer != null && !movesOriginallyActive) _movementCardContainer.gameObject.SetActive(true);
+
         // Форсуємо прорахунок, щоб позиції точно були вірні
         LayoutRebuilder.ForceRebuildLayoutImmediate(_cardContainer.transform as RectTransform);
         LayoutRebuilder.ForceRebuildLayoutImmediate(_modContainer.transform as RectTransform);
+        if (_movementCardContainer != null) LayoutRebuilder.ForceRebuildLayoutImmediate(_movementCardContainer.transform as RectTransform);
 
         if (_cardContainer != null) _cardContainer.enabled = false;
         if (_modContainer != null) _modContainer.enabled = false;
+        if (_movementCardContainer != null) _movementCardContainer.enabled = false;
 
-        // Повертаємо стан активності контейнера модів назад
+        // Повертаємо стан активності контейнера модів та карток назад
         if (!modsOriginallyActive) _modContainer.gameObject.SetActive(false);
+        if (_movementCardContainer != null && !movesOriginallyActive) _movementCardContainer.gameObject.SetActive(false);
 
         // Тепер фіксуємо домашні позиції
         foreach (var card in _cardsInstances)
@@ -164,6 +190,9 @@ public class GameDataInitializer : MonoBehaviour
             var handler = mod.GetComponent<ModDragHandler>();
             if (handler != null) handler.InitializeHome();
         }
+        
+        // For movement cards, we haven't implemented drag handler yet, but if they have one:
+        // foreach (var mc in _movementCardsInstances) { ... }
 
         // Debug.Log("Layout Groups DISABLED and Home Positions FIXED");
     }
@@ -172,8 +201,10 @@ public class GameDataInitializer : MonoBehaviour
     {
         if (_cardContainer != null) ClearContainer(_cardContainer.transform);
         if (_modContainer != null) ClearContainer(_modContainer.transform);
+        //if (_movementCardContainer != null) ClearContainer(_movementCardContainer.transform);
         _cardsInstances.Clear();
         _modsInstances.Clear();
+        //_movementCardsInstances.Clear();
     }
 
     private void ClearContainer(Transform container)

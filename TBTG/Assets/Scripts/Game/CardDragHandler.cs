@@ -144,7 +144,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             scaler.SetDragging(false);
 
         if (CurrentSlot == null)
-            ReturnHome();
+                ReturnHome();
         
         _canDrag = false;
     }
