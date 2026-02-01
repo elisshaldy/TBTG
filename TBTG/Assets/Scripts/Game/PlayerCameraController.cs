@@ -58,7 +58,7 @@ public class PlayerCameraController : MonoBehaviour
     private void HandleRotation()
     {
         // Rotating while Left Mouse Button is held (Updated as per user diff)
-        if (Input.GetMouseButton(0)) 
+        if (Input.GetMouseButton(1)) 
         {
             _currentYaw += Input.GetAxis("Mouse X") * _rotationSpeed;
             
