@@ -129,7 +129,6 @@ public class GameSceneState : MonoBehaviour
         target.PartyCount = source.PartyCount;
         target.BossDifficulty = source.BossDifficulty;
         target.InfluenceInitiative = source.InfluenceInitiative;
-        target.CharacterPoolIndices = source.CharacterPoolIndices;
 
         if (source is PlayerVsBotSettings sBot && target is PlayerVsBotSettings tBot)
             tBot.BotDifficulty = sBot.BotDifficulty;

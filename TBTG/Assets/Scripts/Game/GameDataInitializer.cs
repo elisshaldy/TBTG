@@ -219,17 +219,17 @@ public class GameDataInitializer : MonoBehaviour
 
     private int GetPlayerIndex(SceneState mode, GameSettings settings)
     {
-        // У мультиплеєрі завжди пріоритет за ActorNumber, щоб кожен отримав свій унікальний шматок пулу
-        if (mode == SceneState.Multiplayer)
-        {
-            return PhotonNetwork.InRoom ? PhotonNetwork.LocalPlayer.ActorNumber - 1 : 0;
-        }
-
         if (settings != null)
         {
             return settings.CurrentPlayerIndex;
         }
 
-        return 0;
+        switch (mode)
+        {
+            case SceneState.Multiplayer:
+                return PhotonNetwork.InRoom ? PhotonNetwork.LocalPlayer.ActorNumber - 1 : 0;
+            default:
+                return 0;
+        }
     }
 }

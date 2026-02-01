@@ -83,6 +83,8 @@ public class MultiplayerSettings : GameSettings
         GameSetupStep.Map 
     };
     
+    public override int CurrentPlayerIndex => Photon.Pun.PhotonNetwork.InRoom ? Photon.Pun.PhotonNetwork.LocalPlayer.ActorNumber - 1 : 0;
+
     public override void OpenModeSpecific(GameUIController ui)
     {
         ui.OpenMap();
