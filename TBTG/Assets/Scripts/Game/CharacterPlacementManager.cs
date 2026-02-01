@@ -11,8 +11,12 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
 
     // Key is (OwnerID, CardID)
     private Dictionary<(int, int), GameObject> _spawnedCharacters = new Dictionary<(int, int), GameObject>();
+    // Key is (OwnerID, CardID), Value is LibraryIndex
+    private Dictionary<(int, int), int> _spawnedCharLibIndices = new Dictionary<(int, int), int>();
     // Key is GridCoordinates, Value is (OwnerID, CardID)
     private Dictionary<Vector2Int, (int, int)> _tileOccupants = new Dictionary<Vector2Int, (int, int)>();
+
+    private int _localPlayerIndex = -1;
 
     // Preview logic
     private GameObject _localPreviewInstance;
@@ -43,6 +47,14 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         if (photonView == null)
         {
             Debug.LogError("[CharacterPlacementManager] MISSING PhotonView! Please add PhotonView component to this GameObject for multiplayer to work.");
+        }
+
+        _localPlayerIndex = PhotonNetwork.InRoom ? PhotonNetwork.LocalPlayer.ActorNumber - 1 : 0;
+
+        if (PhotonNetwork.InRoom && photonView != null)
+        {
+            Debug.Log("[Placement] Requesting current placements from others...");
+            photonView.RPC("RPC_RequestCurrentPlacements", RpcTarget.Others);
         }
     }
 
@@ -108,7 +120,10 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
                 if (iconWorld != null) iconWorld.SetIcon(data.CharacterSprite);
 
                 _spawnedCharacters[key] = characterInstance;
+                _spawnedCharLibIndices[key] = libIdx;
                 _tileOccupants[gridPos] = key;
+
+                ApplyTeamColor(characterInstance, ownerID);
             }
         }
     }
@@ -130,9 +145,37 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         {
             Destroy(oldChar);
             _spawnedCharacters.Remove(key);
+            _spawnedCharLibIndices.Remove(key);
             
             var keysToRemove = _tileOccupants.Where(kvp => kvp.Value == key).Select(kvp => kvp.Key).ToList();
             foreach (var k in keysToRemove) _tileOccupants.Remove(k);
+        }
+    }
+
+    #endregion
+
+    #region SYNCHRONIZATION FOR LATE JOINERS
+
+    [PunRPC]
+    private void RPC_RequestCurrentPlacements(PhotonMessageInfo info)
+    {
+        Debug.Log($"[Placement] Player {info.Sender.ActorNumber} requested current placements. Sending mine...");
+        foreach (var kvp in _spawnedCharLibIndices)
+        {
+            var key = kvp.Key; // (ownerID, cardID)
+            int libIdx = kvp.Value;
+
+            // Only send characters that WE (this client) are responsible for
+            // (Assuming ownerID matches local index)
+            if (key.Item1 == _localPlayerIndex)
+            {
+                // Find grid pos for this character
+                var gridPosEntry = _tileOccupants.FirstOrDefault(x => x.Value == key);
+                if (gridPosEntry.Value == key)
+                {
+                    photonView.RPC("RPC_PlaceCharacter", info.Sender, key.Item1, key.Item2, libIdx, gridPosEntry.Key.x, gridPosEntry.Key.y);
+                }
+            }
         }
     }
 
@@ -161,7 +204,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         int libIdx = GetLibraryIndex(cardInfo.CharData);
         
         // Local preview
-        _localPreviewInstance = SpawnPreviewInstance(libIdx, tile);
+        _localPreviewInstance = SpawnPreviewInstance(libIdx, tile, _localPlayerIndex);
 
         // Notify others
         if (PhotonNetwork.InRoom && photonView != null)
@@ -198,7 +241,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         Tile tile = FindTileAt(new Vector2Int(tx, ty));
         if (tile != null)
         {
-            GameObject preview = SpawnPreviewInstance(libIdx, tile);
+            GameObject preview = SpawnPreviewInstance(libIdx, tile, actorNum - 1);
             _remotePreviewInstances[actorNum] = preview;
         }
     }
@@ -213,7 +256,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         }
     }
 
-    private GameObject SpawnPreviewInstance(int libIdx, Tile tile)
+    private GameObject SpawnPreviewInstance(int libIdx, Tile tile, int ownerID)
     {
         if (_library == null || libIdx < 0 || libIdx >= _library.AllCharacters.Count) return null;
 
@@ -222,7 +265,9 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
 
         GameObject preview = Instantiate(data.CharacterModel, tile.transform.position, Quaternion.Euler(-90, 0, 0));
         FitToTile(preview, tile);
-        ApplyHologramEffect(preview);
+        
+        Color pColor = GetColorForPlayer(ownerID);
+        ApplyHologramEffect(preview, pColor);
 
         var iconWorld = preview.GetComponentInChildren<PlayerIconWorld>();
         if (iconWorld != null) iconWorld.SetIcon(data.CharacterSprite);
@@ -242,7 +287,28 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         return FindObjectsOfType<Tile>().FirstOrDefault(t => t.GridCoordinates == pos);
     }
 
-    private void ApplyHologramEffect(GameObject obj)
+    private Color GetColorForPlayer(int ownerID)
+    {
+        // Player 1 (index 0) = Green, Player 2 (index 1) = Red. 
+        // Others rotate or default to red.
+        return ownerID == 0 ? Color.green : Color.red;
+    }
+
+    private void ApplyTeamColor(GameObject obj, int ownerID)
+    {
+        Color teamColor = GetColorForPlayer(ownerID);
+        Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+        foreach (var r in renderers)
+        {
+            foreach (var mat in r.materials)
+            {
+                if (mat.HasProperty("_Color")) mat.color = teamColor;
+                if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", teamColor);
+            }
+        }
+    }
+
+    private void ApplyHologramEffect(GameObject obj, Color color)
     {
         Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
         foreach (var r in renderers)
@@ -254,7 +320,10 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
                 mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                 mat.SetInt("_ZWrite", 0);
                 mat.renderQueue = 3000;
-                Color col = Color.green; col.a = 0.4f;
+                
+                Color col = color; 
+                col.a = 0.4f;
+                
                 if (mat.HasProperty("_Color")) mat.color = col;
                 if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", col);
             }
