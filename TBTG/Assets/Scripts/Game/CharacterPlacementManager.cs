@@ -375,7 +375,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
 
     private void FitToTile(GameObject character, Tile tile)
     {
-        float tileSize = 1.0f;
+        float tileSize = 1.25f;
         var generator = FindObjectOfType<MapGenerator>();
         if (generator != null) tileSize = generator.TileSize;
 
