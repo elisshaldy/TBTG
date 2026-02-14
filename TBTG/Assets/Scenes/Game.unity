@@ -4339,6 +4339,7 @@ GameObject:
   - component: {fileID: 838480641}
   - component: {fileID: 838480643}
   - component: {fileID: 838480642}
+  - component: {fileID: 838480644}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -4462,6 +4463,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 838480640}
   m_CullTransparentMesh: 1
+--- !u!114 &838480644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 838480640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce3a9be8762d500459f2b81ba265cdfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Text: {fileID: 838480642}
+  Key: change_card_in_pair_btn
 --- !u!1001 &855701194
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10129,6 +10144,7 @@ GameObject:
   - component: {fileID: 1787488646}
   - component: {fileID: 1787488648}
   - component: {fileID: 1787488647}
+  - component: {fileID: 1787488649}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -10252,6 +10268,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1787488645}
   m_CullTransparentMesh: 1
+--- !u!114 &1787488649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1787488645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce3a9be8762d500459f2b81ba265cdfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Text: {fileID: 1787488647}
+  Key: change_pait_to_card_btn
 --- !u!1001 &1798258048
 PrefabInstance:
   m_ObjectHideFlags: 0
