@@ -987,7 +987,7 @@ MonoBehaviour:
   _attackBaseTxt: {fileID: 3938794829115708756}
   _defenseBaseTxt: {fileID: 1843909666193693312}
   _char: {fileID: 21300000, guid: 43db492dbe41c6c4c97bf35df3b73117, type: 3}
-  _inactiveCell: {fileID: 21300000, guid: 6fa42683881253a46a314e98ce6ae76f, type: 3}
+  _inactiveCell: {fileID: 21300000, guid: 1af41e5af87a14e44910c544a7eb6f4a, type: 3}
   _activeCell: {fileID: 21300000, guid: 1af41e5af87a14e44910c544a7eb6f4a, type: 3}
   _gridCells:
   - {fileID: 1638757960753825794}
