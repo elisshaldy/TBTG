@@ -50,7 +50,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
             Debug.LogError("[CharacterPlacementManager] MISSING PhotonView! Please add PhotonView component to this GameObject for multiplayer to work.");
         }
 
-        _localPlayerIndex = PhotonNetwork.InRoom ? PhotonNetwork.LocalPlayer.ActorNumber - 1 : 0;
+        _localPlayerIndex = PhotonNetwork.InRoom ? PhotonNetwork.LocalPlayer.ActorNumber : 1;
         
         Debug.Log($"[Placement] Manager started. LocalPlayerIndex: {_localPlayerIndex}. Waiting for grid...");
 
@@ -80,6 +80,13 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     public bool TryPlaceCharacter(CardDragHandler card, Tile tile)
     {
         if (tile == null || tile.Type == TileType.Impassable) return false;
+
+        // NEW: Check placement zone ownership
+        if (tile.PlacementOwnerID != card.OwnerID)
+        {
+            Debug.Log($"[Placement] Cannot place here! Tile belongs to Player {tile.PlacementOwnerID}, but Card belongs to Player {card.OwnerID}");
+            return false;
+        }
 
         // Check if tile is occupied by another character
         if (_tileOccupants.TryGetValue(tile.GridCoordinates, out var occupant))
@@ -263,7 +270,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
 
     public void ShowPreview(CardDragHandler card, Tile tile)
     {
-        if (tile == null || tile.Type == TileType.Impassable)
+        if (tile == null || tile.Type == TileType.Impassable || tile.PlacementOwnerID != card.OwnerID)
         {
             HidePreview();
             return;
@@ -367,9 +374,8 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
 
     private Color GetColorForPlayer(int ownerID)
     {
-        // Player 1 (index 0) = Green, Player 2 (index 1) = Red. 
-        // Others rotate or default to red.
-        return ownerID == 0 ? Color.green : Color.red;
+        // Player 1 = Green, Player 2 = Red.
+        return ownerID == 1 ? Color.green : Color.red;
     }
 
     private void ApplyTeamColor(GameObject obj, int ownerID)

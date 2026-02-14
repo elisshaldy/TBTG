@@ -35,9 +35,9 @@ public abstract class GameSettings
         if (CharacterPoolIndices == null || CharacterPoolIndices.Length == 0) return null;
         
         int countPerPlayer = 10;
-        int start = playerIndex * countPerPlayer;
+        int start = (playerIndex - 1) * countPerPlayer;
         
-        if (start >= CharacterPoolIndices.Length) 
+        if (start < 0 || start >= CharacterPoolIndices.Length) 
         {
             // If we don't have enough specific indices, return null to trigger random fallback
             return null;
@@ -54,9 +54,9 @@ public abstract class GameSettings
         if (MovementPoolIndices == null || MovementPoolIndices.Length == 0) return null;
         
         int countPerPlayer = 6; // Matching _movementCardsToSpawn in Initializer
-        int start = playerIndex * countPerPlayer;
+        int start = (playerIndex - 1) * countPerPlayer;
         
-        if (start >= MovementPoolIndices.Length) 
+        if (start < 0 || start >= MovementPoolIndices.Length) 
         {
             // Fallback: if we need indices for player 1 but only have some for player 0, 
             // returning null here will trigger the random fallback in Initializer
@@ -73,7 +73,7 @@ public abstract class GameSettings
     public virtual void PrepareStep(GameSetupStep step, GameUIController ui) {}
 
     public virtual void OnFlowStarted(GameUIController ui) {}
-    public virtual int CurrentPlayerIndex => 0;
+    public virtual int CurrentPlayerIndex => 1; // Default to P1
     public virtual void TakeSnapshot(List<GameObject> selectedCards) {}
     public virtual void RegisterMovementCards(int playerIndex, List<GameObject> movementCards) {}
     public abstract void OpenModeSpecific(GameUIController ui);
@@ -112,7 +112,7 @@ public class MultiplayerSettings : GameSettings
     public PlayerSnapshot LocalPlayerSnapshot = new PlayerSnapshot();
     public PlayerSnapshot RemotePlayerSnapshot = new PlayerSnapshot();
     
-    public override int CurrentPlayerIndex => Photon.Pun.PhotonNetwork.InRoom ? Photon.Pun.PhotonNetwork.LocalPlayer.ActorNumber - 1 : 0;
+    public override int CurrentPlayerIndex => Photon.Pun.PhotonNetwork.InRoom ? Photon.Pun.PhotonNetwork.LocalPlayer.ActorNumber : 1;
 
     public override void RegisterMovementCards(int playerIndex, List<GameObject> movementCards)
     {
@@ -143,7 +143,7 @@ public class PlayerVsBotSettings : GameSettings
 
     public override void RegisterMovementCards(int playerIndex, List<GameObject> movementCards)
     {
-        PlayerSnapshot target = (playerIndex == 0) ? PlayerSnapshot : BotSnapshot;
+        PlayerSnapshot target = (playerIndex == 1) ? PlayerSnapshot : BotSnapshot;
         target.SelectedMovementCards = new List<GameObject>(movementCards);
         target.PlayerIndex = playerIndex;
     }
@@ -181,18 +181,18 @@ public class HotseatSettings : GameSettings
         GameSetupStep.Map 
     };
 
-    public override int CurrentPlayerIndex => _playerSelectionCycle == 0 ? 0 : _playerSelectionCycle - 1;
+    public override int CurrentPlayerIndex => _playerSelectionCycle == 0 ? 1 : _playerSelectionCycle;
 
     public override void TakeSnapshot(List<GameObject> selectedCards)
     {
         PlayerSnapshot target = (_playerSelectionCycle == 1) ? Player1Snapshot : Player2Snapshot;
         target.SelectedCards = new List<GameObject>(selectedCards);
-        target.PlayerIndex = _playerSelectionCycle - 1;
+        target.PlayerIndex = _playerSelectionCycle;
     }
 
     public override void RegisterMovementCards(int playerIndex, List<GameObject> movementCards)
     {
-        PlayerSnapshot target = (playerIndex == 0) ? Player1Snapshot : Player2Snapshot;
+        PlayerSnapshot target = (playerIndex == 1) ? Player1Snapshot : Player2Snapshot;
         target.SelectedMovementCards = new List<GameObject>(movementCards);
         target.PlayerIndex = playerIndex;
     }

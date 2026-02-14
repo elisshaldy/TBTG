@@ -148,7 +148,7 @@ public class GameDataInitializer : MonoBehaviour
             (_movementCardContainerEnemy != null && _movementCardContainerEnemy.transform.childCount == 0))
         {
             _movementCardsInstances.Clear();
-            int enemyIndex = (playerIndex == 0) ? 1 : 0;
+            int enemyIndex = (playerIndex == 1) ? 2 : 1;
 
             List<GameObject> p1Cards = InitializeMovementContainer(_movementCardContainer, playerIndex, settings);
             List<GameObject> p2Cards = InitializeMovementContainer(_movementCardContainerEnemy, enemyIndex, settings);
@@ -276,9 +276,9 @@ public class GameDataInitializer : MonoBehaviour
         switch (mode)
         {
             case SceneState.Multiplayer:
-                return PhotonNetwork.InRoom ? PhotonNetwork.LocalPlayer.ActorNumber - 1 : 0;
+                return PhotonNetwork.InRoom ? PhotonNetwork.LocalPlayer.ActorNumber : 1;
             default:
-                return 0;
+                return 1;
         }
     }
 }

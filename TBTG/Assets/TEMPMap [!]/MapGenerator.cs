@@ -269,13 +269,13 @@ public class MapGenerator : MonoBehaviour
         tile.GridCoordinates = coords;
         tile.Type = type;
 
-        // if (type == TileType.ActiveTile && ActiveTileEffectsPool.Any())
-        // {
-        //     tile.CurrentEffect = ActiveTileEffectsPool[Random.Range(0, ActiveTileEffectsPool.Count)];
-        // }
-
         _gridManager.RegisterTile(coords, tile);
-        ApplyVisuals(tileObj, type);
+        
+        // Let the tile define its own placement zone based on coords
+        tile.AssignPlacementID();
+        
+        tileObj.name = $"Tile ({coords.x},{coords.y}) - {tile.Type}{(tile.PlacementOwnerID != -1 ? " [P" + tile.PlacementOwnerID + "]" : "")}";
+        ApplyVisuals(tileObj, tile.Type);
     }
 
     // ----------------------------------------------------------------------
@@ -375,6 +375,16 @@ public class MapGenerator : MonoBehaviour
                 case TileType.AttackableOnly: color = Color.blue; break; // Тільки для атаки (Вода/Провалля)
                 default: color = Color.white; break;
             }
+
+            // Highlight placement zones
+            Tile tile = tileObj.GetComponent<Tile>();
+            if (tile != null && tile.PlacementOwnerID != -1)
+            {
+                // Multiply or blend with a light tint
+                Color placementColor = (tile.PlacementOwnerID == 0) ? new Color(0.6f, 1f, 0.6f) : new Color(1f, 0.6f, 0.6f);
+                color = Color.Lerp(color, placementColor, 0.4f);
+            }
+
             // Застосовуємо колір до матеріалу
             renderer.material.color = color;
         }

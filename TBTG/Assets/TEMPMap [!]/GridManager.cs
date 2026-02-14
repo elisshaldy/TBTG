@@ -13,25 +13,20 @@ public class GridManager : MonoBehaviour
     
     public IEnumerable<Vector2Int> GetAllRegisteredCoords()
     {
-        // ������� �������� ������ (���������) � �������� _tiles
         return _tiles.Keys;
     }
 
     private void Awake()
     {
-        // Singleton pattern: якщо вже є Instance, видаляємо поточний GameObject
         if (Instance != null && Instance != this)
         {
-            Debug.LogWarning($"GridManager instance already exists. Destroying duplicate: {gameObject.name}");
             Destroy(gameObject);
             return;
         }
         
         Instance = this;
-        Debug.Log($"GridManager initialized on {gameObject.name}");
     }
 
-    // ����� ��� ��������� ������� ��� ����� ���/��������� ����
     public void RegisterTile(Vector2Int coords, Tile tile)
     {
         if (!_tiles.ContainsKey(coords))
@@ -40,14 +35,23 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    // �������� ����� ��� CombatManager, ��� �������� ������� �� ��������
     public Tile GetTile(Vector2Int coords)
     {
         if (_tiles.TryGetValue(coords, out Tile tile))
         {
             return tile;
         }
-        // ��������� null ��� ������ �������, ���� ������� �� ��������
         return null;
+    }
+
+    public List<Tile> GetTilesByOwner(int ownerID)
+    {
+        List<Tile> result = new List<Tile>();
+        foreach (var tile in _tiles.Values)
+        {
+            if (tile != null && tile.PlacementOwnerID == ownerID)
+                result.Add(tile);
+        }
+        return result;
     }
 }
