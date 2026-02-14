@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: CD_027
   m_EditorClassIdentifier: 
   CharacterName: char_name_027
+  CharacterDescription: char_description_027
   CharacterSprite: {fileID: 21300000, guid: 32dd49af307854b43b631bbf2ad6d405, type: 3}
+  _characterModel: {fileID: 0}
   AttackBase: 1
   DefenseBase: 0
   AttackPatternGrid:
