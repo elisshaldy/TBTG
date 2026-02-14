@@ -229,6 +229,12 @@ public class HotseatSettings : GameSettings
 
         // 3. Оновлюємо ім'я гравця на перший
         ui.ShowHotseatPlayer(Player1Name);
+        
+        if (PlayerCameraController.Instance != null)
+        {
+            PlayerCameraController.Instance.RotateToPlayer(1);
+        }
+
         Debug.Log($"Flow finished. Switched back to {Player1Name} for the game.");
     }
 

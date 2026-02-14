@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 public class PlayerCameraController : MonoBehaviour
 {
     public static bool BlockCameraControl = false;
+    public static PlayerCameraController Instance { get; private set; }
     
     [SerializeField] private Transform _cameraRef;
 
@@ -17,21 +18,57 @@ public class PlayerCameraController : MonoBehaviour
     [SerializeField] private Vector2 _framingOffset; // Зміщення центру екрана відносно гравця
 
     private float _currentZoom = 10f;
-    private float _currentYaw = 0f;
+    private float _currentYaw = 135f;
     private float _currentPitch = 45f;
+    private float _targetYaw = 135f;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            InitializeRotation();
+        }
+    }
 
     private void Start()
     {
         if (_cameraRef != null)
         {
             // Optional: Initialize zoom based on current distance
-            // _currentZoom = Vector3.Distance(transform.position, _cameraRef.position);
         }
+    }
+
+    private void InitializeRotation()
+    {
+        int localPlayer = 1;
+        if (Photon.Pun.PhotonNetwork.InRoom)
+            localPlayer = Photon.Pun.PhotonNetwork.LocalPlayer.ActorNumber;
+        else if (GameSettingsManager.Instance != null && GameSettingsManager.Instance.CurrentSettings != null)
+            localPlayer = GameSettingsManager.Instance.CurrentSettings.CurrentPlayerIndex;
+
+        RotateToPlayer(localPlayer, true);
+    }
+
+    public void RotateToPlayer(int playerID, bool immediate = false)
+    {
+        // P1: Top-Left (135), P2: Bottom-Right (-45 or 315)
+        _targetYaw = (playerID == 2) ? -45f : 135f;
+        
+        if (immediate)
+        {
+            _currentYaw = _targetYaw;
+        }
+
+        Debug.Log($"[Camera] Rotating to Player {playerID} (Target Yaw: {_targetYaw})");
     }
     
     private void LateUpdate()
     {
         if (_cameraRef == null) return;
+
+        // Smoothly interpolate to target yaw
+        _currentYaw = Mathf.LerpAngle(_currentYaw, _targetYaw, Time.deltaTime * 3f);
 
         // Блокуємо керування камерою, якщо вона заблокована ззовні або курсор знаходиться над UI
         bool isPointerOverUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
@@ -60,7 +97,9 @@ public class PlayerCameraController : MonoBehaviour
         // Rotating while Left Mouse Button is held (Updated as per user diff)
         if (Input.GetMouseButton(1)) 
         {
-            _currentYaw += Input.GetAxis("Mouse X") * _rotationSpeed;
+            float deltaX = Input.GetAxis("Mouse X") * _rotationSpeed;
+            _currentYaw += deltaX;
+            _targetYaw += deltaX; // Keep target in sync with manual rotation
             
             // Adjust pitch with Mouse Y
             _currentPitch -= Input.GetAxis("Mouse Y") * _rotationSpeed; 

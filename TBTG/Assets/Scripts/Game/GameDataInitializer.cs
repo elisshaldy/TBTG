@@ -57,6 +57,12 @@ public class GameDataInitializer : MonoBehaviour
         int playerIndex = GetPlayerIndex(mode, settings);
         // Debug.Log($"InitializeGame: PlayerIndex = {playerIndex}, Mode = {mode}");
 
+        // NEW: Rotate camera to player's side at the start of their setup
+        if (PlayerCameraController.Instance != null)
+        {
+            PlayerCameraController.Instance.RotateToPlayer(playerIndex);
+        }
+
         // 2. Отримуємо індекси персонажів
         // Якщо індекси ще не згенеровані (наприклад, у Hotseat або на старті), генеруємо їх один раз для сесії
         if (settings != null && (settings.CharacterPoolIndices == null || settings.CharacterPoolIndices.Length == 0))
