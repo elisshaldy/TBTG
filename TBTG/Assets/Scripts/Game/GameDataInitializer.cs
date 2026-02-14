@@ -16,6 +16,7 @@ public class GameDataInitializer : MonoBehaviour
     [SerializeField] private LayoutGroup _cardContainer;
     [SerializeField] private LayoutGroup _modContainer;
     [SerializeField] private LayoutGroup _movementCardContainer;
+    [SerializeField] private LayoutGroup _movementCardContainerEnemy;
     [SerializeField] private CardDeckController _deckController;
 
     [Header("Generation Settings")]
@@ -133,33 +134,73 @@ public class GameDataInitializer : MonoBehaviour
             }
         }
 
-        if (_movementCardContainer != null && _movementCardContainer.transform.childCount > 0)
+        // ===== MOVEMENT CARDS =====
+        // 3. Генеруємо та перевіряємо індекси карток ходьби
+        if (settings != null && (settings.MovementPoolIndices == null || settings.MovementPoolIndices.Length == 0))
         {
-             // Movement cards already initialized, skip to next parts
+            settings.MovementPoolIndices = _library.GetShuffledMovementIndices();
+            // Debug.Log($"[Initializer] Generated MovementPoolIndices: {settings.MovementPoolIndices.Length} cards.");
         }
-        else
+
+        // 4. Ініціалізуємо обидва контейнери ТІЛЬКИ ЯКЩО ВОНИ ПУСТІ
+        if ((_movementCardContainer != null && _movementCardContainer.transform.childCount == 0) && 
+            (_movementCardContainerEnemy != null && _movementCardContainerEnemy.transform.childCount == 0))
         {
-            if (_movementCardContainer != null) _movementCardContainer.enabled = true;
             _movementCardsInstances.Clear();
-            List<MovementCard> randomMoveCards = _library.GetRandomMovementCards(_movementCardsToSpawn);
-            
-            for (int i = 0; i < _movementCardsToSpawn; i++)
+            int enemyIndex = (playerIndex == 0) ? 1 : 0;
+
+            List<GameObject> p1Cards = InitializeMovementContainer(_movementCardContainer, playerIndex, settings);
+            List<GameObject> p2Cards = InitializeMovementContainer(_movementCardContainerEnemy, enemyIndex, settings);
+
+            if (settings != null)
             {
-                GameObject mcObj = Instantiate(_movementCardPrefab, _movementCardContainer.transform);
-                MovementCardInfo mcInfo = mcObj.GetComponent<MovementCardInfo>();
-                if (mcInfo != null)
-                {
-                    if (i < randomMoveCards.Count) mcInfo.MoveCard = randomMoveCards[i];
-                    mcInfo.Initialize();
-                    _movementCardsInstances.Add(mcInfo);
-                }
+                settings.RegisterMovementCards(playerIndex, p1Cards);
+                settings.RegisterMovementCards(enemyIndex, p2Cards);
             }
         }
 
-        // ВИМИКАЄМО ЛЕАЙУТИ ПІСЛЯ ПАУЗИ (щоб Unity встигла розставити елементи)
+        // ВИМИКАЄМО ЛЕАЙУТИ ПІСЛЯ ПАУЗИ
         StartCoroutine(DisableLayoutsRoutine());
+    }
 
-        // Debug.Log("Game Data Initialized SUCCESS");
+    private List<GameObject> InitializeMovementContainer(LayoutGroup container, int playerIdx, GameSettings settings)
+    {
+        List<GameObject> spawnedCards = new List<GameObject>();
+        if (container == null) 
+        {
+            // Debug.LogWarning($"[Initializer] Container for player {playerIdx} is NULL!");
+            return spawnedCards;
+        }
+        
+        container.gameObject.SetActive(true); // Примусово вмикаємо об'єкт
+        container.enabled = true;
+        ClearContainer(container.transform);
+
+        int[] moveIndices = (settings != null) ? settings.GetMovementIndicesForPlayer(playerIdx) : null;
+        List<MovementCard> cards;
+
+        if (moveIndices != null && moveIndices.Length > 0)
+        {
+            cards = _library.GetMovementCardsFromIndices(moveIndices);
+        }
+        else
+        {
+            cards = _library.GetRandomMovementCards(_movementCardsToSpawn);
+        }
+
+        for (int i = 0; i < _movementCardsToSpawn; i++)
+        {
+            GameObject mcObj = Instantiate(_movementCardPrefab, container.transform);
+            MovementCardInfo mcInfo = mcObj.GetComponent<MovementCardInfo>();
+            if (mcInfo != null)
+            {
+                if (i < cards.Count) mcInfo.MoveCard = cards[i];
+                mcInfo.Initialize();
+                _movementCardsInstances.Add(mcInfo);
+                spawnedCards.Add(mcObj);
+            }
+        }
+        return spawnedCards;
     }
 
     private IEnumerator DisableLayoutsRoutine()
@@ -169,27 +210,16 @@ public class GameDataInitializer : MonoBehaviour
         bool modsOriginallyActive = _modContainer.gameObject.activeSelf;
         if (!modsOriginallyActive) _modContainer.gameObject.SetActive(true);
         
-        bool movesOriginallyActive = _movementCardContainer != null && _movementCardContainer.gameObject.activeSelf;
-        if (_movementCardContainer != null && !movesOriginallyActive) _movementCardContainer.gameObject.SetActive(true);
-
-        // Форсуємо прорахунок, щоб позиції точно були вірні
+        // Форсуємо прорахунок тільки для карт персонажів та модів
         LayoutRebuilder.ForceRebuildLayoutImmediate(_cardContainer.transform as RectTransform);
         LayoutRebuilder.ForceRebuildLayoutImmediate(_modContainer.transform as RectTransform);
-        if (_movementCardContainer != null) LayoutRebuilder.ForceRebuildLayoutImmediate(_movementCardContainer.transform as RectTransform);
 
-        // Даємо Unity закінчити прорахунок геометрії в кінці кадру
         yield return new WaitForEndOfFrame();
-
-        // Повторно форсуємо для карток ходьби
-        if (_movementCardContainer != null) LayoutRebuilder.ForceRebuildLayoutImmediate(_movementCardContainer.transform as RectTransform);
 
         if (_cardContainer != null) _cardContainer.enabled = false;
         if (_modContainer != null) _modContainer.enabled = false;
-        if (_movementCardContainer != null) _movementCardContainer.enabled = false;
-
-        // Повертаємо стан активності контейнера модів та карток назад
+        
         if (!modsOriginallyActive) _modContainer.gameObject.SetActive(false);
-        if (_movementCardContainer != null && !movesOriginallyActive) _movementCardContainer.gameObject.SetActive(false);
 
         // Тепер фіксуємо домашні позиції
         foreach (var card in _cardsInstances)
@@ -222,6 +252,7 @@ public class GameDataInitializer : MonoBehaviour
     {
         if (_cardContainer != null) ClearContainer(_cardContainer.transform);
         if (_modContainer != null) ClearContainer(_modContainer.transform);
+        // Картки ходьби НЕ ЧИСТИМО, вони назавжди
         _cardsInstances.Clear();
         _modsInstances.Clear();
     }

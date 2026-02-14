@@ -26,6 +26,7 @@ public abstract class GameSettings
     public int BossCount;
     public int PartyCount;
     public int[] CharacterPoolIndices;
+    public int[] MovementPoolIndices;
     public BossDifficulty BossDifficulty;
     public bool InfluenceInitiative;
 
@@ -36,11 +37,35 @@ public abstract class GameSettings
         int countPerPlayer = 10;
         int start = playerIndex * countPerPlayer;
         
-        if (start >= CharacterPoolIndices.Length) return null;
+        if (start >= CharacterPoolIndices.Length) 
+        {
+            // If we don't have enough specific indices, return null to trigger random fallback
+            return null;
+        }
 
         int actualCount = Mathf.Min(countPerPlayer, CharacterPoolIndices.Length - start);
         int[] result = new int[actualCount];
         System.Array.Copy(CharacterPoolIndices, start, result, 0, actualCount);
+        return result;
+    }
+
+    public int[] GetMovementIndicesForPlayer(int playerIndex)
+    {
+        if (MovementPoolIndices == null || MovementPoolIndices.Length == 0) return null;
+        
+        int countPerPlayer = 6; // Matching _movementCardsToSpawn in Initializer
+        int start = playerIndex * countPerPlayer;
+        
+        if (start >= MovementPoolIndices.Length) 
+        {
+            // Fallback: if we need indices for player 1 but only have some for player 0, 
+            // returning null here will trigger the random fallback in Initializer
+            return null;
+        }
+
+        int actualCount = Mathf.Min(countPerPlayer, MovementPoolIndices.Length - start);
+        int[] result = new int[actualCount];
+        System.Array.Copy(MovementPoolIndices, start, result, 0, actualCount);
         return result;
     }
 
@@ -50,6 +75,7 @@ public abstract class GameSettings
     public virtual void OnFlowStarted(GameUIController ui) {}
     public virtual int CurrentPlayerIndex => 0;
     public virtual void TakeSnapshot(List<GameObject> selectedCards) {}
+    public virtual void RegisterMovementCards(int playerIndex, List<GameObject> movementCards) {}
     public abstract void OpenModeSpecific(GameUIController ui);
     public virtual void OnFlowFinished(GameUIController ui) {}
 }
@@ -82,8 +108,18 @@ public class MultiplayerSettings : GameSettings
         GameSetupStep.Mods, 
         GameSetupStep.Map 
     };
+
+    public PlayerSnapshot LocalPlayerSnapshot = new PlayerSnapshot();
+    public PlayerSnapshot RemotePlayerSnapshot = new PlayerSnapshot();
     
     public override int CurrentPlayerIndex => Photon.Pun.PhotonNetwork.InRoom ? Photon.Pun.PhotonNetwork.LocalPlayer.ActorNumber - 1 : 0;
+
+    public override void RegisterMovementCards(int playerIndex, List<GameObject> movementCards)
+    {
+        PlayerSnapshot target = (playerIndex == CurrentPlayerIndex) ? LocalPlayerSnapshot : RemotePlayerSnapshot;
+        target.SelectedMovementCards = new List<GameObject>(movementCards);
+        target.PlayerIndex = playerIndex;
+    }
 
     public override void OpenModeSpecific(GameUIController ui)
     {
@@ -102,6 +138,16 @@ public class PlayerVsBotSettings : GameSettings
         GameSetupStep.Map 
     };
     
+    public PlayerSnapshot PlayerSnapshot = new PlayerSnapshot();
+    public PlayerSnapshot BotSnapshot = new PlayerSnapshot();
+
+    public override void RegisterMovementCards(int playerIndex, List<GameObject> movementCards)
+    {
+        PlayerSnapshot target = (playerIndex == 0) ? PlayerSnapshot : BotSnapshot;
+        target.SelectedMovementCards = new List<GameObject>(movementCards);
+        target.PlayerIndex = playerIndex;
+    }
+    
     public override void OpenModeSpecific(GameUIController ui)
     {
         ui.OpenMap();
@@ -112,6 +158,7 @@ public class PlayerVsBotSettings : GameSettings
 public class PlayerSnapshot
 {
     public List<GameObject> SelectedCards = new List<GameObject>();
+    public List<GameObject> SelectedMovementCards = new List<GameObject>();
     public int PlayerIndex;
 }
 
@@ -141,6 +188,13 @@ public class HotseatSettings : GameSettings
         PlayerSnapshot target = (_playerSelectionCycle == 1) ? Player1Snapshot : Player2Snapshot;
         target.SelectedCards = new List<GameObject>(selectedCards);
         target.PlayerIndex = _playerSelectionCycle - 1;
+    }
+
+    public override void RegisterMovementCards(int playerIndex, List<GameObject> movementCards)
+    {
+        PlayerSnapshot target = (playerIndex == 0) ? Player1Snapshot : Player2Snapshot;
+        target.SelectedMovementCards = new List<GameObject>(movementCards);
+        target.PlayerIndex = playerIndex;
     }
 
     public override void PrepareStep(GameSetupStep step, GameUIController ui)

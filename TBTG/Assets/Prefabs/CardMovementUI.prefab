@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8312359839555568423}
   - component: {fileID: 4445839676505454808}
   - component: {fileID: 6844173572093736089}
-  - component: {fileID: 4181410575878312547}
+  - component: {fileID: 12455685293780111}
   m_Layer: 5
   m_Name: AntagonistMovementCards
   m_TagString: Untagged
@@ -35,8 +35,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 207.5, y: 384}
+  m_SizeDelta: {x: 135, y: 750}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4445839676505454808
 CanvasRenderer:
@@ -76,7 +76,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4181410575878312547
+--- !u!114 &12455685293780111
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -89,15 +89,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 18
-    m_Bottom: 0
+    m_Left: 2
+    m_Right: 2
+    m_Top: 2
+    m_Bottom: 2
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 135, y: 100}
-  m_Spacing: {x: 0, y: 15}
+  m_CellSize: {x: 131, y: 121}
+  m_Spacing: {x: 2, y: 2}
   m_Constraint: 0
   m_ConstraintCount: 2
 --- !u!1 &6336417312931367386
@@ -212,8 +212,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 70.5, y: 384}
+  m_SizeDelta: {x: 135, y: 750}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8495144965443965720
 CanvasRenderer:

@@ -22,6 +22,13 @@ public class GameDataLibrary : ScriptableObject
             .ToArray();
     }
 
+    public int[] GetShuffledMovementIndices()
+    {
+        return Enumerable.Range(0, AllMovementCards.Count)
+            .OrderBy(x => System.Guid.NewGuid())
+            .ToArray();
+    }
+
     public List<CharacterData> GetRandomCharacters(int count)
     {
         return AllCharacters.OrderBy(x => System.Guid.NewGuid()).Take(count).ToList();
@@ -30,6 +37,18 @@ public class GameDataLibrary : ScriptableObject
     public List<MovementCard> GetRandomMovementCards(int count)
     {
         return AllMovementCards.OrderBy(x => System.Guid.NewGuid()).Take(count).ToList();
+    }
+
+    public List<MovementCard> GetMovementCardsFromIndices(int[] indices)
+    {
+        List<MovementCard> result = new List<MovementCard>();
+        if (indices == null) return result;
+        foreach (int idx in indices)
+        {
+            if (idx >= 0 && idx < AllMovementCards.Count)
+                result.Add(AllMovementCards[idx]);
+        }
+        return result;
     }
 
     // Метод для рандомного вибору модів (тут вже без Critical)

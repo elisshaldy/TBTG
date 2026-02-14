@@ -5,8 +5,7 @@ public class MovementCardInfo : MonoBehaviour
 {
     public MovementCard MoveCard;
 
-    [SerializeField] private LocalizationLabel _cardName;
-    [SerializeField] private Image _cardImage;
+    //[SerializeField] private LocalizationLabel _cardName;
     
     [Header("Movement Grid UI")]
     [SerializeField] private Sprite _char;

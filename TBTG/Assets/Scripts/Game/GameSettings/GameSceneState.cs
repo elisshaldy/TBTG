@@ -129,6 +129,7 @@ public class GameSceneState : MonoBehaviour
         target.PartyCount = source.PartyCount;
         target.BossDifficulty = source.BossDifficulty;
         target.InfluenceInitiative = source.InfluenceInitiative;
+        target.MovementPoolIndices = source.MovementPoolIndices;
 
         if (source is PlayerVsBotSettings sBot && target is PlayerVsBotSettings tBot)
             tBot.BotDifficulty = sBot.BotDifficulty;
@@ -150,6 +151,7 @@ public class GameSceneState : MonoBehaviour
         if (props.TryGetValue("BossCount", out object bossCount)) _currentSettings.BossCount = Convert.ToInt32(bossCount);
         if (props.TryGetValue("BossDifficulty", out object bossDiff)) _currentSettings.BossDifficulty = (BossDifficulty)Convert.ToInt32(bossDiff);
         if (props.TryGetValue("CharIndices", out object charIndices)) _currentSettings.CharacterPoolIndices = (int[])charIndices;
+        if (props.TryGetValue("MoveIndices", out object moveIndices)) _currentSettings.MovementPoolIndices = (int[])moveIndices;
         if (props.TryGetValue("Initiative", out object initiative)) _currentSettings.InfluenceInitiative = Convert.ToBoolean(initiative);
         
         if (_currentSettings is MultiplayerSettings mp)

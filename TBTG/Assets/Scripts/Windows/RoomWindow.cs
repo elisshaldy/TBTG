@@ -187,6 +187,7 @@ public class RoomWindow : UIWindow
         if (_library != null)
         {
             settings.CharacterPoolIndices = _library.GetShuffledIndices();
+            settings.MovementPoolIndices = _library.GetShuffledMovementIndices();
         }
         
         if (GameSettingsManager.Instance != null)
@@ -206,6 +207,7 @@ public class RoomWindow : UIWindow
                 props.Add("BossCount", settings.BossCount);
                 props.Add("BossDifficulty", (int)settings.BossDifficulty);
                 props.Add("CharIndices", settings.CharacterPoolIndices);
+                props.Add("MoveIndices", settings.MovementPoolIndices);
                 props.Add("Initiative", settings.InfluenceInitiative);
             
                 PhotonNetwork.CurrentRoom.SetCustomProperties(props);
