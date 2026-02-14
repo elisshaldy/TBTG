@@ -683,9 +683,9 @@ RectTransform:
   - {fileID: 1929090084}
   m_Father: {fileID: 1085973019}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 101.279, y: -397.5}
   m_SizeDelta: {x: 300, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &199009647
@@ -3621,6 +3621,14 @@ MonoBehaviour:
     RoomName: Undefined
     YourName: Undefined
     PlayerList: []
+    LocalPlayerSnapshot:
+      SelectedCards: []
+      SelectedMovementCards: []
+      PlayerIndex: 0
+    RemotePlayerSnapshot:
+      SelectedCards: []
+      SelectedMovementCards: []
+      PlayerIndex: 0
   hotseatSettings:
     TurnTime: 0
     FieldSize: 0
@@ -3650,6 +3658,14 @@ MonoBehaviour:
     BossDifficulty: 0
     InfluenceInitiative: 0
     BotDifficulty: 0
+    PlayerSnapshot:
+      SelectedCards: []
+      SelectedMovementCards: []
+      PlayerIndex: 0
+    BotSnapshot:
+      SelectedCards: []
+      SelectedMovementCards: []
+      PlayerIndex: 0
 --- !u!114 &818084966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3724,6 +3740,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _library: {fileID: 11400000, guid: 3b40fb580eef8ac43b4026e490f9a4a6, type: 2}
+  _deckController: {fileID: 0}
 --- !u!114 &818084970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5397,9 +5414,9 @@ RectTransform:
   - {fileID: 82904454}
   m_Father: {fileID: 1085973019}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 101.279, y: -682.5}
   m_SizeDelta: {x: 300, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1203607014
@@ -5545,7 +5562,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1219304271
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7429,9 +7446,9 @@ RectTransform:
   - {fileID: 2106720893}
   m_Father: {fileID: 1085973019}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 101.279, y: -492.5}
   m_SizeDelta: {x: 300, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1454090913
@@ -9343,9 +9360,9 @@ RectTransform:
   - {fileID: 1743586826}
   m_Father: {fileID: 1085973019}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 101.279, y: -587.5}
   m_SizeDelta: {x: 300, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1908665582
@@ -11034,7 +11051,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3974059382248261792, guid: 12fccda35ceaf884d8276597c685c8db, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8187202248708408374, guid: 12fccda35ceaf884d8276597c685c8db, type: 3}
       propertyPath: m_Pivot.x
@@ -11457,7 +11474,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8147715434266441001, guid: 93fff6d980e9f8d4d89c5adc42ca490e, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8413068858755668180, guid: 93fff6d980e9f8d4d89c5adc42ca490e, type: 3}
       propertyPath: m_AnchorMax.y

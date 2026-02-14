@@ -103,6 +103,7 @@ public class GameDataInitializer : MonoBehaviour
                     var dragHandler = cardObj.GetComponent<CardDragHandler>();
                     dragHandler.CardID = i;
                     dragHandler.OwnerID = playerIndex;
+                    dragHandler.PairID = i / 2;
                     dragHandler.SetDependencies(sceneState, _deckController);
                     _deckController.RegisterCard(dragHandler);
                 }

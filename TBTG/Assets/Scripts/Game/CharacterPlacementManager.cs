@@ -9,12 +9,13 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     public static CharacterPlacementManager Instance { get; private set; }
 
     [SerializeField] private GameDataLibrary _library;
+    [SerializeField] private CardDeckController _deckController;
 
-    // Key is (OwnerID, CardID)
+    // Key is (OwnerID, PairID)
     private Dictionary<(int, int), GameObject> _spawnedCharacters = new Dictionary<(int, int), GameObject>();
-    // Key is (OwnerID, CardID), Value is LibraryIndex
+    // Key is (OwnerID, PairID), Value is LibraryIndex of the CURRENTLY ACTIVE card
     private Dictionary<(int, int), int> _spawnedCharLibIndices = new Dictionary<(int, int), int>();
-    // Key is GridCoordinates, Value is (OwnerID, CardID)
+    // Key is GridCoordinates, Value is (OwnerID, PairID)
     private Dictionary<Vector2Int, (int, int)> _tileOccupants = new Dictionary<Vector2Int, (int, int)>();
 
     private int _localPlayerIndex = -1;
@@ -34,12 +35,11 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         if (_library == null)
         {
             var initializer = FindObjectOfType<GameDataInitializer>();
-            if (initializer != null)
-            {
-                // Using reflection or just finding the asset is hard, 
-                // but we can try to find it on the initializer if it was public.
-                // For now, we assume user assigns it or we find it via Resources if possible.
-            }
+        }
+
+        if (_deckController == null)
+        {
+            _deckController = FindObjectOfType<CardDeckController>();
         }
     }
 
@@ -84,7 +84,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         // Check if tile is occupied by another character
         if (_tileOccupants.TryGetValue(tile.GridCoordinates, out var occupant))
         {
-            if (occupant.Item1 != card.OwnerID || occupant.Item2 != card.CardID)
+            if (occupant.Item1 != card.OwnerID || occupant.Item2 != card.PairID)
             {
                 Debug.Log("[Placement] Tile occupied!");
                 return false;
@@ -98,28 +98,28 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         int ownerID = card.OwnerID;
 
         // Perform local placement
-        PerformPlacement(ownerID, card.CardID, charLibraryIndex, tile.GridCoordinates, tile);
+        PerformPlacement(ownerID, card.PairID, charLibraryIndex, tile.GridCoordinates, tile);
 
         // Sync with others
         if (PhotonNetwork.InRoom && photonView != null)
         {
-            photonView.RPC("RPC_PlaceCharacter", RpcTarget.Others, ownerID, card.CardID, charLibraryIndex, tile.GridCoordinates.x, tile.GridCoordinates.y);
+            photonView.RPC("RPC_PlaceCharacter", RpcTarget.Others, ownerID, card.PairID, charLibraryIndex, tile.GridCoordinates.x, tile.GridCoordinates.y);
         }
 
         return true;
     }
 
     [PunRPC]
-    private void RPC_PlaceCharacter(int ownerID, int cardID, int libIdx, int tx, int ty)
+    private void RPC_PlaceCharacter(int ownerID, int pairID, int libIdx, int tx, int ty)
     {
-        Debug.Log($"[Placement] Received RPC for Player {ownerID}, Card {cardID} at ({tx}, {ty})");
+        Debug.Log($"[Placement] Received RPC for Player {ownerID}, Pair {pairID} at ({tx}, {ty})");
         Vector2Int targetPos = new Vector2Int(tx, ty);
         
         // Use a coroutine to handle cases where the grid might not be ready yet
-        StartCoroutine(WaitAndPlace(ownerID, cardID, libIdx, targetPos));
+        StartCoroutine(WaitAndPlace(ownerID, pairID, libIdx, targetPos));
     }
 
-    private IEnumerator WaitAndPlace(int ownerID, int cardID, int libIdx, Vector2Int gridPos)
+    private IEnumerator WaitAndPlace(int ownerID, int pairID, int libIdx, Vector2Int gridPos)
     {
         Tile targetTile = null;
         float timeout = 5f;
@@ -136,20 +136,20 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
 
         if (targetTile != null)
         {
-            PerformPlacement(ownerID, cardID, libIdx, gridPos, targetTile);
+            PerformPlacement(ownerID, pairID, libIdx, gridPos, targetTile);
         }
         else
         {
-            Debug.LogError($"[Placement] CRITICAL: Could not find tile at {gridPos} for character placement (Owner:{ownerID}, Card:{cardID})!");
+            Debug.LogError($"[Placement] CRITICAL: Could not find tile at {gridPos} for character placement (Owner:{ownerID}, Pair:{pairID})!");
         }
     }
 
-    private void PerformPlacement(int ownerID, int cardID, int libIdx, Vector2Int gridPos, Tile tile)
+    private void PerformPlacement(int ownerID, int pairID, int libIdx, Vector2Int gridPos, Tile tile)
     {
         if (tile == null) return;
-        var key = (ownerID, cardID);
+        var key = (ownerID, pairID);
 
-        ClearPlacementInternal(ownerID, cardID);
+        ClearPlacementInternal(ownerID, pairID);
 
         if (_library != null && libIdx >= 0 && libIdx < _library.AllCharacters.Count)
         {
@@ -173,17 +173,54 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
 
     public void ClearPlacement(CardDragHandler card)
     {
-        ClearPlacementInternal(card.OwnerID, card.CardID);
+        ClearPlacementInternal(card.OwnerID, card.PairID);
         if (PhotonNetwork.InRoom && photonView != null)
-            photonView.RPC("RPC_ClearPlacement", RpcTarget.Others, card.OwnerID, card.CardID);
+            photonView.RPC("RPC_ClearPlacement", RpcTarget.Others, card.OwnerID, card.PairID);
     }
 
     [PunRPC]
-    private void RPC_ClearPlacement(int ownerID, int cardID) => ClearPlacementInternal(ownerID, cardID);
+    private void RPC_ClearPlacement(int ownerID, int pairID) => ClearPlacementInternal(ownerID, pairID);
 
-    private void ClearPlacementInternal(int ownerID, int cardID)
+    public bool IsPairPlaced(int ownerID, int pairID)
     {
-        var key = (ownerID, cardID);
+        return _spawnedCharacters.ContainsKey((ownerID, pairID));
+    }
+
+    public void UpdateCharacterModel(int ownerID, int pairID, int libIdx)
+    {
+        var key = (ownerID, pairID);
+        if (_spawnedCharacters.TryGetValue(key, out GameObject charInstance))
+        {
+            // Find current tile
+            var gridSlot = _tileOccupants.FirstOrDefault(x => x.Value == key);
+            if (gridSlot.Value == key)
+            {
+                Tile tile = FindTileAt(gridSlot.Key);
+                // Simple approach: re-place at same tile
+                PerformPlacement(ownerID, pairID, libIdx, gridSlot.Key, tile);
+                
+                // Sync
+                if (PhotonNetwork.InRoom && photonView != null)
+                    photonView.RPC("RPC_UpdateCharacterModel", RpcTarget.Others, ownerID, pairID, libIdx);
+            }
+        }
+    }
+
+    [PunRPC]
+    private void RPC_UpdateCharacterModel(int ownerID, int pairID, int libIdx)
+    {
+        var key = (ownerID, pairID);
+        var gridSlot = _tileOccupants.FirstOrDefault(x => x.Value == key);
+        if (gridSlot.Value == key)
+        {
+            Tile tile = FindTileAt(gridSlot.Key);
+            PerformPlacement(ownerID, pairID, libIdx, gridSlot.Key, tile);
+        }
+    }
+
+    private void ClearPlacementInternal(int ownerID, int pairID)
+    {
+        var key = (ownerID, pairID);
         if (_spawnedCharacters.TryGetValue(key, out GameObject oldChar))
         {
             Destroy(oldChar);
@@ -205,14 +242,12 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         Debug.Log($"[Placement] Player {info.Sender.ActorNumber} requested current placements. Sending mine...");
         foreach (var kvp in _spawnedCharLibIndices)
         {
-            var key = kvp.Key; // (ownerID, cardID)
+            var key = kvp.Key; // (ownerID, pairID)
             int libIdx = kvp.Value;
 
             // Only send characters that WE (this client) are responsible for
-            // (Assuming ownerID matches local index)
             if (key.Item1 == _localPlayerIndex)
             {
-                // Find grid pos for this character
                 var gridPosEntry = _tileOccupants.FirstOrDefault(x => x.Value == key);
                 if (gridPosEntry.Value == key)
                 {
@@ -322,7 +357,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
 
     #region HELPERS
 
-    private int GetLibraryIndex(CharacterData data) => _library != null ? _library.AllCharacters.IndexOf(data) : -1;
+    public int GetLibraryIndex(CharacterData data) => _library != null ? _library.AllCharacters.IndexOf(data) : -1;
 
     private Tile FindTileAt(Vector2Int pos)
     {

@@ -44,6 +44,7 @@ MonoBehaviour:
   - RPC_HideRemotePreview
   - RPC_ShowRemotePreview
   - RPC_RequestCurrentPlacements
+  - RPC_UpdateCharacterModel
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

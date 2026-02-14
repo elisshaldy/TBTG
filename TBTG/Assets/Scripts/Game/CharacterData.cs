@@ -7,6 +7,8 @@ public class CharacterData : ScriptableObject
     [Header("Visuals")]
     [LocalizedKey]
     public string CharacterName;
+    [LocalizedKey]
+    public string CharacterDescription;
     public Sprite CharacterSprite;
     [SerializeField] private GameObject _characterModel;
 

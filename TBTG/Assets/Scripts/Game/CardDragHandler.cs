@@ -10,6 +10,11 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public bool IsLockedInSlot => gameSceneState != null && gameSceneState.CurrentStep == GameSetupStep.Map;
     public int CardID { get; set; } = -1;
     public int OwnerID { get; set; } = -1;
+    public int PairID { get; set; } = -1;
+
+    public CardDragHandler PartnerCard { get; set; }
+    public bool IsPassive { get; set; }
+    private bool _isDeactivated = false;
 
     private RectTransform rectTransform;
     private Canvas canvas;
@@ -73,10 +78,34 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     
     public void SetRaycastTarget(bool value)
     {
+        if (_isDeactivated)
+        {
+            if (canvasGroup != null) canvasGroup.blocksRaycasts = false;
+            if (cardImage != null) cardImage.raycastTarget = false;
+            return;
+        }
+
         if (canvasGroup != null)
             canvasGroup.blocksRaycasts = value;
         
         if (cardImage != null) cardImage.raycastTarget = value;
+    }
+
+    public void SetLastSlot(CardSlot slot)
+    {
+        LastSlot = slot;
+    }
+
+    public void SetDeactivated(bool value)
+    {
+        _isDeactivated = value;
+        if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
+        if (canvasGroup != null)
+        {
+            // Removed transparency as per user request
+            canvasGroup.blocksRaycasts = !value;
+        }
+        if (cardImage != null) cardImage.raycastTarget = !value;
     }
     
     public void OnBeginDrag(PointerEventData eventData)
@@ -92,6 +121,17 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
 
         _canDrag = true;
+        
+        // Passive cards can be dragged (to swap), but Cannot be placed on field.
+        // The check for placement is in TryPlaceOnMapTile.
+
+        if (_isDeactivated)
+        {
+            _canDrag = false;
+            eventData.pointerDrag = null;
+            return;
+        }
+
         if (PersistentMusicManager.Instance != null) PersistentMusicManager.Instance.PlayCardPickup();
 
         LastSlot = CurrentSlot;
@@ -185,12 +225,22 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (IsLockedInSlot)
         {
             placedSuccessfully = TryPlaceOnMapTile(eventData);
+            if (placedSuccessfully && cardDeckController != null)
+            {
+                cardDeckController.MakeActive(this);
+            }
         }
 
         if (CurrentSlot == null)
         {
             if (IsLockedInSlot && LastSlot != null)
             {
+                if (!placedSuccessfully)
+                {
+                    if (CharacterPlacementManager.Instance != null)
+                        CharacterPlacementManager.Instance.ClearPlacement(this);
+                }
+
                 LastSlot.SetCardManually(this);
             }
             else

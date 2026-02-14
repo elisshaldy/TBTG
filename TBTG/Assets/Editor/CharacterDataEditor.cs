@@ -9,6 +9,7 @@ public class CharacterDataEditor : Editor
         serializedObject.Update();
 
         EditorGUILayout.PropertyField(serializedObject.FindProperty("CharacterName"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("CharacterDescription"));
 
         SerializedProperty spriteProp = serializedObject.FindProperty("CharacterSprite");
         EditorGUILayout.PropertyField(spriteProp);
