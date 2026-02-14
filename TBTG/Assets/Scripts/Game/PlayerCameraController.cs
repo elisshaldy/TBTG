@@ -70,16 +70,36 @@ public class PlayerCameraController : MonoBehaviour
         // Smoothly interpolate to target yaw
         _currentYaw = Mathf.LerpAngle(_currentYaw, _targetYaw, Time.deltaTime * 3f);
 
-        // Блокуємо керування камерою, якщо вона заблокована ззовні або курсор знаходиться над UI
-        bool isPointerOverUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
-        
-        if (!BlockCameraControl && !isPointerOverUI)
+        // Блокуємо керування камерою, якщо вона заблокована ззовні або курсор знаходиться над "справжнім" UI (HUD)
+        if (!BlockCameraControl && !IsPointerOverRealUI())
         {
             HandleZoom();
             HandleRotation();
         }
 
         UpdateCameraPosition();
+    }
+
+    private bool IsPointerOverRealUI()
+    {
+        if (EventSystem.current == null) return false;
+
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = Input.mousePosition;
+        System.Collections.Generic.List<RaycastResult> results = new System.Collections.Generic.List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        foreach (var result in results)
+        {
+            // Якщо попали в UI, перевіряємо чи це не WorldSpace Canvas (іконки над головами і т.д.)
+            Canvas canvas = result.gameObject.GetComponentInParent<Canvas>();
+            if (canvas != null && canvas.renderMode != RenderMode.WorldSpace)
+            {
+                return true; // Це справжній інтерфейс на екрані
+            }
+        }
+
+        return false;
     }
 
     private void HandleZoom()
