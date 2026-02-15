@@ -235,11 +235,9 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         {
             if (IsLockedInSlot && LastSlot != null)
             {
-                if (!placedSuccessfully)
-                {
-                    if (CharacterPlacementManager.Instance != null)
-                        CharacterPlacementManager.Instance.ClearPlacement(this);
-                }
+                // Якщо не вдалося поставити на нову клітинку, ми просто повертаємо картку в слот,
+                // але БІЛЬШЕ НЕ видаляємо персонажа з поля (ClearPlacement), 
+                // щоб він залишався на своїй старій позиції.
 
                 LastSlot.SetCardManually(this);
             }

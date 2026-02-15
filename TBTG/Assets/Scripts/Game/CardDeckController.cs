@@ -191,30 +191,62 @@ public class CardDeckController : MonoBehaviour
         CardSlot activeSlot = _cardDeck[2 * p];
         CardSlot passiveSlot = _cardDeck[2 * p + 1];
 
-        // If the card is already logically in the active slot (or it's its home), do nothing
-        if (card.LastSlot == activeSlot) return;
+        // Якщо картка вже в активному слоті або це її дім, нічого не робимо
+        if (card.CurrentSlot == activeSlot || (card.CurrentSlot == null && card.LastSlot == activeSlot)) return;
 
         CardDragHandler partner = card.PartnerCard;
-        if (partner != null)
+        
+        // 1. Якщо напарник зараз в активному слоті — виганяємо його в пасивний
+        if (partner != null && partner.CurrentSlot == activeSlot)
         {
-            // If the partner is currently in the active slot, move it to the passive slot
-            if (partner.CurrentSlot == activeSlot)
+            activeSlot.ClearSlot();
+            passiveSlot.SetCardManually(partner);
+            partner.SetLastSlot(passiveSlot);
+        }
+
+        // 2. Якщо сама картка була в пасивному слоті — звільняємо його
+        if (card.CurrentSlot == passiveSlot)
+        {
+            passiveSlot.ClearSlot();
+        }
+
+        // 3. Тепер кажемо картці, що її дім тепер — активний слот
+        card.SetLastSlot(activeSlot);
+        
+        // Якщо картка зараз не перетягується (наприклад, викликали з коду), ставимо її в слот
+        if (card.CurrentSlot == null && !UnityEngine.EventSystems.EventSystem.current.alreadySelecting)
+        {
+            activeSlot.SetCardManually(card);
+        }
+
+        CheckDeck(); 
+    }
+
+    public CharacterData GetActiveCharacterData(int pairID)
+    {
+        // Спочатку перевіряємо слоти (це найнадійніше)
+        if (pairID * 2 < _cardDeck.Count)
+        {
+            var slot = _cardDeck[pairID * 2];
+            if (slot.IsOccupied && slot.CurrentCard != null)
             {
-                activeSlot.ClearSlot();
-                passiveSlot.SetCardManually(partner);
-            }
-            else if (partner.LastSlot == activeSlot)
-            {
-                // If partner is also on field (shouldn't happen with current rules, but safe), just swap their homes
-                partner.SetLastSlot(passiveSlot);
+                var info = slot.CurrentCard.GetComponent<CardInfo>();
+                if (info != null) return info.CharData;
             }
         }
 
-        // The card being placed (or made active) should now consider the active slot its home
-        card.SetLastSlot(activeSlot);
-        
-        CheckDeck(); 
+        // Фолбек: якщо в слоті порожньо (карта в повітрі), шукаємо активну карту цієї пари в загальному списку
+        foreach (var card in _cards)
+        {
+            if (card != null && card.PairID == pairID && !card.IsPassive)
+            {
+                var info = card.GetComponent<CardInfo>();
+                if (info != null) return info.CharData;
+            }
+        }
+        return null;
     }
+
 
 
     public void ToggleCardsRaycasts(bool value, CardDragHandler caller)
