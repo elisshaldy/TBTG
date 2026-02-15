@@ -278,18 +278,11 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
                     bool isMine = (entry.ownerID == myID);
                     Sprite displaySprite = data.CharacterSprite;
 
-                    // Логіка: своїх бачимо всіх. Ворога - тільки першого в черзі.
-                    if (!isMine)
+                    // Логіка: своїх бачимо завжди. 
+                    // Ворога - ТІЛЬКИ якщо він зараз перший у черзі (його хід).
+                    if (!isMine && i > 0)
                     {
-                        if (opponentShown)
-                        {
-                            // Якщо це не перший ворог у списку - приховуємо іконку
-                            displaySprite = _unknownCharSprite; 
-                        }
-                        else
-                        {
-                            opponentShown = true;
-                        }
+                        displaySprite = _unknownCharSprite;
                     }
 
                     SetupInitiativeEntry(obj, displaySprite, i + 1, entry.pairID);
