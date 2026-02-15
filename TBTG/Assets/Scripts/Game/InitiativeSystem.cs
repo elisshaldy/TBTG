@@ -14,6 +14,7 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
     [SerializeField] private RectTransform _containerInitiative;
     [SerializeField] private GameObject _initiativePrefab;
     [SerializeField] private Button _acceptBtn;
+    [SerializeField] private Sprite _unknownCharSprite;
 
     [Header("State")]
     private List<int> _initiativeQueue = new List<int>(); // Локальна черга (PairIDs)
@@ -262,15 +263,37 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
 
         if (_isFinalized)
         {
+            int myID = PhotonNetwork.InRoom ? PhotonNetwork.LocalPlayer.ActorNumber : 1;
+            bool opponentShown = false;
+
             for (int i = 0; i < _finalQueue.Count; i++)
             {
                 var entry = _finalQueue[i];
                 CharacterData data = GetCharacterDataForFinal(entry.ownerID, entry.pairID);
+                
                 if (data != null)
                 {
                     GameObject obj = Instantiate(_initiativePrefab, _containerInitiative);
-                    SetupInitiativeEntry(obj, data, i + 1, entry.pairID);
-                    // Вимикаємо драг для фінальної черги
+                    
+                    bool isMine = (entry.ownerID == myID);
+                    Sprite displaySprite = data.CharacterSprite;
+
+                    // Логіка: своїх бачимо всіх. Ворога - тільки першого в черзі.
+                    if (!isMine)
+                    {
+                        if (opponentShown)
+                        {
+                            // Якщо це не перший ворог у списку - приховуємо іконку
+                            displaySprite = _unknownCharSprite; 
+                        }
+                        else
+                        {
+                            opponentShown = true;
+                        }
+                    }
+
+                    SetupInitiativeEntry(obj, displaySprite, i + 1, entry.pairID);
+                    
                     var drag = obj.GetComponent<InitiativeEntryDragHandler>();
                     if (drag != null) drag.enabled = false;
                 }
@@ -286,7 +309,7 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
                 if (activeData != null)
                 {
                     GameObject entryObj = Instantiate(_initiativePrefab, _containerInitiative);
-                    SetupInitiativeEntry(entryObj, activeData, i + 1, pID);
+                    SetupInitiativeEntry(entryObj, activeData.CharacterSprite, i + 1, pID);
                 }
             }
         }
@@ -326,12 +349,26 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
         return null;
     }
 
-    private void SetupInitiativeEntry(GameObject entryObj, CharacterData data, int order, int pID)
+    private void SetupInitiativeEntry(GameObject entryObj, Sprite sprite, int order, int pID)
     {
         var icon = entryObj.GetComponentInChildren<Image>();
         var text = entryObj.GetComponentInChildren<TextMeshProUGUI>();
 
-        if (icon != null) icon.sprite = data.CharacterSprite;
+        if (icon != null) 
+        {
+            if (sprite != null)
+            {
+                icon.sprite = sprite;
+                icon.color = Color.white;
+            }
+            else
+            {
+                // Заглушка: якщо спрайту немає, робимо іконку просто темним колом/квадратом
+                icon.sprite = null;
+                icon.color = new Color(0.2f, 0.2f, 0.2f, 0.8f);
+            }
+        }
+        
         if (text != null) text.text = order.ToString();
 
         // Додаємо або налаштовуємо скрипт для перетягування самої іконки

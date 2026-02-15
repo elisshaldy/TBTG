@@ -5437,6 +5437,7 @@ MonoBehaviour:
   _containerInitiative: {fileID: 1338841823}
   _initiativePrefab: {fileID: 1975906870701902372, guid: 71ef60c6657f3a041a0a2d60c1201b03, type: 3}
   _acceptBtn: {fileID: 1154256836}
+  _unknownCharSprite: {fileID: 21300000, guid: 443bbca961603d04a8572918c2305537, type: 3}
 --- !u!114 &1338841828
 MonoBehaviour:
   m_ObjectHideFlags: 0
