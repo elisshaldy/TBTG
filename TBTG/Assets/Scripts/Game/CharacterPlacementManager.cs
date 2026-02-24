@@ -197,6 +197,37 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         return _spawnedCharacters.ContainsKey((ownerID, pairID));
     }
 
+    public void SetCharacterActive(int ownerID, int pairID, bool isActive)
+    {
+        var key = (ownerID, pairID);
+        GameObject charObj = null;
+
+        // 1. Try direct lookup
+        if (!_spawnedCharacters.TryGetValue(key, out charObj))
+        {
+            // 2. Fallback for Hotseat/Debug: search by PairID among all spawned chars
+            foreach (var kvp in _spawnedCharacters)
+            {
+                if (kvp.Key.Item2 == pairID && (ownerID <= 0 || kvp.Key.Item1 == ownerID))
+                {
+                    charObj = kvp.Value;
+                    break;
+                }
+            }
+        }
+
+        if (charObj != null)
+        {
+            var visual = charObj.GetComponent<CharacterVisual>();
+            if (visual == null) visual = charObj.GetComponentInChildren<CharacterVisual>();
+            
+            if (visual != null)
+            {
+                visual.SetIsActive(isActive);
+            }
+        }
+    }
+
     public void UpdateCharacterModel(int ownerID, int pairID, int libIdx)
     {
         var key = (ownerID, pairID);

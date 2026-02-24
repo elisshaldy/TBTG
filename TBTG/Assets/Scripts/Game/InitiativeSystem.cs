@@ -278,6 +278,12 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
             for (int i = 0; i < _finalQueue.Count; i++)
             {
                 var entry = _finalQueue[i];
+
+                if (CharacterPlacementManager.Instance != null)
+                {
+                    CharacterPlacementManager.Instance.SetCharacterActive(entry.ownerID, entry.pairID, i == 0);
+                }
+
                 CharacterData data = GetCharacterDataForFinal(entry.ownerID, entry.pairID);
                 
                 if (data != null)
