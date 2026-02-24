@@ -129,12 +129,14 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
             
             if (currentPlayer == 1)
             {
-                // Очищаємо для другого гравця
+                // Transition to Player 2 instead of finishing
                 _initiativeQueue.Clear();
                 _addedPairIDs.Clear();
+                
+                hs.AdvanceToPlayer2Map(FindObjectOfType<GameUIController>());
+                
                 UpdateInitiativeUI();
                 UpdateAcceptButton();
-                _gameSceneState.Next(FindObjectOfType<GameUIController>());
             }
             else
             {
@@ -239,19 +241,26 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
 
     private int CalculateInsertIndex(Vector2 screenPos)
     {
+        int validIndex = 0;
         for (int i = 0; i < _containerInitiative.childCount; i++)
         {
             RectTransform child = _containerInitiative.GetChild(i) as RectTransform;
+            
             // Якщо ми перетягуємо сам елемент черги, проігноруємо його власну стару плашку
             if (UnityEngine.EventSystems.EventSystem.current.alreadySelecting && 
                 UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == child.gameObject) continue;
 
+            // ВАЖЛИВО: Пропускаємо скриті картки ворога (у них drag.enabled == false)
+            var drag = child.GetComponent<InitiativeEntryDragHandler>();
+            if (drag != null && !drag.enabled) continue;
+
             if (screenPos.y > child.position.y) 
             {
-                return i;
+                return validIndex;
             }
+            validIndex++;
         }
-        return _containerInitiative.childCount;
+        return validIndex;
     }
 
     public void UpdateInitiativeUI()
@@ -294,6 +303,25 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
         }
         else
         {
+            // Hotseat addition: Show other players' selections as HIDDEN
+            if (_gameSceneState != null && _gameSceneState._currentSettings is HotseatSettings hs)
+            {
+                foreach (var kvp in _allPlayersInitiatives)
+                {
+                    if (kvp.Key != hs.CurrentPlayerIndex)
+                    {
+                        foreach (var pID in kvp.Value)
+                        {
+                            GameObject obj = Instantiate(_initiativePrefab, _containerInitiative);
+                            SetupInitiativeEntry(obj, _unknownCharSprite, 0, pID);
+                            
+                            var drag = obj.GetComponent<InitiativeEntryDragHandler>();
+                            if (drag != null) drag.enabled = false;
+                        }
+                    }
+                }
+            }
+
             for (int i = 0; i < _initiativeQueue.Count; i++)
             {
                 int pID = _initiativeQueue[i];
@@ -302,6 +330,8 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
                 if (activeData != null)
                 {
                     GameObject entryObj = Instantiate(_initiativePrefab, _containerInitiative);
+                    // Використовуємо i + 1, щоб у гравця завжди було 1-4, 
+                    // незалежно від того, скільки там прихованих іконок іншого гравця
                     SetupInitiativeEntry(entryObj, activeData.CharacterSprite, i + 1, pID);
                 }
             }
@@ -362,7 +392,11 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
             }
         }
         
-        if (text != null) text.text = order.ToString();
+        if (text != null) 
+        {
+            // Якщо порядок 0 - це прихована іконка іншого гравця
+            text.text = (order > 0) ? order.ToString() : "?";
+        }
 
         // Додаємо або налаштовуємо скрипт для перетягування самої іконки
         var drag = entryObj.GetComponent<InitiativeEntryDragHandler>();

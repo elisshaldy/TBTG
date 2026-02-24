@@ -170,6 +170,95 @@ public class GameDataInitializer : MonoBehaviour
         StartCoroutine(DisableLayoutsRoutine());
     }
 
+    // NEW: Initialize deck with specific selected cards (for Hotseat Map transition)
+    public void InitializeMapSetupForPlayer(int playerIndex, List<CharacterData> chars, List<ModData> mods)
+    {
+        if (_cardContainer != null) _cardContainer.enabled = true;
+        if (_modContainer != null) _modContainer.enabled = true;
+
+        if (_deckController != null) _deckController.ResetController();
+        
+        ClearContainer(_cardContainer.transform);
+        ClearContainer(_modContainer.transform);
+        
+        _cardsInstances.Clear();
+        _modsInstances.Clear();
+
+        GameSceneState sceneState = FindObjectOfType<GameSceneState>();
+
+        // Spawn Characters
+        for (int i = 0; i < chars.Count; i++)
+        {
+            GameObject cardObj = Instantiate(_cardPrefab, _cardContainer.transform);
+            CardInfo cardInfo = cardObj.GetComponent<CardInfo>();
+            if (cardInfo != null)
+            {
+                cardInfo.CharData = chars[i];
+                cardInfo.Initialize();
+                _cardsInstances.Add(cardInfo);
+
+                if (_deckController != null)
+                {
+                    var dragHandler = cardObj.GetComponent<CardDragHandler>();
+                    dragHandler.CardID = i;
+                    dragHandler.OwnerID = playerIndex;
+                    dragHandler.PairID = i / 2;
+                    dragHandler.SetDependencies(sceneState, _deckController);
+                    _deckController.RegisterCard(dragHandler);
+                }
+            }
+        }
+
+        // Spawn Mods
+        for (int i = 0; i < mods.Count; i++)
+        {
+            GameObject modObj = Instantiate(_modPrefab, _modContainer.transform);
+            ModInfo modInfo = modObj.GetComponent<ModInfo>();
+            if (modInfo != null)
+            {
+                modInfo.ModData = mods[i];
+                modInfo.Initialize();
+                _modsInstances.Add(modInfo);
+
+                if (_deckController != null)
+                {
+                    var dragHandler = modObj.GetComponent<ModDragHandler>();
+                    _deckController.RegisterMod(dragHandler);
+                }
+            }
+        }
+
+        // ВАЖЛИВО: Активуємо всі картки і закидаємо їх у слоти
+        foreach (var card in _cardsInstances)
+        {
+            if (card == null) continue;
+            card.gameObject.SetActive(true);
+            var handler = card.GetComponent<CardDragHandler>();
+            if (handler != null)
+            {
+                handler.InitializeHome();
+            }
+        }
+
+        foreach (var mod in _modsInstances)
+        {
+            if (mod == null) continue;
+            mod.gameObject.SetActive(true);
+            var handler = mod.GetComponent<ModDragHandler>();
+            if (handler != null)
+            {
+                handler.InitializeHome();
+            }
+        }
+
+        if (_deckController != null)
+        {
+            _deckController.AutoFillSlots();
+        }
+
+        StartCoroutine(DisableLayoutsRoutine());
+    }
+
     private List<GameObject> InitializeMovementContainer(LayoutGroup container, int playerIdx, GameSettings settings)
     {
         List<GameObject> spawnedCards = new List<GameObject>();

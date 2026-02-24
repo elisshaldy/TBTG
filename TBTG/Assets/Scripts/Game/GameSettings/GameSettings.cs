@@ -117,7 +117,13 @@ public class MultiplayerSettings : GameSettings
     public override void RegisterMovementCards(int playerIndex, List<GameObject> movementCards)
     {
         PlayerSnapshot target = (playerIndex == CurrentPlayerIndex) ? LocalPlayerSnapshot : RemotePlayerSnapshot;
-        target.SelectedMovementCards = new List<GameObject>(movementCards);
+        target.SelectedMovementCards.Clear();
+        foreach (var go in movementCards)
+        {
+            if (go == null) continue;
+            var info = go.GetComponent<MovementCardInfo>();
+            if (info != null && info.MoveCard != null) target.SelectedMovementCards.Add(info.MoveCard);
+        }
         target.PlayerIndex = playerIndex;
     }
 
@@ -144,7 +150,13 @@ public class PlayerVsBotSettings : GameSettings
     public override void RegisterMovementCards(int playerIndex, List<GameObject> movementCards)
     {
         PlayerSnapshot target = (playerIndex == 1) ? PlayerSnapshot : BotSnapshot;
-        target.SelectedMovementCards = new List<GameObject>(movementCards);
+        target.SelectedMovementCards.Clear();
+        foreach (var go in movementCards)
+        {
+            if (go == null) continue;
+            var info = go.GetComponent<MovementCardInfo>();
+            if (info != null && info.MoveCard != null) target.SelectedMovementCards.Add(info.MoveCard);
+        }
         target.PlayerIndex = playerIndex;
     }
     
@@ -157,8 +169,9 @@ public class PlayerVsBotSettings : GameSettings
 [Serializable]
 public class PlayerSnapshot
 {
-    public List<GameObject> SelectedCards = new List<GameObject>();
-    public List<GameObject> SelectedMovementCards = new List<GameObject>();
+    public List<CharacterData> SelectedChars = new List<CharacterData>();
+    public List<ModData> SelectedMods = new List<ModData>();
+    public List<MovementCard> SelectedMovementCards = new List<MovementCard>();
     public int PlayerIndex;
 }
 
@@ -181,19 +194,46 @@ public class HotseatSettings : GameSettings
         GameSetupStep.Map 
     };
 
-    public override int CurrentPlayerIndex => _playerSelectionCycle == 0 ? 1 : _playerSelectionCycle;
+    private int _currentMapPlayerIndex = 1;
+    private bool _isMapPhase = false;
+
+    public override int CurrentPlayerIndex 
+    {
+        get 
+        {
+            if (_isMapPhase) return _currentMapPlayerIndex;
+            return _playerSelectionCycle == 0 ? 1 : _playerSelectionCycle;
+        }
+    }
 
     public override void TakeSnapshot(List<GameObject> selectedCards)
     {
         PlayerSnapshot target = (_playerSelectionCycle == 1) ? Player1Snapshot : Player2Snapshot;
-        target.SelectedCards = new List<GameObject>(selectedCards);
+        target.SelectedChars.Clear();
+        target.SelectedMods.Clear();
+
+        foreach (var obj in selectedCards)
+        {
+            if (obj == null) continue;
+            var cInfo = obj.GetComponent<CardInfo>();
+            if (cInfo != null && cInfo.CharData != null) target.SelectedChars.Add(cInfo.CharData);
+            
+            var mInfo = obj.GetComponent<ModInfo>();
+            if (mInfo != null && mInfo.ModData != null) target.SelectedMods.Add(mInfo.ModData);
+        }
         target.PlayerIndex = _playerSelectionCycle;
     }
 
     public override void RegisterMovementCards(int playerIndex, List<GameObject> movementCards)
     {
         PlayerSnapshot target = (playerIndex == 1) ? Player1Snapshot : Player2Snapshot;
-        target.SelectedMovementCards = new List<GameObject>(movementCards);
+        target.SelectedMovementCards.Clear();
+        foreach (var go in movementCards)
+        {
+            if (go == null) continue;
+            var info = go.GetComponent<MovementCardInfo>();
+            if (info != null && info.MoveCard != null) target.SelectedMovementCards.Add(info.MoveCard);
+        }
         target.PlayerIndex = playerIndex;
     }
 
@@ -206,28 +246,29 @@ public class HotseatSettings : GameSettings
             ui.ShowHotseatPlayer(currentName);
         }
     }
-    
+
+    public void AdvanceToPlayer2Map(GameUIController ui)
+    {
+        _currentMapPlayerIndex = 2;
+        ui.ShowHotseatPlayer(Player2Name);
+        
+        if (PlayerCameraController.Instance != null)
+        {
+            PlayerCameraController.Instance.RotateToPlayer(2);
+        }
+
+        GameDataInitializer initializer = GameObject.FindObjectOfType<GameDataInitializer>();
+        if (initializer != null)
+        {
+            initializer.InitializeMapSetupForPlayer(2, Player2Snapshot.SelectedChars, Player2Snapshot.SelectedMods);
+        }
+    }
+
     public override void OnFlowFinished(GameUIController ui)
     {
-        // 1. Ховаємо карти другого гравця (він щойно закінчив)
-        if (Player2Snapshot != null && Player2Snapshot.SelectedCards != null)
-        {
-            foreach (var card in Player2Snapshot.SelectedCards)
-            {
-                if (card != null) card.SetActive(false);
-            }
-        }
+        _isMapPhase = true;
+        _currentMapPlayerIndex = 1;
 
-        // 2. Вмикаємо карти першого гравця
-        if (Player1Snapshot != null && Player1Snapshot.SelectedCards != null)
-        {
-            foreach (var card in Player1Snapshot.SelectedCards)
-            {
-                if (card != null) card.SetActive(true);
-            }
-        }
-
-        // 3. Оновлюємо ім'я гравця на перший
         ui.ShowHotseatPlayer(Player1Name);
         
         if (PlayerCameraController.Instance != null)
@@ -235,7 +276,11 @@ public class HotseatSettings : GameSettings
             PlayerCameraController.Instance.RotateToPlayer(1);
         }
 
-        Debug.Log($"Flow finished. Switched back to {Player1Name} for the game.");
+        GameDataInitializer initializer = GameObject.FindObjectOfType<GameDataInitializer>();
+        if (initializer != null)
+        {
+            initializer.InitializeMapSetupForPlayer(1, Player1Snapshot.SelectedChars, Player1Snapshot.SelectedMods);
+        }
     }
 
     public override void OpenModeSpecific(GameUIController ui)

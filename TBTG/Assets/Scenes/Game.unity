@@ -3109,11 +3109,13 @@ MonoBehaviour:
     YourName: Undefined
     PlayerList: []
     LocalPlayerSnapshot:
-      SelectedCards: []
+      SelectedChars: []
+      SelectedMods: []
       SelectedMovementCards: []
       PlayerIndex: 0
     RemotePlayerSnapshot:
-      SelectedCards: []
+      SelectedChars: []
+      SelectedMods: []
       SelectedMovementCards: []
       PlayerIndex: 0
   hotseatSettings:
@@ -3128,11 +3130,13 @@ MonoBehaviour:
     Player1Name: Undefined
     Player2Name: Undefined
     Player1Snapshot:
-      SelectedCards: []
+      SelectedChars: []
+      SelectedMods: []
       SelectedMovementCards: []
       PlayerIndex: 0
     Player2Snapshot:
-      SelectedCards: []
+      SelectedChars: []
+      SelectedMods: []
       SelectedMovementCards: []
       PlayerIndex: 0
   playerVsBotSettings:
@@ -3146,11 +3150,13 @@ MonoBehaviour:
     InfluenceInitiative: 0
     BotDifficulty: 0
     PlayerSnapshot:
-      SelectedCards: []
+      SelectedChars: []
+      SelectedMods: []
       SelectedMovementCards: []
       PlayerIndex: 0
     BotSnapshot:
-      SelectedCards: []
+      SelectedChars: []
+      SelectedMods: []
       SelectedMovementCards: []
       PlayerIndex: 0
 --- !u!114 &818084966
@@ -3228,6 +3234,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _library: {fileID: 11400000, guid: 3b40fb580eef8ac43b4026e490f9a4a6, type: 2}
   _deckController: {fileID: 818084966}
+  _mapObject: {fileID: 1585235940}
 --- !u!114 &818084970
 MonoBehaviour:
   m_ObjectHideFlags: 0

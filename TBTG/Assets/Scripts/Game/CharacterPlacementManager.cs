@@ -41,6 +41,10 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         {
             _deckController = FindObjectOfType<CardDeckController>();
         }
+        
+        // Auto-fix for null references to avoid broken placements
+        if (_library == null) _library = FindObjectOfType<GameDataLibrary>();
+        if (_deckController == null) _deckController = FindObjectOfType<CardDeckController>();
     }
 
     private IEnumerator Start()

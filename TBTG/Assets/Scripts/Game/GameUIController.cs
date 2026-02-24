@@ -150,7 +150,25 @@ public class GameUIController : MonoBehaviour
     {
         DisableDeckListening();
         // Debug.Log("Map opened");
-        _containerMods.SetActive(false);
+        
+        bool isHotseatMap = _gameSceneState != null && 
+                           _gameSceneState._currentSettings is HotseatSettings;
+
+        // В Hotseat нам ТРЕБА бачити контейнери (або хоча б карти в слотах), 
+        // тому не вимикаємо все підряд, якщо це тільки початок розстановки
+        if (!isHotseatMap)
+        {
+            _containerMods.SetActive(false);
+            _containerCards.SetActive(false);
+        }
+        else
+        {
+            // В Hotseat на карті нам потрібні тільки персонажі для розстановки,
+            // а модифікатори вже мають бути приховані, щоб не заважати фоном.
+            _containerMods.SetActive(false);
+            _containerCards.SetActive(false); // Ми їх увімкнемо через слоти деки, якщо треба
+        }
+
         _modPointsTxt.gameObject.SetActive(false);
         _applyBtn.gameObject.SetActive(false);
         _map.SetActive(true);

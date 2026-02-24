@@ -131,7 +131,9 @@ public class CardDeckController : MonoBehaviour
             if (slot == null || slot.IsOccupied) continue;
 
             // Шукаємо першу вільну карту, яка ще не в слоті
-            while (cardIdx < _cards.Count && (_cards[cardIdx] == null || _cards[cardIdx].CurrentSlot != null || !_cards[cardIdx].gameObject.activeInHierarchy))
+            // Змінено: перевіряємо activeSelf замість activeInHierarchy, 
+            // бо під час ініціалізації контейнер може бути вимкнений
+            while (cardIdx < _cards.Count && (_cards[cardIdx] == null || _cards[cardIdx].CurrentSlot != null || !_cards[cardIdx].gameObject.activeSelf))
             {
                 cardIdx++;
             }
