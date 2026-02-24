@@ -46,12 +46,20 @@ public class LobbyController : MonoBehaviourPunCallbacks
     private void JoinRoom(string roomName)
     {
         // Debug.Log($"Joining room: {roomName}");
+        _joinRoomWindow.SetInteractivity(false);
         PhotonNetwork.JoinRoom(roomName);
     }
     
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        // Debug.LogError($"Join room failed: {message}");
+        _joinRoomWindow.SetInteractivity(true);
+    }
+
     public override void OnJoinedRoom()
     { 
         // Debug.Log($"Joined room: {PhotonNetwork.CurrentRoom.Name}");
+        _joinRoomWindow.SetInteractivity(true); // Re-enable for the future if we come back
         
         if (PhotonNetwork.IsMasterClient)
         {

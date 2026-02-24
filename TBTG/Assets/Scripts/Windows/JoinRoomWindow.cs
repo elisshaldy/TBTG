@@ -51,4 +51,14 @@ public class JoinRoomWindow : UIWindow
         _roomItems.Add(roomName, newRoom);
         LayoutRebuilder.MarkLayoutForRebuild(_container.GetComponent<RectTransform>());
     }
+
+    public void SetInteractivity(bool value)
+    {
+        foreach (var item in _roomItems.Values)
+        {
+            if (item == null) continue;
+            var btn = item.GetComponentInChildren<Button>();
+            if (btn != null) btn.interactable = value;
+        }
+    }
 }
