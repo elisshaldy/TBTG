@@ -13,6 +13,8 @@ public class RoomParametersUI : MonoBehaviour
     [SerializeField] private GameObject _bossCountUI;
     [SerializeField] private GameObject _bossDificultyUI;
     [SerializeField] private GameObject _initiativeUI;
+    [SerializeField] private GameObject _activeTilesUI;
+    [SerializeField] private GameObject _modsUI;
     // show if PlayerVSBot state
     [SerializeField] private GameObject _botDificultyUI;
     // show if hotseat
@@ -29,6 +31,8 @@ public class RoomParametersUI : MonoBehaviour
     [SerializeField] private TMP_InputField _namePlayer1;
     [SerializeField] private TMP_InputField _namePlayer2;
     [SerializeField] private Toggle _initiative;
+    [SerializeField] private Toggle _activeTiles;
+    [SerializeField] private Toggle _mods;
 
     public event System.Action OnParametersChanged;
 
@@ -161,6 +165,8 @@ public class RoomParametersUI : MonoBehaviour
 
             settings.BossDifficulty = (BossDifficulty)(_bossDifficultyDropdown.value + 1);
             settings.InfluenceInitiative = _initiative.isOn;
+            settings.ActiveTiles = _activeTiles.isOn;
+            settings.Mods = _mods.isOn;
         }
 
         return settings;

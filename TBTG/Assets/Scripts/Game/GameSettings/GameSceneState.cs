@@ -129,6 +129,8 @@ public class GameSceneState : MonoBehaviour
         target.PartyCount = source.PartyCount;
         target.BossDifficulty = source.BossDifficulty;
         target.InfluenceInitiative = source.InfluenceInitiative;
+        target.ActiveTiles = source.ActiveTiles;
+        target.Mods = source.Mods;
         target.MovementPoolIndices = source.MovementPoolIndices;
 
         if (source is PlayerVsBotSettings sBot && target is PlayerVsBotSettings tBot)
@@ -153,6 +155,8 @@ public class GameSceneState : MonoBehaviour
         if (props.TryGetValue("CharIndices", out object charIndices)) _currentSettings.CharacterPoolIndices = (int[])charIndices;
         if (props.TryGetValue("MoveIndices", out object moveIndices)) _currentSettings.MovementPoolIndices = (int[])moveIndices;
         if (props.TryGetValue("Initiative", out object initiative)) _currentSettings.InfluenceInitiative = Convert.ToBoolean(initiative);
+        if (props.TryGetValue("ActiveTiles", out object activeTiles)) _currentSettings.ActiveTiles = Convert.ToBoolean(activeTiles);
+        if (props.TryGetValue("Mods", out object mods)) _currentSettings.Mods = Convert.ToBoolean(mods);
         
         if (_currentSettings is MultiplayerSettings mp)
         {
@@ -187,6 +191,8 @@ public class GameSceneState : MonoBehaviour
         sb.AppendLine($"Party Count: {_currentSettings.PartyCount}");
         sb.AppendLine($"Boss Difficulty: {_currentSettings.BossDifficulty}");
         sb.AppendLine($"Initiative: {_currentSettings.InfluenceInitiative}");
+        sb.AppendLine($"Active Tiles: {_currentSettings.ActiveTiles}");
+        sb.AppendLine($"Mods Enabled: {_currentSettings.Mods}");
 
         if (_currentSettings is PlayerVsBotSettings botSettings)
         {

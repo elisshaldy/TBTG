@@ -209,6 +209,8 @@ public class RoomWindow : UIWindow
                 props.Add("CharIndices", settings.CharacterPoolIndices);
                 props.Add("MoveIndices", settings.MovementPoolIndices);
                 props.Add("Initiative", settings.InfluenceInitiative);
+                props.Add("ActiveTiles", settings.ActiveTiles);
+                props.Add("Mods", settings.Mods);
             
                 PhotonNetwork.CurrentRoom.SetCustomProperties(props);
                 

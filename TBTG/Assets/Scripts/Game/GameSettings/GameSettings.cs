@@ -29,6 +29,8 @@ public abstract class GameSettings
     public int[] MovementPoolIndices;
     public BossDifficulty BossDifficulty;
     public bool InfluenceInitiative;
+    public bool ActiveTiles;
+    public bool Mods;
 
     public int[] GetIndicesForPlayer(int playerIndex)
     {

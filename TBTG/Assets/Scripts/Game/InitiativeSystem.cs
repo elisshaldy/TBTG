@@ -297,7 +297,15 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
 
         if (_isFinalized)
         {
-            int myID = PhotonNetwork.InRoom ? PhotonNetwork.LocalPlayer.ActorNumber : 1;
+            int myID = 1;
+            if (PhotonNetwork.InRoom)
+            {
+                myID = PhotonNetwork.LocalPlayer.ActorNumber;
+            }
+            else if (_gameSceneState != null && _gameSceneState._currentSettings != null)
+            {
+                myID = _gameSceneState._currentSettings.CurrentPlayerIndex;
+            }
             //bool opponentShown = false;
 
             for (int i = 0; i < _finalQueue.Count; i++)
