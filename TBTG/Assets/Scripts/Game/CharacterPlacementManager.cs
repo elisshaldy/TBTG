@@ -180,6 +180,11 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
                 ApplyTeamColor(characterInstance, ownerID);
             }
         }
+
+        if (InitiativeSystem.Instance != null)
+        {
+            InitiativeSystem.Instance.UpdateAcceptButton();
+        }
     }
 
     public void ClearPlacement(CardDragHandler card)
@@ -272,6 +277,16 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
             var keysToRemove = _tileOccupants.Where(kvp => kvp.Value == key).Select(kvp => kvp.Key).ToList();
             foreach (var k in keysToRemove) _tileOccupants.Remove(k);
         }
+
+        if (InitiativeSystem.Instance != null)
+        {
+            InitiativeSystem.Instance.UpdateAcceptButton();
+        }
+    }
+
+    public int GetPlacedCharacterCount(int ownerID)
+    {
+        return _spawnedCharacters.Count(kv => kv.Key.Item1 == ownerID);
     }
 
     #endregion

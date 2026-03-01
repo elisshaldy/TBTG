@@ -109,13 +109,38 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
         }
     }
 
-    private void UpdateAcceptButton()
+    public void UpdateAcceptButton()
     {
         if (_acceptBtn == null || _isFinalized) return;
         
-        // Кнопка з'являється тільки коли черга повна (4 карти)
-        int maxPairs = 4;
-        _acceptBtn.gameObject.SetActive(_initiativeQueue.Count >= maxPairs);
+        int maxPairs = 0;
+        if (_deckController != null) 
+        {
+            var deckField = _deckController.GetType().GetField("_cardDeck", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var deck = deckField?.GetValue(_deckController) as List<CardSlot>;
+            if (deck != null) maxPairs = deck.Count / 2;
+        }
+        if (maxPairs == 0) maxPairs = 4;
+
+        bool isInitiativeFull = _initiativeQueue.Count >= maxPairs;
+
+        int currentPlayerId = 1;
+        if (PhotonNetwork.InRoom)
+        {
+            currentPlayerId = PhotonNetwork.LocalPlayer.ActorNumber;
+        }
+        else if (_gameSceneState != null && _gameSceneState._currentSettings is HotseatSettings hs)
+        {
+            currentPlayerId = hs.CurrentPlayerIndex;
+        }
+
+        bool areUnitsPlaced = false;
+        if (CharacterPlacementManager.Instance != null)
+        {
+            areUnitsPlaced = CharacterPlacementManager.Instance.GetPlacedCharacterCount(currentPlayerId) >= maxPairs;
+        }
+
+        _acceptBtn.gameObject.SetActive(isInitiativeFull && areUnitsPlaced && maxPairs > 0);
     }
 
     private void OnAcceptClick()
