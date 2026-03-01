@@ -66,7 +66,9 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (returningHome)
         {
             transform.localPosition = Vector3.Lerp(transform.localPosition, returnPosition, Time.deltaTime * speed);
-            transform.localRotation = Quaternion.Lerp(transform.localRotation, returnRotation, Time.deltaTime * speed);
+            
+            if (!RotationOverride)
+                transform.localRotation = Quaternion.Lerp(transform.localRotation, returnRotation, Time.deltaTime * speed);
 
             // Збільшена толерантність для завершення анімації
             if (Vector3.Distance(transform.localPosition, returnPosition) < 0.1f &&
@@ -235,6 +237,14 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         {
             targetScale = normalScale;
         }
+    }
+
+    public bool RotationOverride { get; set; }
+
+    public void SetHomeRotation(Quaternion rotation)
+    {
+        homeLocalRotation = rotation;
+        returnRotation = rotation;
     }
 
     public void ResetHover()
