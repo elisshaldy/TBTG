@@ -146,6 +146,38 @@ public class CardDeckController : MonoBehaviour
         }
     }
 
+    public void AutoFillMods()
+    {
+        List<ModsCardContainer> containers = new List<ModsCardContainer>();
+        foreach (var slot in _cardDeck)
+        {
+            if (slot.IsOccupied && slot.CurrentCard != null)
+            {
+                var container = slot.CurrentCard.GetComponent<ModsCardContainer>();
+                if (container != null) containers.Add(container);
+            }
+        }
+
+        if (containers.Count == 0) return;
+
+        foreach (var mod in _mods)
+        {
+            if (mod == null || !mod.gameObject.activeSelf) continue;
+
+            ModInfo info = mod.GetComponent<ModInfo>();
+            if (info == null || info.ModData == null) continue;
+
+            foreach (var container in containers)
+            {
+                if (container.CanAddMod(info.ModData))
+                {
+                    mod.AttachToCard(container.GetComponent<RectTransform>());
+                    break;
+                }
+            }
+        }
+    }
+
     private void CheckDeck()
     {
         bool isDeckFull = true;

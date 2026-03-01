@@ -20,6 +20,6 @@ public class CharacterHealthSystem : MonoBehaviour
 
     private void Start()
     {
-
+        _charHealth = CharHealth.Normal;
     }
 }
