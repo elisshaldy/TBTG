@@ -372,7 +372,16 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
     private CharacterData GetCharacterDataForFinal(int ownerID, int pairID)
     {
         // Якщо це ми - беремо з нашої деки (можемо поміняти на лету)
-        int myID = PhotonNetwork.InRoom ? PhotonNetwork.LocalPlayer.ActorNumber : 1;
+        int myID = 1;
+        if (PhotonNetwork.InRoom)
+        {
+            myID = PhotonNetwork.LocalPlayer.ActorNumber;
+        }
+        else if (_gameSceneState != null && _gameSceneState._currentSettings is HotseatSettings hs)
+        {
+            myID = hs.CurrentPlayerIndex;
+        }
+
         if (ownerID == myID && _deckController != null)
         {
             return _deckController.GetActiveCharacterData(pairID);

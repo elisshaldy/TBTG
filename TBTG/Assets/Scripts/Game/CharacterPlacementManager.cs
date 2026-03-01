@@ -69,12 +69,12 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
             timeout -= Time.deltaTime;
         }
 
-        // Extra small delay to ensure all tiles are fully registered
-        yield return new WaitForSeconds(0.2f);
+        // Extra small delay to ensure all tiles are fully registered and GridManager is populated
+        yield return new WaitForSeconds(0.5f);
 
         if (PhotonNetwork.InRoom && photonView != null)
         {
-            Debug.Log("[Placement] Grid ready. Requesting current placements from others...");
+            Debug.Log($"[Placement] Player {_localPlayerIndex} requesting current placements from others...");
             photonView.RPC("RPC_RequestCurrentPlacements", RpcTarget.Others);
         }
     }
@@ -114,7 +114,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         // Sync with others
         if (PhotonNetwork.InRoom && photonView != null)
         {
-            photonView.RPC("RPC_PlaceCharacter", RpcTarget.Others, ownerID, card.PairID, charLibraryIndex, tile.GridCoordinates.x, tile.GridCoordinates.y);
+            photonView.RPC("RPC_PlaceCharacter", RpcTarget.OthersBuffered, ownerID, card.PairID, charLibraryIndex, tile.GridCoordinates.x, tile.GridCoordinates.y);
         }
 
         return true;
@@ -133,15 +133,15 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     private IEnumerator WaitAndPlace(int ownerID, int pairID, int libIdx, Vector2Int gridPos)
     {
         Tile targetTile = null;
-        float timeout = 5f;
+        float timeout = 10f; // Increased timeout for slow map generation or stage transitions
         
         while (targetTile == null && timeout > 0)
         {
             targetTile = FindTileAt(gridPos);
             if (targetTile == null)
             {
-                yield return new WaitForSeconds(0.1f);
-                timeout -= 0.1f;
+                yield return new WaitForSeconds(0.2f);
+                timeout -= 0.2f;
             }
         }
 
@@ -191,7 +191,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     {
         ClearPlacementInternal(card.OwnerID, card.PairID);
         if (PhotonNetwork.InRoom && photonView != null)
-            photonView.RPC("RPC_ClearPlacement", RpcTarget.Others, card.OwnerID, card.PairID);
+            photonView.RPC("RPC_ClearPlacement", RpcTarget.OthersBuffered, card.OwnerID, card.PairID);
     }
 
     [PunRPC]
@@ -248,7 +248,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
                 
                 // Sync
                 if (PhotonNetwork.InRoom && photonView != null)
-                    photonView.RPC("RPC_UpdateCharacterModel", RpcTarget.Others, ownerID, pairID, libIdx);
+                    photonView.RPC("RPC_UpdateCharacterModel", RpcTarget.OthersBuffered, ownerID, pairID, libIdx);
             }
         }
     }
