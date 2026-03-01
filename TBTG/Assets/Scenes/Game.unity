@@ -3105,6 +3105,8 @@ MonoBehaviour:
     MovementPoolIndices: 
     BossDifficulty: 0
     InfluenceInitiative: 0
+    ActiveTiles: 0
+    Mods: 0
     RoomName: Undefined
     YourName: Undefined
     PlayerList: []
@@ -3127,6 +3129,8 @@ MonoBehaviour:
     MovementPoolIndices: 
     BossDifficulty: 0
     InfluenceInitiative: 0
+    ActiveTiles: 0
+    Mods: 0
     Player1Name: Undefined
     Player2Name: Undefined
     Player1Snapshot:
@@ -3148,6 +3152,8 @@ MonoBehaviour:
     MovementPoolIndices: 
     BossDifficulty: 0
     InfluenceInitiative: 0
+    ActiveTiles: 0
+    Mods: 0
     BotDifficulty: 0
     PlayerSnapshot:
       SelectedChars: []

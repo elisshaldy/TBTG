@@ -3,10 +3,10 @@ using UnityEngine.UI;
 
 public class CharacterHealthSystem : MonoBehaviour
 {
-    [SerializeField] private CharHealth _charHealth = CharHealth.NonInitialized;
-    [SerializeField] private Image[] _healthBars = new Image[6];
+    public CharHealth HealthState => _charHealth;
+    [SerializeField] private CharHealth _charHealth = CharHealth.Normal;
 
-    private enum CharHealth
+    public enum CharHealth
     {
         NonInitialized,
         Dead,
@@ -18,8 +18,9 @@ public class CharacterHealthSystem : MonoBehaviour
         Extra
     }
 
-    private void Start()
+    private void Awake()
     {
-        _charHealth = CharHealth.Normal;
+        if (_charHealth == CharHealth.NonInitialized)
+            _charHealth = CharHealth.Normal;
     }
 }

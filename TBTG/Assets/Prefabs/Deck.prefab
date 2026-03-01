@@ -612,7 +612,7 @@ GameObject:
   - component: {fileID: 8083974312404370094}
   - component: {fileID: 4921413180431725343}
   m_Layer: 5
-  m_Name: Button
+  m_Name: ChangeCardsInPairsBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1040,6 +1040,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SlotPoint: {fileID: 0}
   CurrentCard: {fileID: 0}
+  _zeroHealth: {r: 1, g: 1, b: 1, a: 0.078431375}
+  _oneHealth: {r: 0, g: 0.9607843, b: 0, a: 1}
+  _extraHealth: {r: 0.05882353, g: 0.9529412, b: 0.9529412, a: 1}
+  _healthBars:
+  - {fileID: 1430485644908011114}
+  - {fileID: 2603047020659030693}
+  - {fileID: 9035611268751317121}
+  - {fileID: 3464489077909815032}
+  - {fileID: 4638399437044024058}
+  - {fileID: 6673341579085541331}
 --- !u!1 &5378484983575739318
 GameObject:
   m_ObjectHideFlags: 0
@@ -1428,7 +1438,7 @@ GameObject:
   - component: {fileID: 8338770379501266201}
   - component: {fileID: 6782864638089352603}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: SwapPairNewCard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1787,3 +1797,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SlotPoint: {fileID: 0}
   CurrentCard: {fileID: 0}
+  _zeroHealth: {r: 1, g: 1, b: 1, a: 0.078431375}
+  _oneHealth: {r: 0, g: 0.9607844, b: 0, a: 1}
+  _extraHealth: {r: 0.058823533, g: 0.95294124, b: 0.95294124, a: 1}
+  _healthBars:
+  - {fileID: 1260938752318044140}
+  - {fileID: 5953732662814669634}
+  - {fileID: 841722677764254659}
+  - {fileID: 5640684372392507368}
+  - {fileID: 730974946056817422}
+  - {fileID: 3515264988150973736}
