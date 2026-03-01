@@ -24,9 +24,65 @@ public class GameDataLibrary : ScriptableObject
 
     public int[] GetShuffledMovementIndices()
     {
-        return Enumerable.Range(0, AllMovementCards.Count)
-            .OrderBy(x => System.Guid.NewGuid())
-            .ToArray();
+        if (AllMovementCards == null || AllMovementCards.Count == 0) return new int[0];
+
+        // Групуємо карти за кількістю клітинок ходу
+        var group1 = new List<int>();
+        var group2 = new List<int>();
+        var group3Plus = new List<int>();
+
+        for (int i = 0; i < AllMovementCards.Count; i++)
+        {
+            var card = AllMovementCards[i];
+            if (card == null || card.MovementPatternGrid == null) continue;
+
+            int cellCount = card.MovementPatternGrid.Cells.Count(c => c);
+            if (cellCount == 1) group1.Add(i);
+            else if (cellCount == 2) group2.Add(i);
+            else if (cellCount >= 3) group3Plus.Add(i);
+        }
+
+        // Рандомізуємо кожну групу
+        group1 = group1.OrderBy(x => Random.value).ToList();
+        group2 = group2.OrderBy(x => Random.value).ToList();
+        group3Plus = group3Plus.OrderBy(x => Random.value).ToList();
+
+        List<int> result = new List<int>();
+        int totalToGenerate = AllMovementCards.Count;
+
+        for (int i = 0; i < totalToGenerate; i++)
+        {
+            float roll = Random.value; // 0.0 to 1.0
+            int selectedIndex = -1;
+
+            // Логіка шансів: 1 клітинка (45%), 2 клітинки (35%), 3+ клітинки (20%)
+            if (roll < 0.45f && group1.Count > 0)
+            {
+                selectedIndex = group1[0];
+                group1.RemoveAt(0);
+            }
+            else if (roll < 0.80f && group2.Count > 0) // 0.45 + 0.35 = 0.80
+            {
+                selectedIndex = group2[0];
+                group2.RemoveAt(0);
+            }
+            else if (group3Plus.Count > 0)
+            {
+                selectedIndex = group3Plus[0];
+                group3Plus.RemoveAt(0);
+            }
+            else
+            {
+                // Fallback: якщо вибрана група порожня, беремо з будь-якої іншої доступної
+                if (group1.Count > 0) { selectedIndex = group1[0]; group1.RemoveAt(0); }
+                else if (group2.Count > 0) { selectedIndex = group2[0]; group2.RemoveAt(0); }
+                else if (group3Plus.Count > 0) { selectedIndex = group3Plus[0]; group3Plus.RemoveAt(0); }
+            }
+
+            if (selectedIndex != -1) result.Add(selectedIndex);
+        }
+
+        return result.ToArray();
     }
 
     public List<CharacterData> GetRandomCharacters(int count)
