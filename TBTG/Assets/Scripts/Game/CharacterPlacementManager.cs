@@ -233,6 +233,24 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public GameObject GetCharacterObject(int ownerID, int pairID)
+    {
+        var key = (ownerID, pairID);
+        if (_spawnedCharacters.TryGetValue(key, out GameObject charObj))
+        {
+            return charObj;
+        }
+
+        foreach (var kvp in _spawnedCharacters)
+        {
+            if (kvp.Key.Item2 == pairID && (ownerID <= 0 || kvp.Key.Item1 == ownerID))
+            {
+                return kvp.Value;
+            }
+        }
+        return null;
+    }
+
     public void UpdateCharacterModel(int ownerID, int pairID, int libIdx)
     {
         var key = (ownerID, pairID);

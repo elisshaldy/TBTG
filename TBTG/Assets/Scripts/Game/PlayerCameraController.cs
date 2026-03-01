@@ -22,12 +22,21 @@ public class PlayerCameraController : MonoBehaviour
     private float _currentPitch = 45f;
     private float _targetYaw = 135f;
 
+    private Vector3 _focusCenter;
+    private bool _focusInitialized = false;
+
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
             InitializeRotation();
+            
+            if (_cameraRef != null)
+            {
+                _focusCenter = _cameraRef.position;
+                _focusInitialized = true;
+            }
         }
     }
 
@@ -62,13 +71,41 @@ public class PlayerCameraController : MonoBehaviour
 
         Debug.Log($"[Camera] Rotating to Player {playerID} (Target Yaw: {_targetYaw})");
     }
+
+    private Transform _followTarget;
+
+    public void FollowTarget(Transform target)
+    {
+        _followTarget = target;
+    }
+
+    public void ResetToMapCenter()
+    {
+        _followTarget = null;
+    }
     
     private void LateUpdate()
     {
         if (_cameraRef == null) return;
 
-        // Smoothly interpolate to target yaw
+        // 1. Smoothly interpolate to target yaw
         _currentYaw = Mathf.LerpAngle(_currentYaw, _targetYaw, Time.deltaTime * 3f);
+
+        // 2. Smoothly update focus point
+        // We use _cameraRef.position as the primary home position to respect the editor setup.
+        Vector3 targetFocus = _cameraRef.position;
+        if (_followTarget != null)
+        {
+            targetFocus = _followTarget.position;
+        }
+        
+        if (!_focusInitialized)
+        {
+            _focusCenter = targetFocus;
+            _focusInitialized = true;
+        }
+
+        _focusCenter = Vector3.Lerp(_focusCenter, targetFocus, Time.deltaTime * 3f);
 
         // Блокуємо керування камерою, якщо вона заблокована ззовні або курсор знаходиться над "справжнім" UI (HUD)
         if (!BlockCameraControl && !IsPointerOverRealUI())
@@ -134,7 +171,7 @@ public class PlayerCameraController : MonoBehaviour
         // Розраховуємо точку, на яку зводиться камера (центр екрана)
         // Множимо на _currentZoom, щоб зміщення було пропорційним дистанції (щоб гравець не "тікав" при зумі)
         Vector3 localOffset = new Vector3(_framingOffset.x, _framingOffset.y, 0) * _currentZoom;
-        Vector3 focusPoint = _cameraRef.position + rotation * localOffset;
+        Vector3 focusPoint = _focusCenter + rotation * localOffset;
 
         Vector3 offset = rotation * Vector3.back * _currentZoom;
 

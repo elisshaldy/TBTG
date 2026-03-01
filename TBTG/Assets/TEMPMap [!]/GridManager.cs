@@ -54,4 +54,13 @@ public class GridManager : MonoBehaviour
         }
         return result;
     }
+
+    public Vector3 GetMapCenter()
+    {
+        float tileSize = 1.25f;
+        var generator = FindObjectOfType<MapGenerator>();
+        if (generator != null) tileSize = generator.TileSize;
+
+        return new Vector3((MapWidth - 1) * tileSize * 0.5f, 0, (MapHeight - 1) * tileSize * 0.5f);
+    }
 }

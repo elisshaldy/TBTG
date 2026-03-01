@@ -306,7 +306,22 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
 
                 if (CharacterPlacementManager.Instance != null)
                 {
-                    CharacterPlacementManager.Instance.SetCharacterActive(entry.ownerID, entry.pairID, i == 0);
+                    bool isActive = (i == 0);
+                    CharacterPlacementManager.Instance.SetCharacterActive(entry.ownerID, entry.pairID, isActive);
+                    
+                    // NEW: Camera following active LOCAL character
+                    if (isActive && PlayerCameraController.Instance != null)
+                    {
+                        if (entry.ownerID == myID)
+                        {
+                            var characterObj = CharacterPlacementManager.Instance.GetCharacterObject(entry.ownerID, entry.pairID);
+                            if (characterObj != null) PlayerCameraController.Instance.FollowTarget(characterObj.transform);
+                        }
+                        else
+                        {
+                            PlayerCameraController.Instance.ResetToMapCenter();
+                        }
+                    }
                 }
 
                 CharacterData data = GetCharacterDataForFinal(entry.ownerID, entry.pairID);
