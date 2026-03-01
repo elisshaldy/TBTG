@@ -13,9 +13,28 @@ public class PlayerIconWorld : MonoBehaviour
             _mainCameraTransform = Camera.main.transform;
     }
 
+    public bool IsVisible { get; private set; } = true;
+
     public void SetIcon(Sprite icon)
     {
         if (_face1 != null) _face1.sprite = icon;
+    }
+
+    public void SetVisible(bool visible)
+    {
+        IsVisible = visible;
+        if (_face1 != null) _face1.gameObject.SetActive(visible);
+    }
+
+    public void Fade(bool visible)
+    {
+        IsVisible = visible;
+        if (_face1 != null)
+        {
+            float targetAlpha = visible ? 1f : 0f;
+            _face1.CrossFadeAlpha(targetAlpha, 0.2f, false);
+            if (visible) _face1.gameObject.SetActive(true);
+        }
     }
 
     private void LateUpdate()

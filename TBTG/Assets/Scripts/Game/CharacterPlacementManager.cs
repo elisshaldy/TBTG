@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
 using Photon.Pun;
@@ -15,8 +16,17 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     private Dictionary<(int, int), GameObject> _spawnedCharacters = new Dictionary<(int, int), GameObject>();
     // Key is (OwnerID, PairID), Value is LibraryIndex of the CURRENTLY ACTIVE card
     private Dictionary<(int, int), int> _spawnedCharLibIndices = new Dictionary<(int, int), int>();
+    // Key is (OwnerID, PairID), Value is list of applied mod indices (from library)
+    private Dictionary<(int, int), int[]> _spawnedCharModIndices = new Dictionary<(int, int), int[]>();
     // Key is GridCoordinates, Value is (OwnerID, PairID)
     private Dictionary<Vector2Int, (int, int)> _tileOccupants = new Dictionary<Vector2Int, (int, int)>();
+
+    [Header("Big Card UI")]
+    [SerializeField] private GameObject _cardPrefabForUI; // Prefab with CardInfo
+    private GameObject _bigCardModal; // Overlay panel
+    private GameObject _activeBigCard;
+    private (int, int) _activeBigCardKey = (-1, -1);
+    private HashSet<(int, int)> _revealedEnemyMods = new HashSet<(int, int)>();
 
     private int _localPlayerIndex = -1;
 
@@ -108,29 +118,41 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         int charLibraryIndex = GetLibraryIndex(cardInfo.CharData);
         int ownerID = card.OwnerID;
 
+        // Collect mod indices
+        List<int> modIndices = new List<int>();
+        var modsContainer = card.GetComponent<ModsCardContainer>();
+        if (modsContainer != null)
+        {
+            foreach (var mod in modsContainer._mods)
+            {
+                if (mod != null) modIndices.Add(_library.AllMods.IndexOf(mod));
+            }
+        }
+        int[] modIdxArray = modIndices.ToArray();
+
         // Perform local placement
-        PerformPlacement(ownerID, card.PairID, charLibraryIndex, tile.GridCoordinates, tile);
+        PerformPlacement(ownerID, card.PairID, charLibraryIndex, modIdxArray, tile.GridCoordinates, tile);
 
         // Sync with others
         if (PhotonNetwork.InRoom && photonView != null)
         {
-            photonView.RPC("RPC_PlaceCharacter", RpcTarget.OthersBuffered, ownerID, card.PairID, charLibraryIndex, tile.GridCoordinates.x, tile.GridCoordinates.y);
+            photonView.RPC("RPC_PlaceCharacter", RpcTarget.OthersBuffered, ownerID, card.PairID, charLibraryIndex, modIdxArray, tile.GridCoordinates.x, tile.GridCoordinates.y);
         }
 
         return true;
     }
 
     [PunRPC]
-    private void RPC_PlaceCharacter(int ownerID, int pairID, int libIdx, int tx, int ty)
+    private void RPC_PlaceCharacter(int ownerID, int pairID, int libIdx, int[] modIndices, int tx, int ty)
     {
         Debug.Log($"[Placement] Received RPC for Player {ownerID}, Pair {pairID} at ({tx}, {ty})");
         Vector2Int targetPos = new Vector2Int(tx, ty);
         
         // Use a coroutine to handle cases where the grid might not be ready yet
-        StartCoroutine(WaitAndPlace(ownerID, pairID, libIdx, targetPos));
+        StartCoroutine(WaitAndPlace(ownerID, pairID, libIdx, modIndices, targetPos));
     }
 
-    private IEnumerator WaitAndPlace(int ownerID, int pairID, int libIdx, Vector2Int gridPos)
+    private IEnumerator WaitAndPlace(int ownerID, int pairID, int libIdx, int[] modIndices, Vector2Int gridPos)
     {
         Tile targetTile = null;
         float timeout = 10f; // Increased timeout for slow map generation or stage transitions
@@ -147,7 +169,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
 
         if (targetTile != null)
         {
-            PerformPlacement(ownerID, pairID, libIdx, gridPos, targetTile);
+            PerformPlacement(ownerID, pairID, libIdx, modIndices, gridPos, targetTile);
         }
         else
         {
@@ -155,7 +177,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         }
     }
 
-    private void PerformPlacement(int ownerID, int pairID, int libIdx, Vector2Int gridPos, Tile tile)
+    private void PerformPlacement(int ownerID, int pairID, int libIdx, int[] modIndices, Vector2Int gridPos, Tile tile)
     {
         if (tile == null) return;
         var key = (ownerID, pairID);
@@ -175,7 +197,12 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
 
                 _spawnedCharacters[key] = characterInstance;
                 _spawnedCharLibIndices[key] = libIdx;
+                _spawnedCharModIndices[key] = modIndices;
                 _tileOccupants[gridPos] = key;
+
+                // Add click handler
+                var clickHandler = characterInstance.AddComponent<CharacterWorldClickHandler>();
+                clickHandler.Initialize(ownerID, pairID, data);
 
                 ApplyTeamColor(characterInstance, ownerID);
             }
@@ -262,24 +289,25 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
             {
                 Tile tile = FindTileAt(gridSlot.Key);
                 // Simple approach: re-place at same tile
-                PerformPlacement(ownerID, pairID, libIdx, gridSlot.Key, tile);
+                int[] mods = _spawnedCharModIndices.TryGetValue(key, out var m) ? m : new int[0];
+                PerformPlacement(ownerID, pairID, libIdx, mods, gridSlot.Key, tile);
                 
                 // Sync
                 if (PhotonNetwork.InRoom && photonView != null)
-                    photonView.RPC("RPC_UpdateCharacterModel", RpcTarget.OthersBuffered, ownerID, pairID, libIdx);
+                    photonView.RPC("RPC_UpdateCharacterModel", RpcTarget.OthersBuffered, ownerID, pairID, libIdx, mods);
             }
         }
     }
 
     [PunRPC]
-    private void RPC_UpdateCharacterModel(int ownerID, int pairID, int libIdx)
+    private void RPC_UpdateCharacterModel(int ownerID, int pairID, int libIdx, int[] modIndices)
     {
         var key = (ownerID, pairID);
         var gridSlot = _tileOccupants.FirstOrDefault(x => x.Value == key);
         if (gridSlot.Value == key)
         {
             Tile tile = FindTileAt(gridSlot.Key);
-            PerformPlacement(ownerID, pairID, libIdx, gridSlot.Key, tile);
+            PerformPlacement(ownerID, pairID, libIdx, modIndices, gridSlot.Key, tile);
         }
     }
 
@@ -291,6 +319,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
             Destroy(oldChar);
             _spawnedCharacters.Remove(key);
             _spawnedCharLibIndices.Remove(key);
+            _spawnedCharModIndices.Remove(key);
             
             var keysToRemove = _tileOccupants.Where(kvp => kvp.Value == key).Select(kvp => kvp.Key).ToList();
             foreach (var k in keysToRemove) _tileOccupants.Remove(k);
@@ -307,6 +336,148 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         return _spawnedCharacters.Count(kv => kv.Key.Item1 == ownerID);
     }
 
+    #region BIG CARD UI
+    public void ToggleBigCard(int ownerID, int pairID, CharacterData data)
+    {
+        var key = (ownerID, pairID);
+        if (_activeBigCard != null && _activeBigCardKey == key)
+        {
+            HideBigCard();
+            return;
+        }
+
+        HideBigCard();
+
+        // Find character and icon for positioning
+        if (!_spawnedCharacters.TryGetValue(key, out GameObject charObj)) return;
+
+        var iconWorld = charObj.GetComponentInChildren<PlayerIconWorld>();
+        float spawnY = charObj.transform.position.y + 3.0f; // Set exactly to 3.0
+        
+        if (iconWorld != null)
+        {
+            var iconImg = iconWorld.GetComponentInChildren<Image>();
+            spawnY = (iconImg != null) ? iconImg.transform.position.y : iconWorld.transform.position.y;
+            
+            // Adjust to hit the 3.0 sweet spot
+            spawnY += 0.5f;
+
+            // Min height check for consistency
+            if (spawnY < charObj.transform.position.y + 1.8f)
+                spawnY = charObj.transform.position.y + 3.0f;
+
+            iconWorld.Fade(false);
+        }
+
+        // We use character's X and Z to stay PERFECTLY centered
+        // And use the icon's Y (or fallback) for height
+        Vector3 spawnPos = new Vector3(charObj.transform.position.x, spawnY, charObj.transform.position.z);
+
+        _activeBigCard = Instantiate(_cardPrefabForUI, spawnPos, Quaternion.identity);
+        _activeBigCardKey = key;
+
+        // Force World Space Canvas FIRST so we can work with it properly
+        Canvas canvas = _activeBigCard.GetComponent<Canvas>();
+        if (canvas == null) canvas = _activeBigCard.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.WorldSpace;
+        
+        // Add components for interaction and billboarding
+        if (_activeBigCard.GetComponent<GraphicRaycaster>() == null) _activeBigCard.AddComponent<GraphicRaycaster>();
+        _activeBigCard.AddComponent<BillboardUI>();
+
+        // Set World Scale
+        // Increased to 2.2f for a real "BIG" card feel
+        float worldScale = 0.003f * 2.2f; 
+        _activeBigCard.transform.localScale = Vector3.one * worldScale;
+
+        // RE-FIX: Ensure it stays EXACTLY at spawnPos
+        _activeBigCard.transform.position = spawnPos;
+
+        // Disable UI-specific scaling/flipping logic
+        var scaler = _activeBigCard.GetComponent<CardScaler>();
+        if (scaler != null) scaler.enabled = false;
+        var flip = _activeBigCard.GetComponent<CardFlipController>();
+        if (flip != null) flip.enabled = false;
+
+        CardInfo info = _activeBigCard.GetComponent<CardInfo>();
+        if (info != null)
+        {
+            info.CharData = data;
+            info.Initialize();
+            
+            // Populate mods
+            var modsContainer = _activeBigCard.GetComponentInChildren<ModsCardContainer>();
+            if (modsContainer != null)
+            {
+                if (_spawnedCharModIndices.TryGetValue(key, out int[] modIndices))
+                {
+                    bool isEnemy = (ownerID != _localPlayerIndex);
+                    bool isRevealed = _revealedEnemyMods.Contains(key);
+
+                    foreach (var idx in modIndices)
+                    {
+                        if (idx >= 0 && idx < _library.AllMods.Count)
+                        {
+                            var mod = _library.AllMods[idx];
+                            if (!isEnemy || isRevealed)
+                            {
+                                modsContainer.AddMod(mod);
+                            }
+                        }
+                    }
+
+                    if (isEnemy && !isRevealed)
+                    {
+                        _revealedEnemyMods.Add(key);
+                    }
+                }
+            }
+        }
+
+        // Add a click handler to the big card itself to allow closing it
+        var worldClickHandler = _activeBigCard.AddComponent<CharacterWorldClickHandler>();
+        worldClickHandler.Initialize(ownerID, pairID, data);
+
+        // Animation for opening - we need to adjust the Coroutine to handle the world scale
+        StartCoroutine(ScaleAnimation(_activeBigCard.transform, worldScale));
+    }
+
+    private void HideBigCard()
+    {
+        if (_activeBigCardKey != (-1, -1))
+        {
+            if (_spawnedCharacters.TryGetValue(_activeBigCardKey, out GameObject charObj))
+            {
+                var iconWorld = charObj.GetComponentInChildren<PlayerIconWorld>();
+                if (iconWorld != null) iconWorld.Fade(true);
+            }
+        }
+
+        if (_activeBigCard != null)
+        {
+            Destroy(_activeBigCard);
+            _activeBigCard = null;
+        }
+        _activeBigCardKey = (-1, -1);
+    }
+
+    private IEnumerator ScaleAnimation(Transform target, float targetScale)
+    {
+        float duration = 0.3f;
+        float elapsed = 0;
+        while (elapsed < duration)
+        {
+            if (target == null) yield break;
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            t = t * t * (3f - 2f * t);
+            target.localScale = Vector3.one * Mathf.Lerp(0f, targetScale, t);
+            yield return null;
+        }
+        if (target != null) target.localScale = Vector3.one * targetScale;
+    }
+    #endregion
+
     #endregion
 
     #region SYNCHRONIZATION FOR LATE JOINERS
@@ -319,6 +490,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         {
             var key = kvp.Key; // (ownerID, pairID)
             int libIdx = kvp.Value;
+            int[] mods = _spawnedCharModIndices.TryGetValue(key, out var m) ? m : new int[0];
 
             // Only send characters that WE (this client) are responsible for
             if (key.Item1 == _localPlayerIndex)
@@ -326,7 +498,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
                 var gridPosEntry = _tileOccupants.FirstOrDefault(x => x.Value == key);
                 if (gridPosEntry.Value == key)
                 {
-                    photonView.RPC("RPC_PlaceCharacter", info.Sender, key.Item1, key.Item2, libIdx, gridPosEntry.Key.x, gridPosEntry.Key.y);
+                    photonView.RPC("RPC_PlaceCharacter", info.Sender, key.Item1, key.Item2, libIdx, mods, gridPosEntry.Key.x, gridPosEntry.Key.y);
                 }
             }
         }

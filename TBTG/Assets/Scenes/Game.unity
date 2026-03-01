@@ -3234,7 +3234,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _library: {fileID: 11400000, guid: 3b40fb580eef8ac43b4026e490f9a4a6, type: 2}
   _deckController: {fileID: 818084966}
-  _mapObject: {fileID: 1585235940}
+  _cardPrefabForUI: {fileID: 2845176391593192555, guid: eb772f278a34704449628387dd7fd134, type: 3}
 --- !u!114 &818084970
 MonoBehaviour:
   m_ObjectHideFlags: 0

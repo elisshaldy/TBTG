@@ -41,10 +41,12 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
-        canvas = GetComponentInParent<Canvas>();
         canvasGroup = GetComponent<CanvasGroup>();
         scaler = GetComponent<CardScaler>();
         cardImage = GetComponent<Image>();
+        
+        // Find canvas lazily or in Awake
+        canvas = GetComponentInParent<Canvas>();
     }
 
     public void SetDependencies(GameSceneState sceneState, CardDeckController deckController)
@@ -126,6 +128,31 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         // The check for placement is in TryPlaceOnMapTile.
 
         if (_isDeactivated)
+        {
+            _canDrag = false;
+            eventData.pointerDrag = null;
+            return;
+        }
+
+        // Check if we are in world space (Big Card)
+        if (canvas != null && canvas.renderMode == RenderMode.WorldSpace)
+        {
+            _canDrag = false;
+            eventData.pointerDrag = null;
+            return;
+        }
+
+        if (canvas == null) canvas = GetComponentInParent<Canvas>();
+        
+        if (canvas == null)
+        {
+            _canDrag = false;
+            eventData.pointerDrag = null;
+            return;
+        }
+
+        // Check if we are in world space (Big Card)
+        if (canvas.renderMode == RenderMode.WorldSpace)
         {
             _canDrag = false;
             eventData.pointerDrag = null;

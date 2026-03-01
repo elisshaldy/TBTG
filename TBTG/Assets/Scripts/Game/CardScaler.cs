@@ -51,7 +51,10 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         homeLocalRotation = transform.localRotation;
 
         canvas = GetComponentInParent<Canvas>();
-        canvasRect = canvas.transform as RectTransform;
+        if (canvas != null)
+        {
+            canvasRect = canvas.transform as RectTransform;
+        }
         
         initialGlobalScale = transform.localScale;
     }
@@ -82,7 +85,11 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
         if (isHovered && !isDraggingSelf)
         {
-            KeepOnScreen();
+            if (canvas == null) canvas = GetComponentInParent<Canvas>();
+            if (canvas != null && canvas.renderMode != RenderMode.WorldSpace)
+            {
+                KeepOnScreen();
+            }
         }
     }
     
@@ -134,8 +141,12 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 Vector3 screenPos1 = RectTransformUtility.WorldToScreenPoint(cam, rectTransform.position);
                 Vector3 screenPos2 = screenPos1 + (Vector3)shift;
                 
-                RectTransformUtility.ScreenPointToWorldPointInRectangle(canvasRect, screenPos2, cam, out Vector3 newWorldPos);
-                transform.position = newWorldPos;
+                if (canvasRect == null && canvas != null) canvasRect = canvas.transform as RectTransform;
+                if (canvasRect != null)
+                {
+                    RectTransformUtility.ScreenPointToWorldPointInRectangle(canvasRect, screenPos2, cam, out Vector3 newWorldPos);
+                    transform.position = newWorldPos;
+                }
             }
             else
             {
@@ -197,12 +208,15 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
         targetScale = initialGlobalScale * hoverScale;
 
-        // Змінюємо батька на Canvas ДЛЯ ПОРЯДКУ (тільки якщо він не вже там)
-        if (transform.parent != canvas.transform)
+        if (canvas == null) canvas = GetComponentInParent<Canvas>();
+        if (canvas != null && canvas.renderMode != RenderMode.WorldSpace)
         {
-            transform.SetParent(canvas.transform, true);
+            if (transform.parent != canvas.transform)
+            {
+                transform.SetParent(canvas.transform, true);
+            }
+            transform.SetAsLastSibling();
         }
-        transform.SetAsLastSibling();
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -214,8 +228,11 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         targetScale = normalScale;
 
         // Плавне повернення на домашнє місце
-        transform.SetParent(homeParent, true);
-        transform.SetSiblingIndex(homeSiblingIndex);
+        if (canvas != null && canvas.renderMode != RenderMode.WorldSpace)
+        {
+            transform.SetParent(homeParent, true);
+            transform.SetSiblingIndex(homeSiblingIndex);
+        }
 
         returnPosition = homeLocalPosition;
         returnRotation = homeLocalRotation;

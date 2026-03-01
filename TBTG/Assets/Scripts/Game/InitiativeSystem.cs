@@ -298,7 +298,7 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
         if (_isFinalized)
         {
             int myID = PhotonNetwork.InRoom ? PhotonNetwork.LocalPlayer.ActorNumber : 1;
-            bool opponentShown = false;
+            //bool opponentShown = false;
 
             for (int i = 0; i < _finalQueue.Count; i++)
             {
