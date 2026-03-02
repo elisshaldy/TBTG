@@ -56,6 +56,27 @@ public class CardFlipController : MonoBehaviour, IPointerClickHandler, IPointerE
         }
     }
 
+    public void ShowFrontSide()
+    {
+        if (_isAnimating)
+        {
+            StopAllCoroutines();
+            _isAnimating = false;
+        }
+
+        _isFlipped = false;
+        transform.localRotation = Quaternion.identity;
+
+        if (_frontSide != null) _frontSide.SetActive(true);
+        if (_backSide != null) _backSide.SetActive(false);
+
+        if (_cardScaler != null)
+        {
+            _cardScaler.SetHomeRotation(Quaternion.identity);
+            _cardScaler.RotationOverride = false;
+        }
+    }
+
     private IEnumerator FlipRoutine(bool targetFlipped)
     {
         _isAnimating = true;

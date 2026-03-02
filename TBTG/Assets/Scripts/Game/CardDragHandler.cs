@@ -36,6 +36,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private Quaternion originalLocalRotation;
 
     private CardScaler scaler;
+    private CardFlipController flipController;
     private bool _canDrag = false;
 
     private void Awake()
@@ -44,6 +45,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         canvasGroup = GetComponent<CanvasGroup>();
         scaler = GetComponent<CardScaler>();
         cardImage = GetComponent<Image>();
+        flipController = GetComponent<CardFlipController>();
         
         // Find canvas lazily or in Awake
         canvas = GetComponentInParent<Canvas>();
@@ -327,6 +329,9 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         rectTransform.localScale = originalLocalScale;
         rectTransform.localRotation = originalLocalRotation;
         
+        if (flipController != null)
+            flipController.ShowFrontSide();
+
         if (scaler != null)
             scaler.UpdateHome();
     }
@@ -349,6 +354,9 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         // Встановлюємо візуальний масштаб для слота
         rectTransform.localScale = new Vector3(scale, scale, 1f);
         rectTransform.localRotation = Quaternion.identity;
+
+        if (flipController != null)
+            flipController.ShowFrontSide();
 
         if (scaler != null)
             scaler.UpdateHome(); 
