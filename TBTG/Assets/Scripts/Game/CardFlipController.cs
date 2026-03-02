@@ -10,6 +10,7 @@ public class CardFlipController : MonoBehaviour, IPointerClickHandler, IPointerE
     [SerializeField] private GameObject _frontSide;
     [SerializeField] private GameObject _backSide;
     [SerializeField] private LocalizationLabel _descriptionLabel;
+    [SerializeField] private ScrollRect _descriptionScrollRect;
 
     [Header("Animation")]
     [SerializeField] private float _flipDuration = 0.4f;
@@ -87,18 +88,32 @@ public class CardFlipController : MonoBehaviour, IPointerClickHandler, IPointerE
         {
             _descriptionLabel.SetKey(_cardInfo.CharData.CharacterDescription);
             
-            // Рахуємо букви і підганяємо розмір
-            string text = LocalizationManager.GetTranslation(_cardInfo.CharData.CharacterDescription);
-            int count = text.Length;
-            
-            float size = 26f; // Дефолт
-            if (count > 400) size = 12f;
-            else if (count > 250) size = 15f;
-            else if (count > 150) size = 18f;
-            else if (count > 80) size = 22f;
-
             if (_descriptionLabel.Text != null)
-                _descriptionLabel.Text.fontSize = size;
+            {
+                // Не міняємо шрифт, просто просимо TMPro оновити меш для розрахунків
+                _descriptionLabel.Text.ForceMeshUpdate();
+                
+                RectTransform labelRect = _descriptionLabel.GetComponent<RectTransform>();
+                // Рахуємо висоту саме під поточну ширину лейбла
+                float textHeight = _descriptionLabel.Text.GetPreferredValues(labelRect.rect.width, 0).y;
+                
+                // Чітко ставимо висоту лейбла
+                labelRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, textHeight);
+                
+                // Пхаємо батьківський об'єкт (Content), щоб він перерахував свій розмір
+                if (labelRect.parent is RectTransform contentRect)
+                {
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
+                    Canvas.ForceUpdateCanvases();
+
+                    // Скидаємо скролл в самий верх
+                    ScrollRect scroll = _descriptionScrollRect != null ? _descriptionScrollRect : _descriptionLabel.GetComponentInParent<ScrollRect>();
+                    if (scroll != null)
+                    {
+                        scroll.verticalNormalizedPosition = 1f;
+                    }
+                }
+            }
         }
 
         float elapsed = 0;
