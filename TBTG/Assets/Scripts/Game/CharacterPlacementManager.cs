@@ -325,12 +325,14 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         {
             Destroy(oldChar);
             _spawnedCharacters.Remove(key);
-            _spawnedCharLibIndices.Remove(key);
-            _spawnedCharModIndices.Remove(key);
-            
-            var keysToRemove = _tileOccupants.Where(kvp => kvp.Value == key).Select(kvp => kvp.Key).ToList();
-            foreach (var k in keysToRemove) _tileOccupants.Remove(k);
         }
+
+        // Always clear internal state even if the model was missing
+        _spawnedCharLibIndices.Remove(key);
+        _spawnedCharModIndices.Remove(key);
+        
+        var keysToRemove = _tileOccupants.Where(kvp => kvp.Value == key).Select(kvp => kvp.Key).ToList();
+        foreach (var k in keysToRemove) _tileOccupants.Remove(k);
 
         if (InitiativeSystem.Instance != null)
         {

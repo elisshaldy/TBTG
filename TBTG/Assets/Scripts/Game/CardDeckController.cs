@@ -225,32 +225,25 @@ public class CardDeckController : MonoBehaviour
         CardSlot activeSlot = _cardDeck[2 * p];
         CardSlot passiveSlot = _cardDeck[2 * p + 1];
 
-        // Якщо картка вже в активному слоті або це її дім, нічого не робимо
-        if (card.CurrentSlot == activeSlot || (card.CurrentSlot == null && card.LastSlot == activeSlot)) return;
+        // If already correctly placed in its active slot, nothing to do
+        if (card.CurrentSlot == activeSlot) return;
 
         CardDragHandler partner = card.PartnerCard;
-        
-        // 1. Якщо напарник зараз в активному слоті — виганяємо його в пасивний
-        if (partner != null && partner.CurrentSlot == activeSlot)
-        {
-            activeSlot.ClearSlot();
-            passiveSlot.SetCardManually(partner);
-            partner.SetLastSlot(passiveSlot);
-        }
 
-        // 2. Якщо сама картка була в пасивному слоті — звільняємо його
-        if (card.CurrentSlot == passiveSlot)
-        {
-            passiveSlot.ClearSlot();
-        }
+        // 1. Properly clear both slots in the pair to avoid "losing" cards or overlapping
+        // We handle the swap by ensuring both slots are clean before re-assigning
+        activeSlot.ClearSlot();
+        passiveSlot.ClearSlot();
 
-        // 3. Тепер кажемо картці, що її дім тепер — активний слот
+        // 2. Set the requested card to the active slot
+        activeSlot.SetCardManually(card);
         card.SetLastSlot(activeSlot);
         
-        // Якщо картка зараз не перетягується (наприклад, викликали з коду), ставимо її в слот
-        if (card.CurrentSlot == null && !UnityEngine.EventSystems.EventSystem.current.alreadySelecting)
+        // 3. Set the partner to the passive slot
+        if (partner != null)
         {
-            activeSlot.SetCardManually(card);
+            passiveSlot.SetCardManually(partner);
+            partner.SetLastSlot(passiveSlot);
         }
 
         CheckDeck(); 
