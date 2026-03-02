@@ -22,6 +22,12 @@ public class InitiativeEntryDragHandler : MonoBehaviour, IBeginDragHandler, IDra
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (InitiativeSystem.Instance != null && InitiativeSystem.Instance.IsFinalized)
+        {
+             eventData.pointerDrag = null;
+             return;
+        }
+
         if (InitiativeSystem.Instance != null)
             InitiativeSystem.Instance.ResetDropFlag();
 

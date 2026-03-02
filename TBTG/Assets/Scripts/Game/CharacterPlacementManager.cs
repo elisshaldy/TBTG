@@ -94,6 +94,13 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     public bool TryPlaceCharacter(CardDragHandler card, Tile tile)
     {
         if (tile == null || tile.Type == TileType.Impassable) return false;
+        
+        // NEW: Cannot place after round started
+        if (InitiativeSystem.Instance != null && InitiativeSystem.Instance.IsFinalized)
+        {
+            Debug.Log("[Placement] Cannot place characters - round already started!");
+            return false;
+        }
 
         // NEW: Check placement zone ownership
         if (tile.PlacementOwnerID != card.OwnerID)

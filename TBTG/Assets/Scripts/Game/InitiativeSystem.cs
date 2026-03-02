@@ -22,6 +22,7 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
     
     private Dictionary<int, List<int>> _allPlayersInitiatives = new Dictionary<int, List<int>>();
     private List<(int ownerID, int pairID)> _finalQueue = new List<(int, int)>();
+    public bool IsFinalized => _isFinalized;
     private bool _isFinalized = false;
 
     private CardDeckController _deckController;
@@ -64,6 +65,8 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
+        if (_isFinalized) return;
+
         WasDropHandled = false;
         if (eventData.pointerDrag == null) return;
 

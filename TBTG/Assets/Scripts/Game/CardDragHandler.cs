@@ -122,6 +122,16 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             return;
         }
 
+        // NEW: Cannot drag after round started (Character Cards only)
+        if (InitiativeSystem.Instance != null && InitiativeSystem.Instance.IsFinalized)
+        {
+            if (GetComponent<MovementCardInfo>() == null)
+            {
+                eventData.pointerDrag = null;
+                return;
+            }
+        }
+
         _canDrag = true;
         
         // Passive cards can be dragged (to swap), but Cannot be placed on field.

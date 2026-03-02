@@ -38,6 +38,16 @@ public class ModDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        // NEW: Cannot drag mods after round started
+        if (InitiativeSystem.Instance != null && InitiativeSystem.Instance.IsFinalized)
+        {
+            if (GetComponent<MovementCardInfo>() == null)
+            {
+                eventData.pointerDrag = null;
+                return;
+            }
+        }
+
         if (ModTooltip.Instance != null) ModTooltip.Instance.Hide();
 
         // Оновлюємо canvas перед кожним drag (бо модифікатор міг бути в іншій ієрархії)
