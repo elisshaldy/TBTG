@@ -20,6 +20,7 @@ public class RoomParametersUI : MonoBehaviour
     // show if hotseat
     [SerializeField] private GameObject _hotSeatPlayerName1UI;
     [SerializeField] private GameObject _hotSeatPlayerName2UI;
+    [SerializeField] private RectTransform _scrollContent; // Container with VerticalLayoutGroup and ContentSizeFitter
 
     [Header("Value Inputs")]
     [SerializeField] private TMP_InputField _turnTimeDropdown;
@@ -85,49 +86,52 @@ public class RoomParametersUI : MonoBehaviour
     
     public void ShowMultiplayerUI()
     {
-        _bgPlayersMultiplayer.SetActive(true);
-        _turnTimeUI.SetActive(true);
-        _fieldSizeUI.SetActive(true);
-        _partyCountUI.SetActive(true);
-        _bossCountUI.SetActive(true);
-        _bossDificultyUI.SetActive(true);
-        _initiativeUI.SetActive(true);
-        
-        _botDificultyUI.SetActive(false);
-        
-        _hotSeatPlayerName1UI.SetActive(false);
-        _hotSeatPlayerName2UI.SetActive(false);
+        UpdateUIVisibility(SceneState.Multiplayer);
     }
     
     public void ShowPlayerVSBotUI()
     {
-        _bgPlayersMultiplayer.SetActive(false);
-        _turnTimeUI.SetActive(true);
-        _fieldSizeUI.SetActive(true);
-        _partyCountUI.SetActive(true);
-        _bossCountUI.SetActive(true);
-        _bossDificultyUI.SetActive(true);
-        _initiativeUI.SetActive(true);
-        
-        _botDificultyUI.SetActive(true);
-        
-        _hotSeatPlayerName1UI.SetActive(false);
-        _hotSeatPlayerName2UI.SetActive(false);
+        UpdateUIVisibility(SceneState.PlayerVSBot);
     }
     
     public void ShowHotseatUI()
     {
-        _bgPlayersMultiplayer.SetActive(false);
+        UpdateUIVisibility(SceneState.Hotseat);
+    }
+
+    private void UpdateUIVisibility(SceneState state)
+    {
+        bool isMultiplayer = state == SceneState.Multiplayer;
+        bool isHotseat = state == SceneState.Hotseat;
+        bool isBot = state == SceneState.PlayerVSBot;
+
+        _bgPlayersMultiplayer.SetActive(isMultiplayer);
+        
+        // Shared parameters
         _turnTimeUI.SetActive(true);
         _fieldSizeUI.SetActive(true);
         _partyCountUI.SetActive(true);
         _bossCountUI.SetActive(true);
         _bossDificultyUI.SetActive(true);
-        
-        _botDificultyUI.SetActive(false);
-        
-        _hotSeatPlayerName1UI.SetActive(true);
-        _hotSeatPlayerName2UI.SetActive(true);
+        _activeTilesUI.SetActive(true);
+        _modsUI.SetActive(true);
+
+        // Mode specific parameters
+        _initiativeUI.SetActive(!isHotseat); 
+        _botDificultyUI.SetActive(isBot);
+        _hotSeatPlayerName1UI.SetActive(isHotseat);
+        _hotSeatPlayerName2UI.SetActive(isHotseat);
+
+        RefreshLayout();
+    }
+
+    private void RefreshLayout()
+    {
+        if (_scrollContent == null) return;
+
+        // Force layout update for the content and its children
+        Canvas.ForceUpdateCanvases();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_scrollContent);
     }
 
     private static readonly System.Text.RegularExpressions.Regex _numberRegex = new(@"\d+", System.Text.RegularExpressions.RegexOptions.Compiled);

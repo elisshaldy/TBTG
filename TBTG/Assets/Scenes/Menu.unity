@@ -540,6 +540,7 @@ GameObject:
   m_Component:
   - component: {fileID: 122315660}
   - component: {fileID: 122315661}
+  - component: {fileID: 122315662}
   m_Layer: 5
   m_Name: LayoutGroup
   m_TagString: Untagged
@@ -601,6 +602,20 @@ MonoBehaviour:
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 1
   m_ConstraintCount: 1
+--- !u!114 &122315662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 122315659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 2
 --- !u!1 &181712134
 GameObject:
   m_ObjectHideFlags: 0
@@ -688,6 +703,7 @@ MonoBehaviour:
   _botDificultyUI: {fileID: 404396088}
   _hotSeatPlayerName1UI: {fileID: 554075989}
   _hotSeatPlayerName2UI: {fileID: 2080117954}
+  _scrollContent: {fileID: 122315660}
   _turnTimeDropdown: {fileID: 884744038}
   _fieldSizeDropdown: {fileID: 1480007746}
   _partyCountDropdown: {fileID: 1980861418}
