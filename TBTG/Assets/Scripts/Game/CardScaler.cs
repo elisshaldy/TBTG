@@ -37,6 +37,28 @@ public class CardScaler : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private void OnDisable()
     {
         ActiveScalers.Remove(this);
+        
+        // ВАЖЛИВО: якщо об'єкт вимикається, коли він у Canvas (наприклад, перехід між кроками), 
+        // він має повернутися в свій рідний "дім", інакше він зависне в Canvas'і.
+        if (isHovered)
+        {
+            isHovered = false;
+            if (canvas != null && canvas.renderMode != RenderMode.WorldSpace)
+            {
+                transform.SetParent(homeParent, true);
+                transform.SetSiblingIndex(homeSiblingIndex);
+            }
+            transform.localPosition = homeLocalPosition;
+            transform.localRotation = homeLocalRotation;
+            transform.localScale = normalScale;
+            targetScale = normalScale;
+            returningHome = false;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        ActiveScalers.Remove(this);
     }
 
     private void Awake()

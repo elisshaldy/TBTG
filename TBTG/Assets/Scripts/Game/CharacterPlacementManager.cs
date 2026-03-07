@@ -210,6 +210,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
                 // Add click handler
                 var clickHandler = characterInstance.AddComponent<CharacterWorldClickHandler>();
                 clickHandler.Initialize(ownerID, pairID, data);
+                clickHandler.OnCharacterHidden += HandleCharacterHidden;
 
                 ApplyTeamColor(characterInstance, ownerID);
             }
@@ -218,6 +219,14 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         if (InitiativeSystem.Instance != null)
         {
             InitiativeSystem.Instance.UpdateAcceptButton();
+        }
+    }
+
+    private void HandleCharacterHidden(int ownerID, int pairID)
+    {
+        if (_activeBigCardKey == (ownerID, pairID))
+        {
+            HideBigCard();
         }
     }
 
@@ -321,6 +330,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     private void ClearPlacementInternal(int ownerID, int pairID)
     {
         var key = (ownerID, pairID);
+        
         if (_spawnedCharacters.TryGetValue(key, out GameObject oldChar))
         {
             Destroy(oldChar);
@@ -455,7 +465,8 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     {
         if (_activeBigCardKey != (-1, -1))
         {
-            if (_spawnedCharacters.TryGetValue(_activeBigCardKey, out GameObject charObj))
+            // Перевіряємо charObj на null, бо він міг бути вже знищений або ми самі його щойно знесли
+            if (_spawnedCharacters.TryGetValue(_activeBigCardKey, out GameObject charObj) && charObj != null)
             {
                 var iconWorld = charObj.GetComponentInChildren<PlayerIconWorld>();
                 if (iconWorld != null) iconWorld.Fade(true);

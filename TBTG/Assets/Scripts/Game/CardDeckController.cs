@@ -218,20 +218,40 @@ public class CardDeckController : MonoBehaviour
     public void MakeActive(CardDragHandler card)
     {
         if (card == null) return;
-        
-        int p = card.PairID;
-        if (p < 0 || p * 2 + 1 >= _cardDeck.Count) return;
 
-        CardSlot activeSlot = _cardDeck[2 * p];
-        CardSlot passiveSlot = _cardDeck[2 * p + 1];
+        CardDragHandler partner = card.PartnerCard;
+        CardSlot activeSlot = null;
+        CardSlot passiveSlot = null;
+
+        // Знаходимо, яку пару слотів зараз займає ця пара карток
+        if (card.CurrentSlot != null)
+        {
+            int slotIdx = _cardDeck.IndexOf(card.CurrentSlot);
+            int pairIdx = slotIdx / 2;
+            activeSlot = _cardDeck[pairIdx * 2];
+            passiveSlot = _cardDeck[pairIdx * 2 + 1];
+        }
+        else if (partner != null && partner.CurrentSlot != null)
+        {
+            int slotIdx = _cardDeck.IndexOf(partner.CurrentSlot);
+            int pairIdx = slotIdx / 2;
+            activeSlot = _cardDeck[pairIdx * 2];
+            passiveSlot = _cardDeck[pairIdx * 2 + 1];
+        }
+        else if (card.LastSlot != null)
+        {
+            int slotIdx = _cardDeck.IndexOf(card.LastSlot);
+            int pairIdx = slotIdx / 2;
+            activeSlot = _cardDeck[pairIdx * 2];
+            passiveSlot = _cardDeck[pairIdx * 2 + 1];
+        }
+
+        if (activeSlot == null || passiveSlot == null) return;
 
         // If already correctly placed in its active slot, nothing to do
         if (card.CurrentSlot == activeSlot) return;
 
-        CardDragHandler partner = card.PartnerCard;
-
         // 1. Properly clear both slots in the pair to avoid "losing" cards or overlapping
-        // We handle the swap by ensuring both slots are clean before re-assigning
         activeSlot.ClearSlot();
         passiveSlot.ClearSlot();
 
@@ -251,11 +271,11 @@ public class CardDeckController : MonoBehaviour
 
     public CharacterData GetActiveCharacterData(int pairID)
     {
-        // Спочатку перевіряємо слоти (це найнадійніше)
-        if (pairID * 2 < _cardDeck.Count)
+        // Шукаємо у всіх слотах карту з відповідним PairID, яка стоїть в "активній" позиції
+        for (int i = 0; i < _cardDeck.Count; i += 2)
         {
-            var slot = _cardDeck[pairID * 2];
-            if (slot.IsOccupied && slot.CurrentCard != null)
+            var slot = _cardDeck[i];
+            if (slot.IsOccupied && slot.CurrentCard != null && slot.CurrentCard.PairID == pairID)
             {
                 var info = slot.CurrentCard.GetComponent<CardInfo>();
                 if (info != null) return info.CharData;

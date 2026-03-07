@@ -9,11 +9,23 @@ public class CharacterWorldClickHandler : MonoBehaviour, IPointerClickHandler
     private int _pairID;
     private CharacterData _charData;
 
+    public event System.Action<int, int> OnCharacterHidden;
+
     public void Initialize(int ownerID, int pairID, CharacterData charData)
     {
         _ownerID = ownerID;
         _pairID = pairID;
         _charData = charData;
+    }
+
+    private void OnDisable()
+    {
+        OnCharacterHidden?.Invoke(_ownerID, _pairID);
+    }
+
+    private void OnDestroy()
+    {
+        OnCharacterHidden?.Invoke(_ownerID, _pairID);
     }
 
     public void OnPointerClick(PointerEventData eventData)
