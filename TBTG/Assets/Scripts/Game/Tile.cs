@@ -68,11 +68,67 @@ public class Tile : MonoBehaviour
         if (!name.Contains("[P")) name += ownerTag;
     }
 
+    private void OnMouseDown()
+    {
+        if (CharacterPlacementManager.Instance != null && InitiativeSystem.Instance != null && InitiativeSystem.Instance.IsFinalized)
+        {
+            if (CharacterPlacementManager.Instance.IsMovementModeActive)
+            {
+                CharacterPlacementManager.Instance.TryMoveActiveCharacter(GridCoordinates);
+            }
+            else
+            {
+                CharacterPlacementManager.Instance.TryAttackTile(GridCoordinates);
+            }
+        }
+    }
+
     private void OnDrawGizmos()
     {
-        if (PlacementOwnerID == -1) return;
+        // 1. Draw Placement Zones (only during setup phase)
+        bool isSetupPhase = true;
+        if (Application.isPlaying && InitiativeSystem.Instance != null && InitiativeSystem.Instance.IsFinalized)
+            isSetupPhase = false;
 
-        Gizmos.color = (PlacementOwnerID == 1) ? new Color(0, 1, 0, 0.5f) : new Color(1, 0, 0, 0.5f);
-        Gizmos.DrawSphere(transform.position + Vector3.up * 0.2f, 0.3f);
+        if (isSetupPhase && PlacementOwnerID != -1)
+        {
+            Gizmos.color = (PlacementOwnerID == 1) ? new Color(0, 1, 0, 0.4f) : new Color(1, 0, 0, 0.4f);
+            Gizmos.DrawSphere(transform.position + Vector3.up * 0.2f, 0.25f);
+        }
+
+        // 2. Draw Patterns (only during active game)
+        if (Application.isPlaying && !isSetupPhase && CharacterPlacementManager.Instance != null)
+        {
+            if (CharacterPlacementManager.Instance.IsMovementModeActive)
+            {
+                // MOVEMENT HIGHLIGHT (Green)
+                if (CharacterPlacementManager.Instance.IsTileMovable(GridCoordinates))
+                {
+                    Gizmos.color = new Color(0.2f, 1f, 0.2f, 0.8f); // Bright Green
+                    Vector3 center = transform.position + Vector3.up * 0.05f;
+                    Vector3 size = new Vector3(0.95f, 0.1f, 0.95f);
+                    Gizmos.DrawWireCube(center, size);
+                    Gizmos.color = new Color(0, 1, 0, 0.2f);
+                    Gizmos.DrawCube(center, size);
+                }
+            }
+            else if (CharacterPlacementManager.Instance.IsTileUnderAttack(GridCoordinates))
+            {
+                // ATTACK HIGHLIGHT (Red)
+                // Draw a thick frame-like box for attack zone
+                Gizmos.color = new Color(1, 0.1f, 0.1f, 0.9f); // Bright Red
+                Vector3 center = transform.position + Vector3.up * 0.05f;
+                Vector3 size = new Vector3(0.95f, 0.1f, 0.95f);
+                
+                Gizmos.DrawWireCube(center, size);
+                
+                // Add a second wire cube slightly offset for "thickness"
+                Gizmos.DrawWireCube(center, size * 0.98f);
+
+                // Semi-transparent Danger Fill
+                Gizmos.color = new Color(1, 0, 0, 0.25f);
+                Gizmos.DrawCube(center, size);
+            }
+        }
     }
 }

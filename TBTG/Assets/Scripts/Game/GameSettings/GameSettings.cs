@@ -78,6 +78,7 @@ public abstract class GameSettings
     public virtual int CurrentPlayerIndex => 1; // Default to P1
     public virtual void TakeSnapshot(List<GameObject> selectedCards) {}
     public virtual void RegisterMovementCards(int playerIndex, List<GameObject> movementCards) {}
+    public abstract PlayerSnapshot GetSnapshot(int playerIndex);
     public abstract void OpenModeSpecific(GameUIController ui);
     public virtual void OnFlowFinished(GameUIController ui) {}
 }
@@ -115,7 +116,6 @@ public class MultiplayerSettings : GameSettings
     public PlayerSnapshot RemotePlayerSnapshot = new PlayerSnapshot();
     
     public override int CurrentPlayerIndex => Photon.Pun.PhotonNetwork.InRoom ? Photon.Pun.PhotonNetwork.LocalPlayer.ActorNumber : 1;
-
     public override void RegisterMovementCards(int playerIndex, List<GameObject> movementCards)
     {
         PlayerSnapshot target = (playerIndex == CurrentPlayerIndex) ? LocalPlayerSnapshot : RemotePlayerSnapshot;
@@ -127,6 +127,11 @@ public class MultiplayerSettings : GameSettings
             if (info != null && info.MoveCard != null) target.SelectedMovementCards.Add(info.MoveCard);
         }
         target.PlayerIndex = playerIndex;
+    }
+
+    public override PlayerSnapshot GetSnapshot(int playerIndex)
+    {
+         return (playerIndex == CurrentPlayerIndex) ? LocalPlayerSnapshot : RemotePlayerSnapshot;
     }
 
     public override void OpenModeSpecific(GameUIController ui)
@@ -148,7 +153,6 @@ public class PlayerVsBotSettings : GameSettings
     
     public PlayerSnapshot PlayerSnapshot = new PlayerSnapshot();
     public PlayerSnapshot BotSnapshot = new PlayerSnapshot();
-
     public override void RegisterMovementCards(int playerIndex, List<GameObject> movementCards)
     {
         PlayerSnapshot target = (playerIndex == 1) ? PlayerSnapshot : BotSnapshot;
@@ -160,6 +164,11 @@ public class PlayerVsBotSettings : GameSettings
             if (info != null && info.MoveCard != null) target.SelectedMovementCards.Add(info.MoveCard);
         }
         target.PlayerIndex = playerIndex;
+    }
+
+    public override PlayerSnapshot GetSnapshot(int playerIndex)
+    {
+        return (playerIndex == 1) ? PlayerSnapshot : BotSnapshot;
     }
     
     public override void OpenModeSpecific(GameUIController ui)
@@ -199,10 +208,21 @@ public class HotseatSettings : GameSettings
     private int _currentMapPlayerIndex = 1;
     private bool _isMapPhase = false;
 
+    public int MapPlayerIndex 
+    { 
+        get => _currentMapPlayerIndex; 
+        set => _currentMapPlayerIndex = value; 
+    }
+
     public override int CurrentPlayerIndex 
     {
         get 
         {
+            if (InitiativeSystem.Instance != null && InitiativeSystem.Instance.IsFinalized)
+            {
+                return InitiativeSystem.Instance.CurrentTurnPlayerID;
+            }
+
             if (_isMapPhase) return _currentMapPlayerIndex;
             return _playerSelectionCycle == 0 ? 1 : _playerSelectionCycle;
         }
@@ -237,6 +257,11 @@ public class HotseatSettings : GameSettings
             if (info != null && info.MoveCard != null) target.SelectedMovementCards.Add(info.MoveCard);
         }
         target.PlayerIndex = playerIndex;
+    }
+
+    public override PlayerSnapshot GetSnapshot(int playerIndex)
+    {
+        return (playerIndex == 1) ? Player1Snapshot : Player2Snapshot;
     }
 
     public override void PrepareStep(GameSetupStep step, GameUIController ui)

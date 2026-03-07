@@ -6,6 +6,8 @@ using System.Collections;
 
 public class GameDataInitializer : MonoBehaviour
 {
+    public static GameDataInitializer Instance { get; private set; }
+
     [Header("Data Source")]
     [SerializeField] private GameDataLibrary _library;
     
@@ -18,6 +20,11 @@ public class GameDataInitializer : MonoBehaviour
     [SerializeField] private LayoutGroup _movementCardContainer;
     [SerializeField] private LayoutGroup _movementCardContainerEnemy;
     [SerializeField] private CardDeckController _deckController;
+
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+    }
 
     [Header("Generation Settings")]
     [SerializeField] private int _cardsToSpawn = 10;
@@ -149,21 +156,18 @@ public class GameDataInitializer : MonoBehaviour
             // Debug.Log($"[Initializer] Generated MovementPoolIndices: {settings.MovementPoolIndices.Length} cards.");
         }
 
-        // 4. Ініціалізуємо обидва контейнери ТІЛЬКИ ЯКЩО ВОНИ ПУСТІ
-        if ((_movementCardContainer != null && _movementCardContainer.transform.childCount == 0) && 
-            (_movementCardContainerEnemy != null && _movementCardContainerEnemy.transform.childCount == 0))
+        // 4. Ініціалізуємо обидва контейнери
+        // Ми завжди оновлюємо їх (особливо для Hotseat), щоб Local/Enemy слоти були актуальні
+        _movementCardsInstances.Clear();
+        int enemyIndex = (playerIndex == 1) ? 2 : 1;
+
+        List<GameObject> p1Cards = InitializeMovementContainer(_movementCardContainer, playerIndex, settings);
+        List<GameObject> p2Cards = InitializeMovementContainer(_movementCardContainerEnemy, enemyIndex, settings);
+
+        if (settings != null)
         {
-            _movementCardsInstances.Clear();
-            int enemyIndex = (playerIndex == 1) ? 2 : 1;
-
-            List<GameObject> p1Cards = InitializeMovementContainer(_movementCardContainer, playerIndex, settings);
-            List<GameObject> p2Cards = InitializeMovementContainer(_movementCardContainerEnemy, enemyIndex, settings);
-
-            if (settings != null)
-            {
-                settings.RegisterMovementCards(playerIndex, p1Cards);
-                settings.RegisterMovementCards(enemyIndex, p2Cards);
-            }
+            settings.RegisterMovementCards(playerIndex, p1Cards);
+            settings.RegisterMovementCards(enemyIndex, p2Cards);
         }
 
         // ВИМИКАЄМО ЛЕАЙУТИ ПІСЛЯ ПАУЗИ
@@ -256,6 +260,16 @@ public class GameDataInitializer : MonoBehaviour
             _deckController.AutoFillSlots();
         }
 
+        // REDO: Refresh movement cards so the active player always has their cards at the bottom (Local) 
+        // and the correct OwnerIDs are assigned.
+        GameSettings settings = sceneState != null ? sceneState._currentSettings : null;
+        if (settings != null)
+        {
+            int enemyIndex = (playerIndex == 1) ? 2 : 1;
+            InitializeMovementContainer(_movementCardContainer, playerIndex, settings);
+            InitializeMovementContainer(_movementCardContainerEnemy, enemyIndex, settings);
+        }
+
         StartCoroutine(DisableLayoutsRoutine());
     }
 
@@ -273,25 +287,43 @@ public class GameDataInitializer : MonoBehaviour
         ClearContainer(container.transform);
 
         int[] moveIndices = (settings != null) ? settings.GetMovementIndicesForPlayer(playerIdx) : null;
-        List<MovementCard> cards;
+        List<MovementCard> cards = new List<MovementCard>();
 
-        if (moveIndices != null && moveIndices.Length > 0)
+        // PERSISTENCE FIX: Check if we have a hand saved in the snapshot
+        PlayerSnapshot snapshot = (settings != null) ? settings.GetSnapshot(playerIdx) : null;
+        if (snapshot != null && snapshot.SelectedMovementCards.Count > 0)
         {
-            cards = _library.GetMovementCardsFromIndices(moveIndices);
+            cards = new List<MovementCard>(snapshot.SelectedMovementCards); // COPY to avoid Clearing the source
         }
         else
         {
-            cards = _library.GetRandomMovementCards(_movementCardsToSpawn);
+            // Initial generation
+            if (moveIndices != null && moveIndices.Length > 0)
+            {
+                cards = _library.GetMovementCardsFromIndices(moveIndices);
+            }
+            else
+            {
+                cards = _library.GetRandomMovementCards(_movementCardsToSpawn);
+            }
+            
+            // Save to hand for persistence
+            if (snapshot != null)
+            {
+                snapshot.SelectedMovementCards.Clear();
+                snapshot.SelectedMovementCards.AddRange(cards);
+            }
         }
 
-        for (int i = 0; i < _movementCardsToSpawn; i++)
+        for (int i = 0; i < cards.Count; i++)
         {
             GameObject mcObj = Instantiate(_movementCardPrefab, container.transform);
             MovementCardInfo mcInfo = mcObj.GetComponent<MovementCardInfo>();
             if (mcInfo != null)
             {
-                if (i < cards.Count) mcInfo.MoveCard = cards[i];
-                mcInfo.Initialize();
+                mcInfo.MoveCard = cards[i];
+                mcInfo.Initialize(playerIdx);
+                
                 _movementCardsInstances.Add(mcInfo);
                 spawnedCards.Add(mcObj);
             }
@@ -303,8 +335,21 @@ public class GameDataInitializer : MonoBehaviour
     {
         // Якщо контейнер вимкнений, леайут-група не прораховується.
         // На мить вмикаємо його, щоб Unity встигла розставити елементи.
+        // FIX FLICKER: ховаємо панель через CanvasGroup на один кадр, щоб не блимало.
         bool modsOriginallyActive = _modContainer.gameObject.activeSelf;
-        if (!modsOriginallyActive) _modContainer.gameObject.SetActive(true);
+        CanvasGroup modCg = null;
+        float originalAlpha = 1f;
+
+        if (!modsOriginallyActive)
+        {
+            modCg = _modContainer.GetComponent<CanvasGroup>();
+            if (modCg == null) modCg = _modContainer.gameObject.AddComponent<CanvasGroup>();
+            
+            originalAlpha = modCg.alpha;
+            modCg.alpha = 0f;
+
+            _modContainer.gameObject.SetActive(true);
+        }
         
         // Форсуємо прорахунок тільки для карт персонажів та модів
         LayoutRebuilder.ForceRebuildLayoutImmediate(_cardContainer.transform as RectTransform);
@@ -315,7 +360,11 @@ public class GameDataInitializer : MonoBehaviour
         if (_cardContainer != null) _cardContainer.enabled = false;
         if (_modContainer != null) _modContainer.enabled = false;
         
-        if (!modsOriginallyActive) _modContainer.gameObject.SetActive(false);
+        if (!modsOriginallyActive) 
+        {
+            _modContainer.gameObject.SetActive(false);
+            if (modCg != null) modCg.alpha = originalAlpha; // Відновлюємо для майбутніх відкриттів
+        }
 
         // Тепер фіксуємо домашні позиції
         foreach (var card in _cardsInstances)
@@ -361,6 +410,20 @@ public class GameDataInitializer : MonoBehaviour
         }
     }
 
+    public void RefreshBattleUI()
+    {
+        if (InitiativeSystem.Instance == null) return;
+        int currentActivePlayer = InitiativeSystem.Instance.CurrentTurnPlayerID;
+        int enemyPlayer = (currentActivePlayer == 1) ? 2 : 1;
+
+        GameSceneState sceneState = FindObjectOfType<GameSceneState>();
+        GameSettings settings = sceneState != null ? sceneState._currentSettings : null;
+        
+        // 1. Refresh MOVEMENT cards (Always show P1 at bottom, P2 at top)
+        _movementCardsInstances.Clear();
+        InitializeMovementContainer(_movementCardContainer, currentActivePlayer, settings);
+        InitializeMovementContainer(_movementCardContainerEnemy, enemyPlayer, settings);
+    }
     private int GetPlayerIndex(SceneState mode, GameSettings settings)
     {
         if (settings != null)

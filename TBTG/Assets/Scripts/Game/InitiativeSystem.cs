@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
@@ -15,6 +16,7 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
     [SerializeField] private GameObject _initiativePrefab;
     [SerializeField] private Button _acceptBtn;
     [SerializeField] private Sprite _unknownCharSprite;
+    [SerializeField] private TextMeshProUGUI _roundText;
 
     [Header("State")]
     private List<int> _initiativeQueue = new List<int>(); // Локальна черга (PairIDs)
@@ -24,10 +26,35 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
     private List<(int ownerID, int pairID)> _finalQueue = new List<(int, int)>();
     public bool IsFinalized => _isFinalized;
     private bool _isFinalized = false;
+    private bool _p1Starts;
+    private int _roundCount = 1;
+    private int _unitsActedInRound = 0;
+    
+    private int _actionsRemaining = 2;
+    private const int MAX_ACTIONS = 2;
+
+    public int ActionsRemaining => _actionsRemaining;
 
     private CardDeckController _deckController;
     private GameSceneState _gameSceneState;
+    private GameDataLibrary _library;
     private PhotonView _photonView;
+
+    public (int ownerID, int pairID) GetActiveUnitKey()
+    {
+        if (_isFinalized && _finalQueue.Count > 0) return _finalQueue[0];
+        return (-1, -1);
+    }
+
+    public int CurrentTurnPlayerID 
+    {
+        get
+        {
+            if (_isFinalized && _finalQueue.Count > 0) return _finalQueue[0].ownerID;
+            if (_gameSceneState != null && _gameSceneState._currentSettings != null) return _gameSceneState._currentSettings.CurrentPlayerIndex;
+            return 1;
+        }
+    }
 
     private void Awake()
     {
@@ -36,6 +63,13 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
         _gameSceneState = FindObjectOfType<GameSceneState>();
         _photonView = GetComponent<PhotonView>();
         
+        if (CharacterPlacementManager.Instance != null)
+        {
+            // Get library from PlacementManager to ensure consistency
+            var libField = CharacterPlacementManager.Instance.GetType().GetField("_library", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            _library = libField?.GetValue(CharacterPlacementManager.Instance) as GameDataLibrary;
+        }
+
         if (_deckController != null)
         {
             _deckController.DeckStateChanged += (isFull) => UpdateInitiativeUI();
@@ -46,6 +80,9 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
             _acceptBtn.onClick.AddListener(OnAcceptClick);
             _acceptBtn.gameObject.SetActive(false);
         }
+
+        if (_roundText != null) _roundText.gameObject.SetActive(false);
+        LocalizationManager.OnLanguageChanged += UpdateRoundUI;
     }
 
     private void OnDestroy()
@@ -54,6 +91,7 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
         {
             _deckController.DeckStateChanged -= (isFull) => UpdateInitiativeUI();
         }
+        LocalizationManager.OnLanguageChanged -= UpdateRoundUI;
     }
 
     public bool WasDropHandled { get; private set; }
@@ -103,6 +141,12 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
             if (insertIndex > _initiativeQueue.Count) insertIndex = _initiativeQueue.Count;
             _initiativeQueue.Insert(insertIndex, pairID);
             
+            // NEW: If we drop a card from a pair, it MUST become the active member of that pair
+            if (card != null && _deckController != null)
+            {
+                _deckController.MakeActive(card);
+            }
+
             WasDropHandled = true;
             UpdateInitiativeUI();
             UpdateAcceptButton();
@@ -174,15 +218,27 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
         else if (_gameSceneState != null && _gameSceneState._currentSettings is PlayerVsBotSettings botSettings)
         {
             _allPlayersInitiatives[1] = new List<int>(_initiativeQueue);
-            // Бот генерує рандомну ініціативу
-            List<int> botList = new List<int> { 0, 1, 2, 3 };
-            for (int i = 0; i < 4; i++) {
-                int temp = botList[i];
-                int randomIndex = Random.Range(i, 4);
-                botList[i] = botList[randomIndex];
-                botList[randomIndex] = temp;
+            
+            // Collect all placed pair IDs for Bot (Player 2)
+            List<int> botAvailablePairs = new List<int>();
+            if (CharacterPlacementManager.Instance != null)
+            {
+                // In Bot mode, Player 2 is always the bot
+                for (int i = 0; i < 10; i++) // Check up to 10 potential pairs
+                {
+                    if (CharacterPlacementManager.Instance.IsPairPlaced(2, i))
+                        botAvailablePairs.Add(i);
+                }
             }
-            _allPlayersInitiatives[2] = botList;
+            
+            // Randomly shuffle bot's initiative
+            for (int i = 0; i < botAvailablePairs.Count; i++) {
+                int temp = botAvailablePairs[i];
+                int randomIndex = Random.Range(i, botAvailablePairs.Count);
+                botAvailablePairs[i] = botAvailablePairs[randomIndex];
+                botAvailablePairs[randomIndex] = temp;
+            }
+            _allPlayersInitiatives[2] = botAvailablePairs;
             FinalizeInitiative();
         }
         else if (PhotonNetwork.InRoom && _photonView != null)
@@ -205,20 +261,18 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
 
     private void FinalizeInitiative()
     {
-        _isFinalized = true;
         _acceptBtn?.gameObject.SetActive(false);
 
         // Визначаємо, хто перший (для мультиплеєра використовуємо стабільний рандом)
-        bool p1Starts;
         if (PhotonNetwork.InRoom)
         {
             // Використовуємо номер кімнати як зерно для синхронного рандому
             Random.InitState(PhotonNetwork.CurrentRoom.Name.GetHashCode());
-            p1Starts = Random.value > 0.5f;
+            _p1Starts = Random.value > 0.5f;
         }
         else
         {
-            p1Starts = Random.value > 0.5f;
+            _p1Starts = Random.value > 0.5f;
         }
 
         List<int> p1List, p2List;
@@ -239,7 +293,7 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
         int max = Mathf.Max(p1List.Count, p2List.Count);
         for (int i = 0; i < max; i++)
         {
-            if (p1Starts)
+            if (_p1Starts)
             {
                 if (i < p1List.Count) _finalQueue.Add((PhotonNetwork.InRoom ? _allPlayersInitiatives.Keys.OrderBy(k => k).First() : 1, p1List[i]));
                 if (i < p2List.Count) _finalQueue.Add((PhotonNetwork.InRoom ? _allPlayersInitiatives.Keys.OrderBy(k => k).Last() : 2, p2List[i]));
@@ -249,6 +303,33 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
                 if (i < p2List.Count) _finalQueue.Add((PhotonNetwork.InRoom ? _allPlayersInitiatives.Keys.OrderBy(k => k).Last() : 2, p2List[i]));
                 if (i < p1List.Count) _finalQueue.Add((PhotonNetwork.InRoom ? _allPlayersInitiatives.Keys.OrderBy(k => k).First() : 1, p1List[i]));
             }
+        }
+
+        // Hotseat: Initialize the first player's deck once the order is decided
+        if (_gameSceneState != null && _gameSceneState._currentSettings is HotseatSettings hsGame)
+        {
+            if (_finalQueue.Count > 0)
+            {
+                int firstPlayer = _finalQueue[0].ownerID;
+                hsGame.MapPlayerIndex = firstPlayer;
+                
+                var initializer = FindObjectOfType<GameDataInitializer>();
+                if (initializer != null)
+                {
+                    initializer.RefreshBattleUI();
+                }
+            }
+        }
+
+        _isFinalized = true;
+        _roundCount = 1;
+        _unitsActedInRound = 0;
+        if (_roundText != null) _roundText.gameObject.SetActive(true);
+        UpdateRoundUI();
+
+        if (CharacterPlacementManager.Instance != null)
+        {
+            CharacterPlacementManager.Instance.InitializeHPs();
         }
 
         UpdateInitiativeUI();
@@ -291,12 +372,136 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
         return validIndex;
     }
 
+    public void ConsumeAction(bool isEndingTurnAction = false)
+    {
+        if (!_isFinalized) return;
+
+        if (isEndingTurnAction)
+        {
+            _actionsRemaining = 0;
+        }
+        else
+        {
+            _actionsRemaining--;
+        }
+
+        if (_actionsRemaining <= 0)
+        {
+            NextTurn();
+        }
+        else
+        {
+            UpdateInitiativeUI();
+        }
+    }
+
+    public void NextTurn()
+    {
+        if (!_isFinalized || _finalQueue.Count == 0) return;
+
+        int prevPlayerID = CurrentTurnPlayerID;
+
+        // 1. REMOVE the finished unit (as requested)
+        _finalQueue.RemoveAt(0);
+        _unitsActedInRound++;
+
+        // 2. CHECK: If round is over, refill the queue
+        if (_finalQueue.Count == 0)
+        {
+            RegenerateRound();
+        }
+
+        _actionsRemaining = MAX_ACTIONS;
+        
+        // Reset movement mode if active
+        if (CharacterPlacementManager.Instance != null)
+            CharacterPlacementManager.Instance.ClearMovementMode();
+
+        UpdateInitiativeUI();
+
+        // REFRESH: Swap the movement containers ONLY if the player changed
+        if (GameDataInitializer.Instance != null && CurrentTurnPlayerID != prevPlayerID)
+        {
+            GameDataInitializer.Instance.RefreshBattleUI();
+        }
+    }
+
+    private void RegenerateRound()
+    {
+        _roundCount++;
+        _unitsActedInRound = 0;
+        UpdateRoundUI();
+
+        List<int> p1List, p2List;
+        if (PhotonNetwork.InRoom)
+        {
+            var keys = _allPlayersInitiatives.Keys.OrderBy(k => k).ToList();
+            p1List = _allPlayersInitiatives[keys[0]];
+            p2List = _allPlayersInitiatives[keys[1]];
+        }
+        else
+        {
+            p1List = _allPlayersInitiatives.ContainsKey(1) ? _allPlayersInitiatives[1] : new List<int>();
+            p2List = _allPlayersInitiatives.ContainsKey(2) ? _allPlayersInitiatives[2] : new List<int>();
+        }
+
+        int max = Mathf.Max(p1List.Count, p2List.Count);
+        for (int i = 0; i < max; i++)
+        {
+            if (_p1Starts)
+            {
+                if (i < p1List.Count) _finalQueue.Add((PhotonNetwork.InRoom ? _allPlayersInitiatives.Keys.OrderBy(k => k).First() : 1, p1List[i]));
+                if (i < p2List.Count) _finalQueue.Add((PhotonNetwork.InRoom ? _allPlayersInitiatives.Keys.OrderBy(k => k).Last() : 2, p2List[i]));
+            }
+            else
+            {
+                if (i < p2List.Count) _finalQueue.Add((PhotonNetwork.InRoom ? _allPlayersInitiatives.Keys.OrderBy(k => k).Last() : 2, p2List[i]));
+                if (i < p1List.Count) _finalQueue.Add((PhotonNetwork.InRoom ? _allPlayersInitiatives.Keys.OrderBy(k => k).First() : 1, p1List[i]));
+            }
+        }
+    }
+
+    private void UpdateRoundUI()
+    {
+        if (!_isFinalized) return;
+
+        if (_roundText != null)
+        {
+            string translated = LocalizationManager.GetTranslation("round_txt");
+            _roundText.text = $"{translated}: {_roundCount}";
+
+            // FIX: If there's a LocalizationLabel on the same object, it might overwrite our text.
+            // We set its suffix to ensure the number persists during language changes.
+            var locLabel = _roundText.GetComponent<LocalizationLabel>();
+            if (locLabel != null)
+            {
+                locLabel.Key = "round_txt";
+                locLabel.SetSuffix(": " + _roundCount);
+            }
+        }
+    }
+
+    public void RemoveFromQueue(int ownerID, int pairID)
+    {
+        _finalQueue.RemoveAll(q => q.ownerID == ownerID && q.pairID == pairID);
+        UpdateInitiativeUI();
+        
+        if (_finalQueue.Count == 0)
+        {
+            Debug.Log("[Game Over] Total Victory for the survivors!");
+            // Потім можна завантажити переможний екран
+        }
+    }
+
     public void UpdateInitiativeUI()
     {
-        foreach (Transform child in _containerInitiative)
+        // Safe clear: Detach children so childCount becomes 0 immediately 
+        // to avoid duplication if called multiple times in one frame.
+        for (int i = _containerInitiative.childCount - 1; i >= 0; i--)
         {
-            Destroy(child.gameObject);
+            Destroy(_containerInitiative.GetChild(i).gameObject);
         }
+        _containerInitiative.DetachChildren();
 
         if (_isFinalized)
         {
@@ -305,11 +510,10 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
             {
                 myID = PhotonNetwork.LocalPlayer.ActorNumber;
             }
-            else if (_gameSceneState != null && _gameSceneState._currentSettings != null)
+            else if (_gameSceneState != null && _gameSceneState._currentSettings is HotseatSettings hsGame)
             {
-                myID = _gameSceneState._currentSettings.CurrentPlayerIndex;
+                myID = hsGame.CurrentPlayerIndex;
             }
-            //bool opponentShown = false;
 
             for (int i = 0; i < _finalQueue.Count; i++)
             {
@@ -320,18 +524,28 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
                     bool isActive = (i == 0);
                     CharacterPlacementManager.Instance.SetCharacterActive(entry.ownerID, entry.pairID, isActive);
                     
-                    // NEW: Camera following active LOCAL character
-                    if (isActive && PlayerCameraController.Instance != null)
+                    if (isActive)
                     {
-                        if (entry.ownerID == myID)
+                        bool isHotseat = (PhotonNetwork.InRoom == false);
+                        bool isMyTurn = isHotseat || entry.ownerID == myID;
+                        
+                        // NEW: Camera following (Hotseat: Always, Multiplayer: Only if it's Me)
+                        if (PlayerCameraController.Instance != null)
                         {
-                            var characterObj = CharacterPlacementManager.Instance.GetCharacterObject(entry.ownerID, entry.pairID);
-                            if (characterObj != null) PlayerCameraController.Instance.FollowTarget(characterObj.transform);
+                            if (isMyTurn)
+                            {
+                                var characterObj = CharacterPlacementManager.Instance.GetCharacterObject(entry.ownerID, entry.pairID);
+                                if (characterObj != null) PlayerCameraController.Instance.FollowTarget(characterObj.transform);
+                            }
+                            else
+                            {
+                                PlayerCameraController.Instance.ResetToMapCenter();
+                            }
                         }
-                        else
-                        {
-                            PlayerCameraController.Instance.ResetToMapCenter();
-                        }
+                        
+                        // NEW: Toggle Skip Button visibility
+                        var uiController = FindObjectOfType<GameUIController>();
+                        if (uiController != null) uiController.SetSkipTurnButtonActive(isMyTurn);
                     }
                 }
 
@@ -351,7 +565,7 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
                         displaySprite = _unknownCharSprite;
                     }
 
-                    SetupInitiativeEntry(obj, displaySprite, i + 1, entry.pairID);
+                    SetupInitiativeEntry(obj, displaySprite, i + 1 + _unitsActedInRound, entry.pairID);
                     
                     var drag = obj.GetComponent<InitiativeEntryDragHandler>();
                     if (drag != null) drag.enabled = false;
@@ -397,46 +611,33 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
 
     private CharacterData GetCharacterDataForFinal(int ownerID, int pairID)
     {
-        // Якщо це ми - беремо з нашої деки (можемо поміняти на лету)
-        int myID = 1;
-        if (PhotonNetwork.InRoom)
+        // 1. Direct call to CharacterPlacementManager (Source of truth for what's on the field)
+        if (CharacterPlacementManager.Instance != null && _library != null)
         {
-            myID = PhotonNetwork.LocalPlayer.ActorNumber;
-        }
-        else if (_gameSceneState != null && _gameSceneState._currentSettings is HotseatSettings hs)
-        {
-            myID = hs.CurrentPlayerIndex;
+            int libIdx = CharacterPlacementManager.Instance.GetSpawnedCharacterLibIndex(ownerID, pairID);
+            if (libIdx >= 0 && libIdx < _library.AllCharacters.Count)
+                return _library.AllCharacters[libIdx];
         }
 
-        if (ownerID == myID && _deckController != null)
+        // 2. Fallback to deck (only if not on field yet or during setup)
+        if (_deckController != null)
         {
             return _deckController.GetActiveCharacterData(pairID);
         }
 
-        // Якщо це ворог - беремо з CharacterPlacementManager (він знає libIndex)
-        if (CharacterPlacementManager.Instance != null)
-        {
-            // В Hotseat ownerID може бути 1 або 2
-            // В мультиплеєрі це ActorNumber
-            
-            // Нам треба знайти CharacterData за libIndex, який зберіг PlacementManager
-            // (Це безпечно, бо модель на полі вже стоїть)
-            var spawnedIndices = CharacterPlacementManager.Instance.GetType()
-                .GetField("_spawnedCharLibIndices", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                ?.GetValue(CharacterPlacementManager.Instance) as Dictionary<(int, int), int>;
-
-            if (spawnedIndices != null && spawnedIndices.TryGetValue((ownerID, pairID), out int libIdx))
-            {
-                var library = CharacterPlacementManager.Instance.GetType()
-                    .GetField("_library", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.GetValue(CharacterPlacementManager.Instance) as GameDataLibrary;
-                
-                if (library != null && libIdx >= 0 && libIdx < library.AllCharacters.Count)
-                    return library.AllCharacters[libIdx];
-            }
-        }
         return null;
     }
+
+    private void OnEnable() => StartCoroutine(SubscribeRoutine());
+    private void OnDisable() { if (_deckController != null) _deckController.DeckStateChanged -= RefreshUIOnDeckUpdate; }
+
+    private IEnumerator SubscribeRoutine()
+    {
+        while (_deckController == null) { _deckController = FindObjectOfType<CardDeckController>(); yield return null; }
+        _deckController.DeckStateChanged += RefreshUIOnDeckUpdate;
+    }
+
+    private void RefreshUIOnDeckUpdate(bool _) { UpdateInitiativeUI(); }
 
     private void SetupInitiativeEntry(GameObject entryObj, Sprite sprite, int order, int pID)
     {

@@ -1049,3 +1049,5 @@ change_card_in_pair_btn,Змінити карти в парі,Change cards in pa
 change_pait_to_card_btn,Обміняти пару на нову карту,Swap pair for a new card
 active_tiles_room_param,Активні Клітинки,Active Tiles
 mods_room_param,Модифікатори,Modificators
+skip_turn,Пропустити хід,Skip Turn
+round_txt,Раунд,Round

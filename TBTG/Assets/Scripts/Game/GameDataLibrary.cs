@@ -48,32 +48,36 @@ public class GameDataLibrary : ScriptableObject
         group3Plus = group3Plus.OrderBy(x => Random.value).ToList();
 
         List<int> result = new List<int>();
-        int totalToGenerate = AllMovementCards.Count;
+        
+        // Ensure we always have enough cards for 2+ players (at least 6 each)
+        // By using a larger total, the fallback will reuse cards if the groups run out
+        int totalToGenerate = Mathf.Max(24, AllMovementCards.Count);
 
         for (int i = 0; i < totalToGenerate; i++)
         {
-            float roll = Random.value; // 0.0 to 1.0
+            float roll = Random.value;
             int selectedIndex = -1;
 
-            // Логіка шансів: 1 клітинка (45%), 2 клітинки (35%), 3+ клітинки (20%)
-            if (roll < 0.45f && group1.Count > 0)
-            {
-                selectedIndex = group1[0];
-                group1.RemoveAt(0);
-            }
-            else if (roll < 0.80f && group2.Count > 0) // 0.45 + 0.35 = 0.80
-            {
-                selectedIndex = group2[0];
-                group2.RemoveAt(0);
-            }
-            else if (group3Plus.Count > 0)
-            {
-                selectedIndex = group3Plus[0];
-                group3Plus.RemoveAt(0);
-            }
-            else
-            {
-                // Fallback: якщо вибрана група порожня, беремо з будь-якої іншої доступної
+            // ... (Logic to pull from groups, but reset groups if they empty out)
+            if (roll < 0.45f && group1.Count > 0) { selectedIndex = group1[0]; group1.RemoveAt(0); }
+            else if (roll < 0.80f && group2.Count > 0) { selectedIndex = group2[0]; group2.RemoveAt(0); }
+            else if (group3Plus.Count > 0) { selectedIndex = group3Plus[0]; group3Plus.RemoveAt(0); }
+            else {
+                // REFILL logic: if we need more than we have, start over with shuffles
+                if (group1.Count == 0 && group2.Count == 0 && group3Plus.Count == 0)
+                {
+                    // Refresh groups if we are in a massive loop
+                    for (int j = 0; j < AllMovementCards.Count; j++) {
+                        int cCount = AllMovementCards[j].MovementPatternGrid.Cells.Count(c => c);
+                        if (cCount == 1) group1.Add(j);
+                        else if (cCount == 2) group2.Add(j);
+                        else group3Plus.Add(j);
+                    }
+                    group1 = group1.OrderBy(x => Random.value).ToList();
+                    group2 = group2.OrderBy(x => Random.value).ToList();
+                    group3Plus = group3Plus.OrderBy(x => Random.value).ToList();
+                }
+
                 if (group1.Count > 0) { selectedIndex = group1[0]; group1.RemoveAt(0); }
                 else if (group2.Count > 0) { selectedIndex = group2[0]; group2.RemoveAt(0); }
                 else if (group3Plus.Count > 0) { selectedIndex = group3Plus[0]; group3Plus.RemoveAt(0); }

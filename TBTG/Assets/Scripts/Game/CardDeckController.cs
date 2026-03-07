@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems; // Added for IPointerClickHandler
 
 public class CardDeckController : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class CardDeckController : MonoBehaviour
 
     [SerializeField] private PlayerModel _playerModel;
     
+    [SerializeField] private GameDataLibrary _library;
     [SerializeField] private List<CardSlot> _cardDeck;
     [SerializeField] private List<CardDragHandler> _cards;
     [SerializeField] private List<ModDragHandler> _mods;
@@ -182,33 +184,43 @@ public class CardDeckController : MonoBehaviour
     {
         bool isDeckFull = true;
 
-        for (int i = 0; i < _cardDeck.Count; i++)
+        // Iterate by pairs: 0-1, 2-3, 4-5...
+        for (int i = 0; i < _cardDeck.Count; i += 2)
         {
-            CardSlot slot = _cardDeck[i];
-            if (!slot.IsOccupied)
+            CardSlot activeSlot = _cardDeck[i];
+            CardSlot passiveSlot = (i + 1 < _cardDeck.Count) ? _cardDeck[i + 1] : null;
+
+            if (!activeSlot.IsOccupied) isDeckFull = false;
+
+            // 1. Update IsPassive flags
+            if (activeSlot.IsOccupied)
             {
-                isDeckFull = false;
-                continue;
+                activeSlot.CurrentCard.IsPassive = false;
+            }
+            if (passiveSlot != null && passiveSlot.IsOccupied)
+            {
+                passiveSlot.CurrentCard.IsPassive = true;
             }
 
-            CardDragHandler card = slot.CurrentCard;
-            bool wasPassive = card.IsPassive;
-            bool nowPassive = (i % 2 != 0); // Slot 0, 2, 4... are Active. Slot 1, 3, 5... are Passive.
-
-            card.IsPassive = nowPassive;
-
-            // If a card was Passive and became Active (or vice versa) and it's already on the field, we need to swap models
-            if (wasPassive != nowPassive && !nowPassive) // Only trigger from the one becoming Active
+            // 2. FORCE SYNC WITH MAP: The card in the ACTIVE (Even) slot DICTATES the model on field
+            if (activeSlot.IsOccupied && CharacterPlacementManager.Instance != null)
             {
-                if (CharacterPlacementManager.Instance != null && CharacterPlacementManager.Instance.IsPairPlaced(card.OwnerID, card.PairID))
+                CardDragHandler activeCard = activeSlot.CurrentCard;
+                // Double check: if it's placed on the map, ensure it's the right model
+                if (CharacterPlacementManager.Instance.IsPairPlaced(activeCard.OwnerID, activeCard.PairID))
                 {
-                    var cardInfo = card.GetComponent<CardInfo>();
+                    var cardInfo = activeCard.GetComponent<CardInfo>();
                     if (cardInfo != null && cardInfo.CharData != null)
                     {
                         int libIdx = CharacterPlacementManager.Instance.GetLibraryIndex(cardInfo.CharData);
-                        CharacterPlacementManager.Instance.UpdateCharacterModel(card.OwnerID, card.PairID, libIdx);
+                        CharacterPlacementManager.Instance.UpdateCharacterModel(activeCard.OwnerID, activeCard.PairID, libIdx);
                     }
                 }
+            }
+            else if (!activeSlot.IsOccupied && passiveSlot != null && !passiveSlot.IsOccupied && CharacterPlacementManager.Instance != null)
+            {
+                // Both slots empty = Pair possibly in hand/limbo. If they are on map, 
+                // we leave them there for now to prevent flicker while dragging.
             }
         }
 
@@ -267,6 +279,11 @@ public class CardDeckController : MonoBehaviour
         }
 
         CheckDeck(); 
+
+        if (InitiativeSystem.Instance != null && InitiativeSystem.Instance.IsFinalized)
+        {
+            InitiativeSystem.Instance.ConsumeAction();
+        }
     }
 
     public CharacterData GetActiveCharacterData(int pairID)
@@ -304,6 +321,39 @@ public class CardDeckController : MonoBehaviour
             {
                 slot.CurrentCard.SetRaycastTarget(value);
             }
+        }
+    }
+
+    /// <summary>
+    /// EXCHANGE Action: Replaces the current pair with random characters. 
+    /// Consumes 1 action. (Takes effect via CheckDeck inside)
+    /// </summary>
+    public void ExchangeActivePair()
+    {
+        if (InitiativeSystem.Instance == null || !InitiativeSystem.Instance.IsFinalized || _library == null) return;
+
+        var activeKey = InitiativeSystem.Instance.GetActiveUnitKey();
+        if (activeKey.ownerID == -1) return;
+
+        // Find cards matching this owner and pair
+        var pairCards = _cards.FindAll(c => c.OwnerID == activeKey.ownerID && c.PairID == activeKey.pairID);
+        var newChars = _library.GetRandomCharacters(pairCards.Count);
+
+        for (int i = 0; i < pairCards.Count; i++)
+        {
+            var info = pairCards[i].GetComponent<CardInfo>();
+            if (info != null && i < newChars.Count)
+            {
+                info.CharData = newChars[i];
+                info.Initialize();
+            }
+        }
+
+        CheckDeck(); 
+
+        if (InitiativeSystem.Instance != null && InitiativeSystem.Instance.IsFinalized)
+        {
+            InitiativeSystem.Instance.ConsumeAction();
         }
     }
 }

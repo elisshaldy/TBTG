@@ -46,6 +46,9 @@ MonoBehaviour:
   - RPC_RequestCurrentPlacements
   - RPC_UpdateCharacterModel
   - RPC_SubmitInitiative
+  - RPC_MoveCharacter
+  - RPC_AttackTile
+  - RPC_AttackTiles
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

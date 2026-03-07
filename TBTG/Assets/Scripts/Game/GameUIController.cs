@@ -8,10 +8,12 @@ public class GameUIController : MonoBehaviour
     [SerializeField] private GameObject _containerMods;
     [SerializeField] private GameObject _map;
     [SerializeField] private GameObject _mapUIGameLoop;
+    [SerializeField] private Button _rerollBtn;
     [Header("UI")]
     [SerializeField] private LocalizationLabel _hotseatPlayerNameTxt;
     [SerializeField] private LocalizationLabel _modPointsTxt;
     [SerializeField] private Button _applyBtn;
+    [SerializeField] private Button _skipTurnBtn;
     [Header("State")]
     [SerializeField] private GameSceneState _gameSceneState;
     [SerializeField] private CardDeckController _cardDeckController;
@@ -48,6 +50,18 @@ public class GameUIController : MonoBehaviour
         _playerModel.OnModPointsChanged += UpdateModPointsUI;
         UpdateModPointsUI(_playerModel.ModPoints);
         
+        if (_rerollBtn != null) _rerollBtn.onClick.AddListener(() => _cardDeckController.ExchangeActivePair());
+        
+        if (_skipTurnBtn != null) 
+        {
+            _skipTurnBtn.onClick.AddListener(() => {
+                if (InitiativeSystem.Instance != null && InitiativeSystem.Instance.IsFinalized)
+                {
+                    InitiativeSystem.Instance.ConsumeAction(true);
+                }
+            });
+        }
+
         _gameSceneState.StartFlow(this);
         if (GameSettingsManager.Instance != null && GameSettingsManager.Instance.IsDebug) CreateDebugButtons();
         
@@ -162,6 +176,7 @@ public class GameUIController : MonoBehaviour
         _containerCards.SetActive(true);
         _containerMods.SetActive(false);
         _modPointsTxt.gameObject.SetActive(false); // Вимикаємо текст балів при виборі карт
+        if (_skipTurnBtn != null) _skipTurnBtn.gameObject.SetActive(false);
         
         _cardDeckController.ResetController();
         _playerModel.ResetModPoints();
@@ -175,6 +190,7 @@ public class GameUIController : MonoBehaviour
         _containerMods.SetActive(true);
         _applyBtn.gameObject.SetActive(true);
         _modPointsTxt.gameObject.SetActive(true); // Вмикаємо тільки на модах
+        if (_skipTurnBtn != null) _skipTurnBtn.gameObject.SetActive(false);
     }
     
     public void OpenMap()
@@ -204,6 +220,7 @@ public class GameUIController : MonoBehaviour
         _applyBtn.gameObject.SetActive(false);
         _map.SetActive(true);
         _mapUIGameLoop.SetActive(true);
+        if (_skipTurnBtn != null) _skipTurnBtn.gameObject.SetActive(false); // Will be enabled by InitiativeSystem
         
         if (_dataInitializer != null) _dataInitializer.CleanUpContainers();
     }
@@ -225,5 +242,10 @@ public class GameUIController : MonoBehaviour
         _hotseatPlayerNameTxt.SetKey("hotseat_current_player");
         _hotseatPlayerNameTxt.SetSuffix(": " + playerName);
         _hotseatPlayerNameTxt.gameObject.SetActive(true);
+    }
+    
+    public void SetSkipTurnButtonActive(bool isActive)
+    {
+        if (_skipTurnBtn != null) _skipTurnBtn.gameObject.SetActive(isActive);
     }
 }

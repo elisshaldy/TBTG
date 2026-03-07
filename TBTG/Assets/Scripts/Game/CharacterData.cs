@@ -32,6 +32,7 @@ public class CharacterData : ScriptableObject
     [Header("Base Stats")]
     public int AttackBase = 0;
     public int DefenseBase = 0;
+    public int MaxHP = 10;
     
     public AttackGrid3x3 AttackPatternGrid;
 }

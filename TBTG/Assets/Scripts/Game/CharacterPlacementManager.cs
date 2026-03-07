@@ -20,6 +20,9 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     private Dictionary<(int, int), int[]> _spawnedCharModIndices = new Dictionary<(int, int), int[]>();
     // Key is GridCoordinates, Value is (OwnerID, PairID)
     private Dictionary<Vector2Int, (int, int)> _tileOccupants = new Dictionary<Vector2Int, (int, int)>();
+    
+    // Character HP tracking per unit on field (PairID)
+    private Dictionary<(int, int), int> _unitHPs = new Dictionary<(int, int), int>();
 
     [Header("Big Card UI")]
     [SerializeField] private GameObject _cardPrefabForUI; // Prefab with CardInfo
@@ -28,7 +31,18 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     private (int, int) _activeBigCardKey = (-1, -1);
     private HashSet<(int, int)> _revealedEnemyMods = new HashSet<(int, int)>();
 
+    private (int ownerID, int pairID) _activeCharacterKey = (-1, -1);
+    private CharacterData _activeCharacterData;
+    private int _activeOrientation = 0; // 0=0, 1=90, 2=180, 3=270 deg
+    private bool _isReversed = false;
+
+    private MovementCard _activeMovementCard = null;
+    private MovementCardInfo _activeMovementCardInfo = null;
+    public bool IsMovementModeActive => _activeMovementCard != null;
+    public MovementCard ActiveMovementCard => _activeMovementCard;
+
     private int _localPlayerIndex = -1;
+    private GameSceneState _gameSceneState;
 
     // Preview logic
     private GameObject _localPreviewInstance;
@@ -55,6 +69,54 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         // Auto-fix for null references to avoid broken placements
         if (_library == null) _library = FindObjectOfType<GameDataLibrary>();
         if (_deckController == null) _deckController = FindObjectOfType<CardDeckController>();
+        if (_gameSceneState == null) _gameSceneState = FindObjectOfType<GameSceneState>();
+    }
+
+    private void Update()
+    {
+        // Handle rotation during active turn
+        if (InitiativeSystem.Instance != null && InitiativeSystem.Instance.IsFinalized)
+        {
+            if (_activeCharacterData != null)
+            {
+                bool changed = false;
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    _activeOrientation = (_activeOrientation + 1) % 4;
+                    changed = true;
+                }
+                else if (Input.GetKeyDown(KeyCode.Q))
+                {
+                    _activeOrientation = (_activeOrientation + 3) % 4;
+                    changed = true;
+                }
+                else if (Input.GetKeyDown(KeyCode.R))
+                {
+                    _isReversed = !_isReversed;
+                    changed = true;
+                }
+
+                if (changed)
+                {
+                    UpdateVisualRotation();
+                }
+            }
+        }
+    }
+
+    private void UpdateVisualRotation()
+    {
+        GameObject charObj = GetCharacterObject(_activeCharacterKey.ownerID, _activeCharacterKey.pairID);
+        if (charObj != null)
+        {
+            // Rotate model around Y axis. Original models might have -90 X rotation.
+            charObj.transform.rotation = Quaternion.Euler(-90, _activeOrientation * 90f, 0);
+
+            // Apply Mirror effect on X axis
+            Vector3 currentScale = charObj.transform.localScale;
+            currentScale.x = Mathf.Abs(currentScale.x) * (_isReversed ? -1f : 1f);
+            charObj.transform.localScale = currentScale;
+        }
     }
 
     private IEnumerator Start()
@@ -273,7 +335,400 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
             {
                 visual.SetIsActive(isActive);
             }
+
+            if (isActive)
+            {
+                _activeCharacterKey = key;
+                _activeCharacterData = GetCharacterData(ownerID, pairID);
+                _activeOrientation = 0; // Reset orientation for new active character
+                _isReversed = false;    // Reset mirror for new active character
+                UpdateVisualRotation();
+            }
+            else if (_activeCharacterKey == key)
+            {
+                _activeCharacterKey = (-1, -1);
+                _activeCharacterData = null;
+                _isReversed = false;
+            }
         }
+    }
+
+    public int GetSpawnedCharacterLibIndex(int ownerID, int pairID)
+    {
+        if (_spawnedCharLibIndices.TryGetValue((ownerID, pairID), out int libIdx))
+        {
+            return libIdx;
+        }
+        return -1;
+    }
+
+    private CharacterData GetCharacterData(int ownerID, int pairID)
+    {
+        int libIdx = GetSpawnedCharacterLibIndex(ownerID, pairID);
+        if (_library != null && libIdx >= 0 && libIdx < _library.AllCharacters.Count)
+            return _library.AllCharacters[libIdx];
+        
+        return null;
+    }
+
+    public bool IsTileUnderAttack(Vector2Int tileCoords)
+    {
+        if (_activeCharacterData == null || _activeCharacterData.AttackPatternGrid == null) return false;
+
+        var gridSlot = _tileOccupants.FirstOrDefault(x => x.Value == _activeCharacterKey);
+        if (gridSlot.Value != _activeCharacterKey) return false;
+
+        Vector2Int charGridPos = gridSlot.Key;
+        Vector2Int relOffset = tileCoords - charGridPos;
+        
+        // Rotate the offset relative to the character based on current orientation
+        // (x, y) rotated counter-clockwise by _activeOrientation * 90
+        Vector2Int rotatedRel = relOffset;
+        switch (_activeOrientation)
+        {
+            case 1: rotatedRel = new Vector2Int(relOffset.y, -relOffset.x); break; // 90 CW in world -> rotate -90 in pattern
+            case 2: rotatedRel = new Vector2Int(-relOffset.x, -relOffset.y); break; // 180
+            case 3: rotatedRel = new Vector2Int(-relOffset.y, relOffset.x); break; // 270 CW in world -> rotate 90 in pattern
+        }
+
+        // Apply Reverse (Mirror) if active
+        if (_isReversed)
+        {
+            rotatedRel.x = -rotatedRel.x;
+        }
+
+        Vector2Int patternCharPos = _activeCharacterData.AttackPatternGrid.CharacterPosition;
+        int px = rotatedRel.x + patternCharPos.x;
+        int py = rotatedRel.y + patternCharPos.y;
+
+        if (px >= 0 && px < 3 && py >= 0 && py < 3)
+        {
+            return _activeCharacterData.AttackPatternGrid.Get(px, py);
+        }
+
+        return false;
+    }
+
+    public bool IsTileMovable(Vector2Int tileCoords)
+    {
+        if (_activeMovementCard == null || _activeMovementCard.MovementPatternGrid == null) return false;
+
+        var gridSlot = _tileOccupants.FirstOrDefault(x => x.Value == _activeCharacterKey);
+        if (gridSlot.Value != _activeCharacterKey) return false;
+
+        Vector2Int charGridPos = gridSlot.Key;
+        Vector2Int relOffset = tileCoords - charGridPos;
+        
+        // APPLY ROTATION (copied from Attack logic)
+        Vector2Int rotatedRel = relOffset;
+        switch (_activeOrientation)
+        {
+            case 1: rotatedRel = new Vector2Int(relOffset.y, -relOffset.x); break; 
+            case 2: rotatedRel = new Vector2Int(-relOffset.x, -relOffset.y); break; 
+            case 3: rotatedRel = new Vector2Int(-relOffset.y, relOffset.x); break; 
+        }
+
+        // APPLY REVERSE (Mirror)
+        if (_isReversed)
+        {
+            rotatedRel.x = -rotatedRel.x;
+        }
+        
+        Vector2Int patternCharPos = _activeMovementCard.MovementPatternGrid.CharacterPosition;
+        int px = rotatedRel.x + patternCharPos.x;
+        int py = rotatedRel.y + patternCharPos.y;
+
+        if (px >= 0 && px < 3 && py >= 0 && py < 3)
+        {
+            return _activeMovementCard.MovementPatternGrid.Get(px, py);
+        }
+
+        return false;
+    }
+
+    public void SetMovementMode(MovementCardInfo cardInfo)
+    {
+        if (cardInfo != null)
+        {
+            // SECURE OWNERSHIP: Only allow if card owner matches active unit owner
+            if (cardInfo.OwnerID != _activeCharacterKey.ownerID)
+            {
+                Debug.LogWarning($"[Movement] Ownership mismatch! Card belongs to P{cardInfo.OwnerID}, Unit belongs to P{_activeCharacterKey.ownerID}");
+                return;
+            }
+        }
+        _activeMovementCardInfo = cardInfo;
+        _activeMovementCard = cardInfo != null ? cardInfo.MoveCard : null;
+    }
+
+    public void ClearMovementMode()
+    {
+        _activeMovementCard = null;
+        _activeMovementCardInfo = null;
+    }
+
+    /// <summary>
+    /// Спроба перемістити активного персонажа на вказану клітинку
+    /// </summary>
+    public void TryMoveActiveCharacter(Vector2Int targetPos)
+    {
+        if (!IsMovementModeActive) return;
+        if (_activeCharacterKey == (-1, -1)) return;
+
+        // 1. ПЕРЕВІРКА ПАТЕРНУ
+        if (!IsTileMovable(targetPos))
+        {
+            Debug.Log("[Movement] Target tile not in pattern!");
+            return;
+        }
+
+        // 2. ПЕРЕВІРКА КОЛІЗІЇ (чи зайнята клітинка?)
+        if (_tileOccupants.ContainsKey(targetPos))
+        {
+            Debug.Log("[Movement] Target tile is already occupied!");
+            return;
+        }
+
+        // 3. ВИКОНАННЯ ХОДУ
+        string cardName = _activeMovementCard != null ? _activeMovementCard.name : "";
+        if (PhotonNetwork.InRoom)
+        {
+            photonView.RPC("RPC_MoveCharacter", RpcTarget.All, _activeCharacterKey.ownerID, _activeCharacterKey.pairID, targetPos.x, targetPos.y, cardName);
+        }
+        else
+        {
+            ExecuteMovement(_activeCharacterKey.ownerID, _activeCharacterKey.pairID, targetPos, cardName);
+        }
+    }
+
+    [PunRPC]
+    private void RPC_MoveCharacter(int ownerID, int pairID, int tx, int ty, string cardName)
+    {
+        ExecuteMovement(ownerID, pairID, new Vector2Int(tx, ty), cardName);
+    }
+
+    private void ExecuteMovement(int ownerID, int pairID, Vector2Int targetPos, string cardName)
+    {
+        var key = (ownerID, pairID);
+        var kvp = _tileOccupants.FirstOrDefault(x => x.Value == key);
+        if (kvp.Value != key) return;
+
+        Vector2Int oldPos = kvp.Key;
+        _tileOccupants.Remove(oldPos);
+        _tileOccupants[targetPos] = key;
+
+        GameObject charObj = GetCharacterObject(ownerID, pairID);
+        if (charObj != null)
+        {
+            Tile t = FindTileAt(targetPos);
+            if (t != null)
+            {
+                charObj.transform.position = t.transform.position + Vector3.up * 0.05f;
+            }
+        }
+
+        // ВИДАЛЕННЯ КАРТКИ
+        // Якщо це локальний хід, ми вже маємо посилання. Якщо ні (або RPC), шукаємо по імені та власнику.
+        MovementCardInfo targetCard = _activeMovementCardInfo;
+        if (targetCard == null && !string.IsNullOrEmpty(cardName))
+        {
+            targetCard = FindObjectsOfType<MovementCardInfo>()
+                .FirstOrDefault(c => c.OwnerID == ownerID && c.MoveCard != null && c.MoveCard.name == cardName);
+        }
+
+        if (targetCard != null)
+        {
+            // PERSISTENCE: Remove from the logical hand in settings
+            if (_gameSceneState != null && _gameSceneState._currentSettings != null)
+            {
+                var snapshot = _gameSceneState._currentSettings.GetSnapshot(ownerID);
+                if (snapshot != null && targetCard.MoveCard != null)
+                {
+                    snapshot.SelectedMovementCards.Remove(targetCard.MoveCard);
+                }
+            }
+            Destroy(targetCard.gameObject);
+        }
+
+        ClearMovementMode(); 
+        
+        // NEW: Turn logic
+        if (InitiativeSystem.Instance != null)
+        {
+            InitiativeSystem.Instance.ConsumeAction();
+        }
+    }
+
+    /// <summary>
+    /// Спроба атакувати вказану клітинку
+    /// </summary>
+    public void TryAttackTile(Vector2Int targetPos)
+    {
+        if (IsMovementModeActive) return; // Не атакуємо, якщо вибрана хода
+        
+        if (!IsTileUnderAttack(targetPos))
+        {
+            Debug.Log("[Attack] Clicked tile not in pattern!");
+            return;
+        }
+
+        List<Vector2Int> targetTiles = new List<Vector2Int>();
+        var gridSlot = _tileOccupants.FirstOrDefault(x => x.Value == _activeCharacterKey);
+        if (gridSlot.Value == _activeCharacterKey)
+        {
+            Vector2Int charGridPos = gridSlot.Key;
+            for (int x = -5; x <= 5; x++)
+            {
+                for (int y = -5; y <= 5; y++)
+                {
+                    Vector2Int pos = charGridPos + new Vector2Int(x, y);
+                    if (IsTileUnderAttack(pos)) targetTiles.Add(pos);
+                }
+            }
+        }
+
+        if (targetTiles.Count == 0) return; // Fallback
+
+        // PREVENT ATTACKING EMPTY SPACE (Friendly Fire ON)
+        bool hasTarget = false;
+        foreach (var pos in targetTiles)
+        {
+            if (_tileOccupants.TryGetValue(pos, out var occ))
+            {
+                // Any unit other than the attacker themselves is a valid target
+                if (occ != _activeCharacterKey)
+                {
+                    hasTarget = true;
+                    break;
+                }
+            }
+        }
+
+        if (!hasTarget)
+        {
+            Debug.Log("[Attack] No targets in pattern, attack cancelled!");
+            return;
+        }
+
+        if (PhotonNetwork.InRoom)
+        {
+            int[] txs = targetTiles.Select(t => t.x).ToArray();
+            int[] tys = targetTiles.Select(t => t.y).ToArray();
+            photonView.RPC("RPC_AttackTiles", RpcTarget.All, _activeCharacterKey.ownerID, _activeCharacterKey.pairID, txs, tys);
+        }
+        else
+        {
+            ExecuteAttackMulti(_activeCharacterKey.ownerID, _activeCharacterKey.pairID, targetTiles);
+        }
+    }
+
+    [PunRPC]
+    private void RPC_AttackTiles(int ownerID, int pairID, int[] txs, int[] tys)
+    {
+        List<Vector2Int> targetTiles = new List<Vector2Int>();
+        for (int i = 0; i < txs.Length; i++)
+        {
+            targetTiles.Add(new Vector2Int(txs[i], tys[i]));
+        }
+        ExecuteAttackMulti(ownerID, pairID, targetTiles);
+    }
+
+    private void ExecuteAttackMulti(int ownerID, int pairID, List<Vector2Int> targetTiles)
+    {
+        // 1. Ефект на самому атакуючому герої
+        var myObj = GetCharacterObject(ownerID, pairID);
+        if (myObj != null && EffectManager.Instance != null)
+        {
+            EffectManager.Instance.PlayAttackerEffect(myObj.transform.position);
+        }
+
+        // 2. Логіка пошкоджень для кожної клітинки
+        foreach (Vector2Int targetPos in targetTiles)
+        {
+            if (_tileOccupants.TryGetValue(targetPos, out var victimKey))
+            {
+                if (EffectManager.Instance != null)
+                {
+                    Tile t = FindTileAt(targetPos);
+                    if (t != null) EffectManager.Instance.PlayHitEffect(t.transform.position);
+                }
+
+                // --- DAMAGE LOGIC ---
+                var attackerData = GetCharacterData(ownerID, pairID);
+                var victimData = GetCharacterData(victimKey.Item1, victimKey.Item2);
+
+                if (attackerData != null && victimData != null && _unitHPs.ContainsKey(victimKey))
+                {
+                    int damage = Mathf.Max(1, attackerData.AttackBase - victimData.DefenseBase);
+                    _unitHPs[victimKey] -= damage;
+                    
+                    Debug.Log($"[Battle] Unit {victimKey} hit by {ownerID}! Damage={damage}, HP remaining={_unitHPs[victimKey]}");
+
+                    if (_unitHPs[victimKey] <= 0)
+                    {
+                        HandleUnitDeath(victimKey, targetPos);
+                    }
+                }
+                // --------------------
+            }
+            else
+            {
+                if (EffectManager.Instance != null)
+                {
+                    Tile t = FindTileAt(targetPos);
+                    if (t != null) EffectManager.Instance.PlayMissEffect(t.transform.position);
+                }
+            }
+        }
+
+        // 3. АТАКА ЗАВЕРШУЄ ХІД (ConsumeAction(true) означає злити всі дії)
+        if (InitiativeSystem.Instance != null)
+        {
+            InitiativeSystem.Instance.ConsumeAction(true);
+        }
+    }
+
+    private void HandleUnitDeath((int ownerID, int pairID) key, Vector2Int pos)
+    {
+        Debug.Log($"[Battle] Unit {key} is DEAD!");
+
+        // Remove from occupants
+        _tileOccupants.Remove(pos);
+
+        // Remove from spawned objects
+        if (_spawnedCharacters.TryGetValue(key, out GameObject obj))
+        {
+            Destroy(obj);
+            _spawnedCharacters.Remove(key);
+            _spawnedCharLibIndices.Remove(key);
+            _spawnedCharModIndices.Remove(key);
+        }
+
+        _unitHPs.Remove(key);
+
+        // Notify Initiative System to remove from queue
+        if (InitiativeSystem.Instance != null)
+        {
+            InitiativeSystem.Instance.RemoveFromQueue(key.ownerID, key.pairID);
+        }
+
+        // Play visual feedback for death
+        if (EffectManager.Instance != null)
+        {
+            Tile t = FindTileAt(pos);
+            if (t != null) EffectManager.Instance.PlayHitEffect(t.transform.position); // Reusing hit for now
+        }
+    }
+
+    public void InitializeHPs()
+    {
+        _unitHPs.Clear();
+        foreach (var key in _spawnedCharacters.Keys)
+        {
+            var charData = _deckController.GetActiveCharacterData(key.Item2);
+            _unitHPs[key] = (charData != null) ? charData.MaxHP : 10;
+        }
+        Debug.Log($"[Battle] Initialized HP for {_unitHPs.Count} units.");
     }
 
     public GameObject GetCharacterObject(int ownerID, int pairID)
@@ -297,6 +752,11 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     public void UpdateCharacterModel(int ownerID, int pairID, int libIdx)
     {
         var key = (ownerID, pairID);
+
+        // Optimization: if the model is already correct, do nothing to avoid flicker
+        if (_spawnedCharLibIndices.TryGetValue(key, out int currentIdx) && currentIdx == libIdx)
+            return;
+
         if (_spawnedCharacters.TryGetValue(key, out GameObject charInstance))
         {
             // Find current tile

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler, IPointerClickHandler
 {
     public CardSlot CurrentSlot { get; set; }
     public CardSlot LastSlot { get; private set; }
@@ -362,6 +362,24 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             scaler.UpdateHome(); 
             
         if (PersistentMusicManager.Instance != null) PersistentMusicManager.Instance.PlayCardPlaced();
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.dragging) return;
+        
+        // Allowed only during active game phase to swap cards in a pair
+        if (InitiativeSystem.Instance != null && InitiativeSystem.Instance.IsFinalized)
+        {
+            // Only allow if it's our turn
+            if (OwnerID == InitiativeSystem.Instance.CurrentTurnPlayerID && IsPassive)
+            {
+                if (cardDeckController != null)
+                {
+                    cardDeckController.MakeActive(this);
+                }
+            }
+        }
     }
 
     public void OnDrop(PointerEventData eventData)
