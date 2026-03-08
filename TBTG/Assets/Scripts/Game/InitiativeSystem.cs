@@ -322,7 +322,7 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
         }
 
         _isFinalized = true;
-        _roundCount = 1;
+        if (_roundCount == 0) _roundCount = 1;
         _unitsActedInRound = 0;
         if (_roundText != null) _roundText.gameObject.SetActive(true);
         UpdateRoundUI();
@@ -439,38 +439,65 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
         _unitsActedInRound = 0;
         UpdateRoundUI();
 
-        List<int> p1List, p2List;
-        if (PhotonNetwork.InRoom)
+        // 1. Зносимо старі картки ходьби — RefreshBattleUI згенерує нові рандомні
+        var settings = _gameSceneState != null ? _gameSceneState._currentSettings : FindObjectOfType<GameSceneState>()?._currentSettings;
+        if (settings != null)
         {
-            var keys = _allPlayersInitiatives.Keys.OrderBy(k => k).ToList();
-            p1List = _allPlayersInitiatives[keys[0]];
-            p2List = _allPlayersInitiatives[keys[1]];
-        }
-        else
-        {
-            p1List = _allPlayersInitiatives.ContainsKey(1) ? _allPlayersInitiatives[1] : new List<int>();
-            p2List = _allPlayersInitiatives.ContainsKey(2) ? _allPlayersInitiatives[2] : new List<int>();
+            var snap1 = settings.GetSnapshot(1);
+            if (snap1 != null) snap1.SelectedMovementCards.Clear();
+            var snap2 = settings.GetSnapshot(2);
+            if (snap2 != null) snap2.SelectedMovementCards.Clear();
         }
 
-        int max = Mathf.Max(p1List.Count, p2List.Count);
-        for (int i = 0; i < max; i++)
+        // 2. Скидаємо ініціативу, щоб гравці накидували заново
+        _isFinalized = false;
+        _finalQueue.Clear();
+        _allPlayersInitiatives.Clear();
+        _initiativeQueue.Clear();
+        _addedPairIDs.Clear();
+        WasDropHandled = false;
+
+        // 3. Вимикаємо кнопку Skip Turn на час вибору ініціативи
+        var skipUI = FindObjectOfType<GameUIController>();
+        if (skipUI != null) skipUI.SetSkipTurnButtonActive(false);
+
+        // 4. Повертаємо хід першому гравцю для вибору ініціативи
+        if (_gameSceneState != null && _gameSceneState._currentSettings is HotseatSettings hs)
         {
-            if (_p1Starts)
+            hs.MapPlayerIndex = 1;
+            
+            GameUIController uiController = skipUI;
+            if (uiController != null)
             {
-                if (i < p1List.Count) _finalQueue.Add((PhotonNetwork.InRoom ? _allPlayersInitiatives.Keys.OrderBy(k => k).First() : 1, p1List[i]));
-                if (i < p2List.Count) _finalQueue.Add((PhotonNetwork.InRoom ? _allPlayersInitiatives.Keys.OrderBy(k => k).Last() : 2, p2List[i]));
+                uiController.ShowHotseatPlayer(hs.Player1Name);
             }
-            else
+
+            if (PlayerCameraController.Instance != null)
             {
-                if (i < p2List.Count) _finalQueue.Add((PhotonNetwork.InRoom ? _allPlayersInitiatives.Keys.OrderBy(k => k).Last() : 2, p2List[i]));
-                if (i < p1List.Count) _finalQueue.Add((PhotonNetwork.InRoom ? _allPlayersInitiatives.Keys.OrderBy(k => k).First() : 1, p1List[i]));
+                PlayerCameraController.Instance.RotateToPlayer(1);
+            }
+
+            if (GameDataInitializer.Instance != null)
+            {
+                // RefreshBattleUI calls ApplyHotseatHand inside and updates movement cards.
+                GameDataInitializer.Instance.RefreshBattleUI();
             }
         }
+        else if (PhotonNetwork.InRoom)
+        {
+            // В мультиплеєрі просто перезавантажуємо свої карти
+            if (GameDataInitializer.Instance != null)
+            {
+                GameDataInitializer.Instance.RefreshBattleUI();
+            }
+        }
+
+        UpdateInitiativeUI();
+        UpdateAcceptButton();
     }
 
     private void UpdateRoundUI()
     {
-        if (!_isFinalized) return;
 
         if (_roundText != null)
         {

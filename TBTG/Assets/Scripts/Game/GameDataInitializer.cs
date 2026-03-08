@@ -9,7 +9,7 @@ public class GameDataInitializer : MonoBehaviour
     public static GameDataInitializer Instance { get; private set; }
 
     [Header("Data Source")]
-    [SerializeField] private GameDataLibrary _library;
+    public GameDataLibrary _library;
     
     [SerializeField] private GameObject _cardPrefab;
     [SerializeField] private GameObject _modPrefab;
