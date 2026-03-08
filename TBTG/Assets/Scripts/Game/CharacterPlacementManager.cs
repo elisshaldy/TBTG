@@ -406,6 +406,48 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         return false;
     }
 
+    public bool IsTilePotentiallyUnderAttack(Vector2Int tileCoords)
+    {
+        if (_activeCharacterData == null || _activeCharacterData.AttackPatternGrid == null) return false;
+
+        var gridSlot = _tileOccupants.FirstOrDefault(x => x.Value == _activeCharacterKey);
+        if (gridSlot.Value != _activeCharacterKey) return false;
+
+        Vector2Int charGridPos = gridSlot.Key;
+        Vector2Int relOffset = tileCoords - charGridPos;
+        Vector2Int patternCharPos = _activeCharacterData.AttackPatternGrid.CharacterPosition;
+
+        for (int flip = 0; flip < 2; flip++)
+        {
+            for (int rot = 0; rot < 4; rot++)
+            {
+                Vector2Int currentRel = relOffset;
+                
+                switch (rot)
+                {
+                    case 1: currentRel = new Vector2Int(currentRel.y, -currentRel.x); break; 
+                    case 2: currentRel = new Vector2Int(-currentRel.x, -currentRel.y); break; 
+                    case 3: currentRel = new Vector2Int(-currentRel.y, currentRel.x); break; 
+                }
+
+                if (flip == 1)
+                {
+                    currentRel.x = -currentRel.x;
+                }
+
+                int px = currentRel.x + patternCharPos.x;
+                int py = currentRel.y + patternCharPos.y;
+
+                if (px >= 0 && px < 3 && py >= 0 && py < 3 && _activeCharacterData.AttackPatternGrid.Get(px, py))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public bool IsTileMovable(Vector2Int tileCoords)
     {
         if (_activeMovementCard == null || _activeMovementCard.MovementPatternGrid == null) return false;

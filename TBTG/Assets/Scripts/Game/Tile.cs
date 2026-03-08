@@ -125,6 +125,19 @@ public class Tile : MonoBehaviour
                 Gizmos.color = new Color(1, 0, 0, 0.25f);
                 Gizmos.DrawCube(center, size);
             }
+            else if (CharacterPlacementManager.Instance.IsTilePotentiallyUnderAttack(GridCoordinates))
+            {
+                // POTENTIAL ATTACK HIGHLIGHT (Pale Red - All possible variants)
+                Gizmos.color = new Color(1, 0.1f, 0.1f, 0.3f); // Pale Red Wireframe
+                Vector3 center = transform.position + Vector3.up * 0.05f;
+                Vector3 size = new Vector3(0.95f, 0.1f, 0.95f);
+                
+                Gizmos.DrawWireCube(center, size);
+
+                // Very light fill
+                Gizmos.color = new Color(1, 0, 0, 0.05f);
+                Gizmos.DrawCube(center, size);
+            }
         }
     }
 }
