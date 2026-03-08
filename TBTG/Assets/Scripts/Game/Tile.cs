@@ -76,10 +76,6 @@ public class Tile : MonoBehaviour
             {
                 CharacterPlacementManager.Instance.TryMoveActiveCharacter(GridCoordinates);
             }
-            else
-            {
-                CharacterPlacementManager.Instance.TryAttackTile(GridCoordinates);
-            }
         }
     }
 

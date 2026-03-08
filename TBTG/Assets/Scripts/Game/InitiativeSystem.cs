@@ -329,7 +329,7 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
 
         if (CharacterPlacementManager.Instance != null)
         {
-            CharacterPlacementManager.Instance.InitializeHPs();
+            // CharacterPlacementManager.Instance.InitializeHPs();
         }
 
         UpdateInitiativeUI();
@@ -574,24 +574,6 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
         }
         else
         {
-            // Hotseat addition: Show other players' selections as HIDDEN
-            if (_gameSceneState != null && _gameSceneState._currentSettings is HotseatSettings hs)
-            {
-                foreach (var kvp in _allPlayersInitiatives)
-                {
-                    if (kvp.Key != hs.CurrentPlayerIndex)
-                    {
-                        foreach (var pID in kvp.Value)
-                        {
-                            GameObject obj = Instantiate(_initiativePrefab, _containerInitiative);
-                            SetupInitiativeEntry(obj, _unknownCharSprite, 0, pID);
-                            
-                            var drag = obj.GetComponent<InitiativeEntryDragHandler>();
-                            if (drag != null) drag.enabled = false;
-                        }
-                    }
-                }
-            }
 
             for (int i = 0; i < _initiativeQueue.Count; i++)
             {
