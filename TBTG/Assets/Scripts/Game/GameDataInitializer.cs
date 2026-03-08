@@ -175,18 +175,19 @@ public class GameDataInitializer : MonoBehaviour
     }
 
     // NEW: Initialize deck with specific selected cards (for Hotseat Map transition)
-    public void InitializeMapSetupForPlayer(int playerIndex, List<CharacterData> chars, List<ModData> mods)
+    public void InitializeMapSetupForPlayer(int playerIndex, List<CharacterData> chars, List<ModData> mods, bool clearContainers = true)
     {
         if (_cardContainer != null) _cardContainer.enabled = true;
         if (_modContainer != null) _modContainer.enabled = true;
 
-        if (_deckController != null) _deckController.ResetController();
-        
-        ClearContainer(_cardContainer.transform);
-        ClearContainer(_modContainer.transform);
-        
-        _cardsInstances.Clear();
-        _modsInstances.Clear();
+        if (clearContainers)
+        {
+            if (_deckController != null) _deckController.ResetController();
+            ClearContainer(_cardContainer.transform);
+            ClearContainer(_modContainer.transform);
+            _cardsInstances.Clear();
+            _modsInstances.Clear();
+        }
 
         GameSceneState sceneState = FindObjectOfType<GameSceneState>();
 
@@ -227,6 +228,7 @@ public class GameDataInitializer : MonoBehaviour
                 if (_deckController != null)
                 {
                     var dragHandler = modObj.GetComponent<ModDragHandler>();
+                    dragHandler.OwnerID = playerIndex;
                     _deckController.RegisterMod(dragHandler);
                 }
             }
@@ -408,6 +410,7 @@ public class GameDataInitializer : MonoBehaviour
         {
             Destroy(container.GetChild(i).gameObject);
         }
+        container.DetachChildren();
     }
 
     public void RefreshBattleUI()
@@ -419,10 +422,102 @@ public class GameDataInitializer : MonoBehaviour
         GameSceneState sceneState = FindObjectOfType<GameSceneState>();
         GameSettings settings = sceneState != null ? sceneState._currentSettings : null;
         
-        // 1. Refresh MOVEMENT cards (Always show P1 at bottom, P2 at top)
+        if (settings is HotseatSettings hSettings)
+        {
+            ApplyHotseatHand(currentActivePlayer);
+        }
+
+        // 1. Refresh MOVEMENT cards (Always show Active Player at bottom, Enemy at top)
         _movementCardsInstances.Clear();
         InitializeMovementContainer(_movementCardContainer, currentActivePlayer, settings);
         InitializeMovementContainer(_movementCardContainerEnemy, enemyPlayer, settings);
+
+        // Force layout rebuild and grab homes
+        StartCoroutine(RebuildMovementCardsRoutine());
+    }
+
+    public void ApplyHotseatHand(int playerID)
+    {
+        if (_deckController == null) return;
+
+        // 1. Reset controller (hides previous and clears lists)
+        _deckController.ResetController();
+
+        // 2. Filter and Register ALL cards for THIS player
+        foreach (var cardInfo in _cardsInstances)
+        {
+            if (cardInfo == null) continue;
+            var drag = cardInfo.GetComponent<CardDragHandler>();
+            if (drag != null && drag.OwnerID == playerID)
+            {
+                cardInfo.gameObject.SetActive(true);
+                _deckController.RegisterCard(drag);
+            }
+            else
+            {
+                cardInfo.gameObject.SetActive(false);
+            }
+        }
+
+        // 3. Filter and Register Mods for THIS player
+        foreach (var modInfo in _modsInstances)
+        {
+            if (modInfo == null) continue;
+            var drag = modInfo.GetComponent<ModDragHandler>();
+            
+            // Logic: if it's attached to a card, it follows card visibility.
+            // If it's in the mod container, we check its OwnerID (re-added).
+            if (drag != null && modInfo.transform.parent == _modContainer.transform)
+            {
+                bool isMe = drag.OwnerID == playerID;
+                modInfo.gameObject.SetActive(isMe);
+                if (isMe) _deckController.RegisterMod(drag);
+            }
+        }
+
+        // 4. Fill slots
+        _deckController.AutoFillSlots();
+
+        // 5. Special Sync: if map is finalized, make sure the cards currently on map are "ACTIVE" in slots
+        if (InitiativeSystem.Instance != null && InitiativeSystem.Instance.IsFinalized && CharacterPlacementManager.Instance != null)
+        {
+             for (int pairID = 0; pairID < 5; pairID++)
+             {
+                 int mapLibIdx = CharacterPlacementManager.Instance.GetSpawnedCharacterLibIndex(playerID, pairID);
+                 if (mapLibIdx == -1) continue;
+
+                 // Find the cards in that pair in controller
+                 // NO NEED: Controller already has them in _cards. Let's just find the one that matches map
+                 var pCards = _cardsInstances.FindAll(c => {
+                     var d = c.GetComponent<CardDragHandler>();
+                     return d != null && d.OwnerID == playerID && d.PairID == pairID;
+                 });
+
+                 var activeInPair = pCards.Find(c => CharacterPlacementManager.Instance.GetLibraryIndex(c.CharData) == mapLibIdx);
+                 if (activeInPair != null)
+                 {
+                     var drag = activeInPair.GetComponent<CardDragHandler>();
+                     if (drag != null) _deckController.MakeActive(drag);
+                 }
+             }
+        }
+    }
+
+    private IEnumerator RebuildMovementCardsRoutine()
+    {
+        if (_movementCardContainer != null) LayoutRebuilder.ForceRebuildLayoutImmediate(_movementCardContainer.transform as RectTransform);
+        if (_movementCardContainerEnemy != null) LayoutRebuilder.ForceRebuildLayoutImmediate(_movementCardContainerEnemy.transform as RectTransform);
+
+        yield return new WaitForEndOfFrame();
+
+        foreach (var mc in _movementCardsInstances)
+        {
+            if (mc == null) continue;
+            var handler = mc.GetComponent<CardDragHandler>();
+            if (handler != null) handler.InitializeHome();
+            var modHandler = mc.GetComponent<ModDragHandler>();
+            if (modHandler != null) modHandler.InitializeHome();
+        }
     }
     private int GetPlayerIndex(SceneState mode, GameSettings settings)
     {

@@ -50,6 +50,15 @@ public class CardDeckController : MonoBehaviour
             if (card != null) card.gameObject.SetActive(false);
         }
         
+        ClearAllSlots();
+
+        _cards.Clear();
+        _mods.Clear();
+        CheckDeck();
+    }
+
+    public void ClearAllSlots()
+    {
         foreach (var slot in _cardDeck)
         {
             if (slot != null && slot.IsOccupied)
@@ -57,10 +66,6 @@ public class CardDeckController : MonoBehaviour
                 slot.ClearSlot();
             }
         }
-
-        _cards.Clear();
-        _mods.Clear();
-        CheckDeck();
     }
 
 

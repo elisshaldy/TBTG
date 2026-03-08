@@ -8,6 +8,7 @@ public class ModDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     public event Action<int> ModDetachHere;
     
     [SerializeField] private ModInfo _modInfo;
+    public int OwnerID { get; set; } = -1;
     
     private RectTransform rectTransform;
     private Canvas canvas;

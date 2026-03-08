@@ -534,6 +534,7 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
                         {
                             if (isMyTurn)
                             {
+                                //PlayerCameraController.Instance.RotateToPlayer(entry.ownerID);
                                 var characterObj = CharacterPlacementManager.Instance.GetCharacterObject(entry.ownerID, entry.pairID);
                                 if (characterObj != null) PlayerCameraController.Instance.FollowTarget(characterObj.transform);
                             }

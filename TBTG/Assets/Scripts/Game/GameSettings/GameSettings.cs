@@ -287,7 +287,8 @@ public class HotseatSettings : GameSettings
         GameDataInitializer initializer = GameObject.FindObjectOfType<GameDataInitializer>();
         if (initializer != null)
         {
-            initializer.InitializeMapSetupForPlayer(2, Player2Snapshot.SelectedChars, Player2Snapshot.SelectedMods);
+            initializer.InitializeMapSetupForPlayer(2, Player2Snapshot.SelectedChars, Player2Snapshot.SelectedMods, false);
+            initializer.ApplyHotseatHand(2);
         }
     }
 
@@ -307,6 +308,7 @@ public class HotseatSettings : GameSettings
         if (initializer != null)
         {
             initializer.InitializeMapSetupForPlayer(1, Player1Snapshot.SelectedChars, Player1Snapshot.SelectedMods);
+            initializer.ApplyHotseatHand(1);
         }
     }
 
