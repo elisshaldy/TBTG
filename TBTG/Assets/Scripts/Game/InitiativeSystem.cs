@@ -402,7 +402,14 @@ public class InitiativeSystem : MonoBehaviour, IDropHandler
         int prevPlayerID = CurrentTurnPlayerID;
 
         // 1. REMOVE the finished unit (as requested)
+        var finishedUnit = _finalQueue[0];
         _finalQueue.RemoveAt(0);
+        
+        if (CharacterPlacementManager.Instance != null)
+        {
+            CharacterPlacementManager.Instance.SetCharacterActive(finishedUnit.ownerID, finishedUnit.pairID, false);
+        }
+
         _unitsActedInRound++;
 
         // 2. CHECK: If round is over, refill the queue

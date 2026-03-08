@@ -415,29 +415,41 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
 
         Vector2Int charGridPos = gridSlot.Key;
         Vector2Int relOffset = tileCoords - charGridPos;
-        
-        // APPLY ROTATION (copied from Attack logic)
-        Vector2Int rotatedRel = relOffset;
-        switch (_activeOrientation)
-        {
-            case 1: rotatedRel = new Vector2Int(relOffset.y, -relOffset.x); break; 
-            case 2: rotatedRel = new Vector2Int(-relOffset.x, -relOffset.y); break; 
-            case 3: rotatedRel = new Vector2Int(-relOffset.y, relOffset.x); break; 
-        }
-
-        // APPLY REVERSE (Mirror)
-        if (_isReversed)
-        {
-            rotatedRel.x = -rotatedRel.x;
-        }
-        
         Vector2Int patternCharPos = _activeMovementCard.MovementPatternGrid.CharacterPosition;
-        int px = rotatedRel.x + patternCharPos.x;
-        int py = rotatedRel.y + patternCharPos.y;
 
-        if (px >= 0 && px < 3 && py >= 0 && py < 3)
+        // Перевіряємо всі 8 варіантів (4 повороти + 2 віддзеркалення),
+        // щоб одразу відобразити всі можливі напрямки на карті навколо юніта.
+        for (int flip = 0; flip < 2; flip++)
         {
-            return _activeMovementCard.MovementPatternGrid.Get(px, py);
+            for (int rot = 0; rot < 4; rot++)
+            {
+                Vector2Int currentRel = relOffset;
+                
+                // Приміняємо поворот
+                switch (rot)
+                {
+                    case 1: currentRel = new Vector2Int(currentRel.y, -currentRel.x); break; 
+                    case 2: currentRel = new Vector2Int(-currentRel.x, -currentRel.y); break; 
+                    case 3: currentRel = new Vector2Int(-currentRel.y, currentRel.x); break; 
+                }
+
+                // Приміняємо віддзеркалення
+                if (flip == 1)
+                {
+                    currentRel.x = -currentRel.x;
+                }
+
+                int px = currentRel.x + patternCharPos.x;
+                int py = currentRel.y + patternCharPos.y;
+
+                if (px >= 0 && px < 3 && py >= 0 && py < 3)
+                {
+                    if (_activeMovementCard.MovementPatternGrid.Get(px, py))
+                    {
+                        return true;
+                    }
+                }
+            }
         }
 
         return false;

@@ -26,6 +26,16 @@ public class CardSlot : MonoBehaviour, IDropHandler
         UpdateHealthUI();
     }
 
+    private void OnEnable()
+    {
+        CharacterHealthSystem.OnAnyHealthChanged += UpdateHealthUI;
+    }
+
+    private void OnDisable()
+    {
+        CharacterHealthSystem.OnAnyHealthChanged -= UpdateHealthUI;
+    }
+
     public bool IsOccupied => CurrentCard != null;
 
     public void OnDrop(PointerEventData eventData)
@@ -85,51 +95,61 @@ public class CardSlot : MonoBehaviour, IDropHandler
             return;
         }
 
-        var healthSystem = CurrentCard.GetComponentInChildren<CharacterHealthSystem>(true);
+        // 1. Try to find the REAL health from the character on the board
+        CharacterHealthSystem healthSystem = null;
+        if (CharacterPlacementManager.Instance != null)
+        {
+            var charObj = CharacterPlacementManager.Instance.GetCharacterObject(CurrentCard.OwnerID, CurrentCard.PairID);
+            if (charObj != null)
+            {
+                healthSystem = charObj.GetComponentInChildren<CharacterHealthSystem>(true);
+            }
+        }
+
+        // 2. Fallback to the card's local health system if not on map
         if (healthSystem == null)
         {
-            Debug.LogWarning($"[CardSlot] CharacterHealthSystem NOT FOUND on {CurrentCard.name} or children!");
-            ClearHealthBars();
-            return;
+            healthSystem = CurrentCard.GetComponentInChildren<CharacterHealthSystem>(true);
         }
 
-        int activeBars = 0;
+        int activeBars = 0; 
         Color activeColor = _oneHealth;
 
-        switch (healthSystem.HealthState)
+        if (healthSystem != null)
         {
-            case CharacterHealthSystem.CharHealth.NonInitialized:
-            case CharacterHealthSystem.CharHealth.Dead:
-                activeBars = 0;
-                break;
-            case CharacterHealthSystem.CharHealth.Comma:
-                activeBars = 1;
-                break;
-            case CharacterHealthSystem.CharHealth.Critical:
-                activeBars = 2;
-                break;
-            case CharacterHealthSystem.CharHealth.Serious:
-                activeBars = 3;
-                break;
-            case CharacterHealthSystem.CharHealth.Minor:
-                activeBars = 4;
-                break;
-            case CharacterHealthSystem.CharHealth.Normal:
-                activeBars = 5;
-                break;
-            case CharacterHealthSystem.CharHealth.Extra:
-                activeBars = 6;
-                activeColor = _extraHealth;
-                break;
+            switch (healthSystem.HealthState)
+            {
+                case CharacterHealthSystem.CharHealth.Dead:
+                    activeBars = 0;
+                    break;
+                case CharacterHealthSystem.CharHealth.Coma:
+                    activeBars = 1;
+                    break;
+                case CharacterHealthSystem.CharHealth.Critical:
+                    activeBars = 2;
+                    break;
+                case CharacterHealthSystem.CharHealth.Serious:
+                    activeBars = 3;
+                    break;
+                case CharacterHealthSystem.CharHealth.Minor:
+                    activeBars = 4;
+                    break;
+                case CharacterHealthSystem.CharHealth.Normal:
+                case CharacterHealthSystem.CharHealth.NonInitialized:
+                    activeBars = 5;
+                    break;
+                case CharacterHealthSystem.CharHealth.Extra:
+                    activeBars = 6;
+                    activeColor = _extraHealth;
+                    break;
+            }
         }
 
-        Debug.Log($"[CardSlot] Updating UI for {CurrentCard.name}: State={healthSystem.HealthState}, Bars={activeBars}, ColorAlpha={activeColor.a}");
+        if (_healthBars == null || _healthBars.Length == 0) return;
 
-        if (_healthBars == null || _healthBars.Length == 0)
-        {
-            Debug.LogError("[CardSlot] _healthBars array is null or empty in Inspector!");
-            return;
-        }
+        // Visual fix: ensure colors are visible even if unset in Inspector
+        if (activeColor.a < 0.1f) activeColor = Color.green;
+        Color emptyColor = (_zeroHealth.a < 0.1f) ? new Color(0.2f, 0.2f, 0.2f, 0.5f) : _zeroHealth;
 
         for (int i = 0; i < _healthBars.Length; i++)
         {
@@ -138,7 +158,7 @@ public class CardSlot : MonoBehaviour, IDropHandler
             if (i < activeBars)
                 _healthBars[i].color = activeColor;
             else
-                _healthBars[i].color = _zeroHealth;
+                _healthBars[i].color = emptyColor;
         }
     }
 

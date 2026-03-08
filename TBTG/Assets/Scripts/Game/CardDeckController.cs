@@ -153,6 +153,12 @@ public class CardDeckController : MonoBehaviour
         }
     }
 
+    public CardSlot GetSlot(int index)
+    {
+        if (index >= 0 && index < _cardDeck.Count) return _cardDeck[index];
+        return null;
+    }
+
     public void AutoFillMods()
     {
         List<ModsCardContainer> containers = new List<ModsCardContainer>();
@@ -185,7 +191,7 @@ public class CardDeckController : MonoBehaviour
         }
     }
 
-    private void CheckDeck()
+    public void CheckDeck()
     {
         bool isDeckFull = true;
 

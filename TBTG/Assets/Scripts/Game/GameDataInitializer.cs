@@ -425,6 +425,14 @@ public class GameDataInitializer : MonoBehaviour
         if (settings is HotseatSettings hSettings)
         {
             ApplyHotseatHand(currentActivePlayer);
+
+            // Update player name in UI
+            var ui = FindObjectOfType<GameUIController>();
+            if (ui != null)
+            {
+                string playerName = (currentActivePlayer == 1) ? hSettings.Player1Name : hSettings.Player2Name;
+                ui.ShowHotseatPlayer(playerName);
+            }
         }
 
         // 1. Refresh MOVEMENT cards (Always show Active Player at bottom, Enemy at top)
@@ -440,67 +448,85 @@ public class GameDataInitializer : MonoBehaviour
     {
         if (_deckController == null) return;
 
-        // 1. Reset controller (hides previous and clears lists)
+        // 1. Full Reset (Clears slots, lists, and hides previous)
         _deckController.ResetController();
 
-        // 2. Filter and Register ALL cards for THIS player
-        foreach (var cardInfo in _cardsInstances)
+        // 2. Register Active Player's Hand into Controller
+        foreach (var cardInf in _cardsInstances)
         {
-            if (cardInfo == null) continue;
-            var drag = cardInfo.GetComponent<CardDragHandler>();
+            var drag = cardInf.GetComponent<CardDragHandler>();
             if (drag != null && drag.OwnerID == playerID)
             {
-                cardInfo.gameObject.SetActive(true);
+                cardInf.gameObject.SetActive(true);
                 _deckController.RegisterCard(drag);
             }
             else
             {
-                cardInfo.gameObject.SetActive(false);
+                cardInf.gameObject.SetActive(false);
             }
         }
 
-        // 3. Filter and Register Mods for THIS player
-        foreach (var modInfo in _modsInstances)
+        foreach (var modInf in _modsInstances)
         {
-            if (modInfo == null) continue;
-            var drag = modInfo.GetComponent<ModDragHandler>();
-            
-            // Logic: if it's attached to a card, it follows card visibility.
-            // If it's in the mod container, we check its OwnerID (re-added).
-            if (drag != null && modInfo.transform.parent == _modContainer.transform)
+            var drag = modInf.GetComponent<ModDragHandler>();
+            if (drag != null && modInf.transform.parent == _modContainer.transform)
             {
                 bool isMe = drag.OwnerID == playerID;
-                modInfo.gameObject.SetActive(isMe);
+                modInf.gameObject.SetActive(isMe);
                 if (isMe) _deckController.RegisterMod(drag);
             }
         }
 
-        // 4. Fill slots
-        _deckController.AutoFillSlots();
-
-        // 5. Special Sync: if map is finalized, make sure the cards currently on map are "ACTIVE" in slots
-        if (InitiativeSystem.Instance != null && InitiativeSystem.Instance.IsFinalized && CharacterPlacementManager.Instance != null)
+        // 3. Pair and Assign cards to Slots (Explicit Writing to slots)
+        for (int pairID = 0; pairID < 5; pairID++)
         {
-             for (int pairID = 0; pairID < 5; pairID++)
-             {
-                 int mapLibIdx = CharacterPlacementManager.Instance.GetSpawnedCharacterLibIndex(playerID, pairID);
-                 if (mapLibIdx == -1) continue;
+            // Find both cards for this player-pair
+            var pCards = _cardsInstances.FindAll(c => {
+                var d = c.GetComponent<CardDragHandler>();
+                return d != null && d.OwnerID == playerID && d.PairID == pairID;
+            });
 
-                 // Find the cards in that pair in controller
-                 // NO NEED: Controller already has them in _cards. Let's just find the one that matches map
-                 var pCards = _cardsInstances.FindAll(c => {
-                     var d = c.GetComponent<CardDragHandler>();
-                     return d != null && d.OwnerID == playerID && d.PairID == pairID;
-                 });
+            if (pCards.Count == 0) continue;
 
-                 var activeInPair = pCards.Find(c => CharacterPlacementManager.Instance.GetLibraryIndex(c.CharData) == mapLibIdx);
-                 if (activeInPair != null)
-                 {
-                     var drag = activeInPair.GetComponent<CardDragHandler>();
-                     if (drag != null) _deckController.MakeActive(drag);
-                 }
-             }
+            // Slots: 0 and 1 belong to pairID 0, etc.
+            CardSlot activeSlot = _deckController.GetSlot(pairID * 2);
+            CardSlot passiveSlot = _deckController.GetSlot(pairID * 2 + 1);
+
+            // Determine which one is ACTIVE on board (if any)
+            int mapLibIdx = (CharacterPlacementManager.Instance != null) 
+                ? CharacterPlacementManager.Instance.GetSpawnedCharacterLibIndex(playerID, pairID) 
+                : -1;
+
+            CardDragHandler mainCard = null;
+            CardDragHandler secondCard = null;
+
+            if (mapLibIdx != -1)
+            {
+                var cardOnBoard = pCards.Find(c => CharacterPlacementManager.Instance.GetLibraryIndex(c.CharData) == mapLibIdx);
+                if (cardOnBoard != null)
+                {
+                    mainCard = cardOnBoard.GetComponent<CardDragHandler>();
+                    var other = pCards.Find(c => c != cardOnBoard);
+                    if (other != null) secondCard = other.GetComponent<CardDragHandler>();
+                }
+            }
+            
+            // Fallback for not on board/selection
+            if (mainCard == null)
+            {
+                mainCard = pCards[0].GetComponent<CardDragHandler>();
+                if (pCards.Count > 1) secondCard = pCards[1].GetComponent<CardDragHandler>();
+            }
+
+            // WRITE TO SLOTS
+            if (mainCard != null && activeSlot != null) activeSlot.SetCardManually(mainCard);
+            if (secondCard != null && passiveSlot != null) passiveSlot.SetCardManually(secondCard);
         }
+
+        // Final UI refresh
+        _deckController.CheckDeck();
+        if (_cardContainer != null) LayoutRebuilder.ForceRebuildLayoutImmediate(_cardContainer.transform as RectTransform);
+        if (_modContainer != null) LayoutRebuilder.ForceRebuildLayoutImmediate(_modContainer.transform as RectTransform);
     }
 
     private IEnumerator RebuildMovementCardsRoutine()

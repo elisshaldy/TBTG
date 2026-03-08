@@ -65,7 +65,7 @@ public class MovementCardInfo : MonoBehaviour
         }
     }
 
-    private void UpdateMovementGrid()
+    public void UpdateMovementGrid()
     {
         if (MoveCard == null || MoveCard.MovementPatternGrid == null) return;
         if (_gridCells == null || _gridCells.Length == 0)
