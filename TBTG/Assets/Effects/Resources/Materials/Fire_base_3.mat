@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Fire_base_2
+  m_Name: Fire_base_3
   m_Shader: {fileID: 4800000, guid: 30bc8fd703be46640bd61c9fef44f54f, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -125,5 +125,5 @@ Material:
     - _Mask_FianalColor: {r: 1, g: 1, b: 1, a: 1}
     - _NoisexyTilingyzOffset: {r: 1, g: 1, b: 0, a: 0}
     - _Texture_Color: {r: 1, g: 1, b: 1, a: 1}
-    - _TintColor: {r: 0.49019608, g: 1, b: 1, a: 1}
+    - _TintColor: {r: 1, g: 0.9725693, b: 0.5613208, a: 1}
   m_BuildTextureStacks: []

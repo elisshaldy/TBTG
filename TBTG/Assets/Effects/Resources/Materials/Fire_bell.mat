@@ -114,5 +114,5 @@ Material:
     - _Mask_FianalColor: {r: 1, g: 1, b: 1, a: 1}
     - _NoisexyTilingyzOffset: {r: 9.96, g: 1, b: 0, a: 0}
     - _Texture_Color: {r: 1, g: 1, b: 1, a: 1}
-    - _TintColor: {r: 1, g: 1, b: 1, a: 0.5}
+    - _TintColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
