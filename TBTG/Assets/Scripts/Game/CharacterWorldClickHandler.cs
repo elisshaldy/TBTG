@@ -32,8 +32,20 @@ public class CharacterWorldClickHandler : MonoBehaviour, IPointerClickHandler
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            if (CharacterPlacementManager.Instance != null)
+            if (CharacterPlacementManager.Instance != null && InitiativeSystem.Instance != null && InitiativeSystem.Instance.IsFinalized)
             {
+                // If we are NOT in movement mode, check if this character is on a tile that is under attack
+                if (!CharacterPlacementManager.Instance.IsMovementModeActive)
+                {
+                    Vector2Int myGridPos = CharacterPlacementManager.Instance.GetCharacterGridPos(_ownerID, _pairID);
+                    if (myGridPos.x != -1 && CharacterPlacementManager.Instance.IsTileUnderAttack(myGridPos))
+                    {
+                        CharacterPlacementManager.Instance.TryAttackTile(myGridPos);
+                        return; // Done
+                    }
+                }
+
+                // Default: toggle info
                 CharacterPlacementManager.Instance.ToggleBigCard(_ownerID, _pairID, _charData);
             }
         }

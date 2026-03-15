@@ -383,9 +383,9 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         Vector2Int rotatedRel = relOffset;
         switch (_activeOrientation)
         {
-            case 1: rotatedRel = new Vector2Int(relOffset.y, -relOffset.x); break; // 90 CW in world -> rotate -90 in pattern
+            case 1: rotatedRel = new Vector2Int(-relOffset.y, relOffset.x); break; // Model 90 CW -> Pattern rotate -90 CW (90 CCW)
             case 2: rotatedRel = new Vector2Int(-relOffset.x, -relOffset.y); break; // 180
-            case 3: rotatedRel = new Vector2Int(-relOffset.y, relOffset.x); break; // 270 CW in world -> rotate 90 in pattern
+            case 3: rotatedRel = new Vector2Int(relOffset.y, -relOffset.x); break; // Model 270 CW -> Pattern rotate -270 CW (90 CW)
         }
 
         // Apply Reverse (Mirror) if active
@@ -798,6 +798,14 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
                 if (screen != null) screen.Show();
             }
         }
+    }
+
+    public Vector2Int GetCharacterGridPos(int ownerID, int pairID)
+    {
+        var key = (ownerID, pairID);
+        var entry = _tileOccupants.FirstOrDefault(x => x.Value == key);
+        if (entry.Value == key) return entry.Key;
+        return new Vector2Int(-1, -1);
     }
 
     public GameObject GetCharacterObject(int ownerID, int pairID)
