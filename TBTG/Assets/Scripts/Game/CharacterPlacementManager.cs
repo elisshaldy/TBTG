@@ -610,6 +610,196 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         }
     }
 
+    /// <summary>
+    /// Спроба атакувати клітинку
+    /// </summary>
+    public void TryAttackTile(Vector2Int targetPos)
+    {
+        if (IsMovementModeActive) return; // Не атакуємо, якщо вибрана карта ходу
+        if (_activeCharacterKey == (-1, -1)) return;
+
+        // 1. ПЕРЕВІРКА ПАТЕРНУ
+        if (!IsTileUnderAttack(targetPos))
+        {
+            Debug.Log("[Combat] Target tile not in attack pattern!");
+            return;
+        }
+
+        // 2. ВИКОНАННЯ АТАКИ
+        if (PhotonNetwork.InRoom)
+        {
+            photonView.RPC("RPC_AttackCharacter", RpcTarget.All, _activeCharacterKey.ownerID, _activeCharacterKey.pairID, targetPos.x, targetPos.y);
+        }
+        else
+        {
+            ExecuteAttack(_activeCharacterKey.ownerID, _activeCharacterKey.pairID, targetPos);
+        }
+    }
+
+    [PunRPC]
+    private void RPC_AttackCharacter(int attackerOwnerID, int attackerPairID, int tx, int ty)
+    {
+        ExecuteAttack(attackerOwnerID, attackerPairID, new Vector2Int(tx, ty));
+    }
+
+    private void ExecuteAttack(int attackerOwnerID, int attackerPairID, Vector2Int targetPos)
+    {
+        // Ефект на атакуючому
+        GameObject attackerObj = GetCharacterObject(attackerOwnerID, attackerPairID);
+        if (attackerObj != null && EffectManager.Instance != null)
+        {
+            EffectManager.Instance.PlayAttackerEffect(attackerObj.transform.position);
+        }
+
+        // Перевірка цілі
+        if (_tileOccupants.TryGetValue(targetPos, out var victimKey))
+        {
+            GameObject victimObj = GetCharacterObject(victimKey.Item1, victimKey.Item2);
+            
+            // Здоров'я тепер знімаємо з КАРТКИ, яка зараз активна на полі
+            CharacterHealthSystem health = null;
+            if (_deckController != null)
+            {
+                var activeCard = _deckController.GetActiveCardHandler(victimKey.Item1, victimKey.Item2);
+                if (activeCard != null)
+                {
+                    health = activeCard.GetComponentInChildren<CharacterHealthSystem>(true);
+                    if (health == null) health = activeCard.gameObject.AddComponent<CharacterHealthSystem>();
+                    
+                    // Ініціалізуємо, якщо ще не ініціалізовано
+                    if (health.OwnerID == -1) health.Initialize(victimKey.Item1, victimKey.Item2);
+                }
+            }
+
+            if (health != null)
+            {
+                health.TakeHit();
+                if (victimObj != null && EffectManager.Instance != null) 
+                    EffectManager.Instance.PlayHitEffect(victimObj.transform.position);
+
+                // --- НОВА ЛОГІКА СМЕРТІ ---
+                if (health.HealthState == CharacterHealthSystem.CharHealth.Dead)
+                {
+                    HandleCharacterDeath(victimKey.Item1, victimKey.Item2);
+                }
+            }
+        }
+        else
+        {
+            // Промах
+            Tile t = FindTileAt(targetPos);
+            if (t != null && EffectManager.Instance != null)
+            {
+                EffectManager.Instance.PlayMissEffect(t.transform.position);
+            }
+        }
+
+        // Завершення ходу (ПОВНЕ)
+        if (InitiativeSystem.Instance != null && attackerOwnerID == InitiativeSystem.Instance.CurrentTurnPlayerID)
+        {
+            InitiativeSystem.Instance.ConsumeAction(true);
+        }
+    }
+
+    private void HandleCharacterDeath(int ownerID, int pairID)
+    {
+        if (_deckController == null) return;
+
+        var deadCard = _deckController.GetActiveCardHandler(ownerID, pairID);
+        if (deadCard == null) return;
+
+        var partnerCard = deadCard.PartnerCard;
+        bool isPartnerAlive = false;
+        
+        if (partnerCard != null)
+        {
+            var pHealth = partnerCard.GetComponentInChildren<CharacterHealthSystem>();
+            if (pHealth != null && pHealth.HealthState > CharacterHealthSystem.CharHealth.Dead)
+            {
+                isPartnerAlive = true;
+            }
+        }
+
+        if (isPartnerAlive)
+        {
+            // Якщо напарник живий — просто перемикаємо на нього модель на полі
+            Debug.Log($"[Game] Character in pair {pairID} DIED. Switching to partner.");
+            _deckController.MakeActive(partnerCard);
+        }
+        else
+        {
+            // Якщо обоє мертві — видаляємо юніта зовсім
+            Debug.Log($"[Game] Both characters in pair {pairID} are DEAD. Removing unit from map.");
+            
+            // 1. Видаляємо з мапи
+            ClearPlacementInternal(ownerID, pairID);
+            
+            // 2. Видаляємо з черги ходів
+            if (InitiativeSystem.Instance != null)
+            {
+                InitiativeSystem.Instance.RemoveFromQueue(ownerID, pairID);
+            }
+
+            // 3. Синхронізуємо видалення (RPC_ClearPlacement вже існує в коді)
+            if (PhotonNetwork.InRoom)
+            {
+                photonView.RPC("RPC_ClearPlacement", RpcTarget.Others, ownerID, pairID);
+            }
+        }
+
+        // Перевіряємо умови завершення гри
+        CheckWinCondition();
+    }
+
+    private void CheckWinCondition()
+    {
+        // Чекаємо, поки ініціатива буде фіналізована (гра почалася)
+        if (InitiativeSystem.Instance == null || !InitiativeSystem.Instance.IsFinalized) return;
+
+        // Рахуємо юнітів для обох гравців
+        int p1Count = GetPlacedCharacterCount(1);
+        int p2Count = GetPlacedCharacterCount(2);
+
+        // Якщо у когось 0 — гра закінчена
+        if (p1Count == 0 || p2Count == 0)
+        {
+            int myID = PhotonNetwork.InRoom ? PhotonNetwork.LocalPlayer.ActorNumber : -1;
+            
+            // Визначаємо результат для локального гравця
+            bool isWin = false;
+            if (myID == 1) isWin = (p1Count > 0);
+            else if (myID == 2) isWin = (p2Count > 0);
+            else 
+            {
+                // Hotseat: хтось виграв, покажемо загальний екран перемоги
+                isWin = true; 
+            }
+
+            if (isWin)
+            {
+                string winnerName = "Player";
+                if (PhotonNetwork.InRoom)
+                {
+                    winnerName = PhotonNetwork.LocalPlayer.NickName;
+                }
+                else if (_gameSceneState != null && _gameSceneState._currentSettings is HotseatSettings hs)
+                {
+                    winnerName = (p1Count > 0) ? hs.Player1Name : hs.Player2Name;
+                }
+                
+                Debug.Log($"<color=green><b>GRATZ! {winnerName} WINS!</b></color>");
+
+                var screen = FindObjectOfType<WinScreen>(true);
+                if (screen != null) screen.Show();
+            }
+            else
+            {
+                var screen = FindObjectOfType<LoseScreen>(true);
+                if (screen != null) screen.Show();
+            }
+        }
+    }
+
     public GameObject GetCharacterObject(int ownerID, int pairID)
     {
         var key = (ownerID, pairID);

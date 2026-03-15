@@ -297,6 +297,18 @@ public class CardDeckController : MonoBehaviour
         }
     }
 
+    public CardDragHandler GetActiveCardHandler(int ownerID, int pairID)
+    {
+        foreach (var card in _cards)
+        {
+            if (card != null && card.OwnerID == ownerID && card.PairID == pairID && !card.IsPassive)
+            {
+                return card;
+            }
+        }
+        return null;
+    }
+
     public CharacterData GetActiveCharacterData(int pairID)
     {
         // Шукаємо у всіх слотах карту з відповідним PairID, яка стоїть в "активній" позиції

@@ -28,12 +28,20 @@ public class CardSlot : MonoBehaviour, IDropHandler
 
     private void OnEnable()
     {
-        CharacterHealthSystem.OnAnyHealthChanged += UpdateHealthUI;
+        CharacterHealthSystem.OnHealthChanged += OnHealthChanged;
     }
 
     private void OnDisable()
     {
-        CharacterHealthSystem.OnAnyHealthChanged -= UpdateHealthUI;
+        CharacterHealthSystem.OnHealthChanged -= OnHealthChanged;
+    }
+
+    private void OnHealthChanged(int ownerID, int pairID)
+    {
+        if (CurrentCard != null && CurrentCard.OwnerID == ownerID && CurrentCard.PairID == pairID)
+        {
+            UpdateHealthUI();
+        }
     }
 
     public bool IsOccupied => CurrentCard != null;
@@ -95,21 +103,12 @@ public class CardSlot : MonoBehaviour, IDropHandler
             return;
         }
 
-        // 1. Try to find the REAL health from the character on the board
-        CharacterHealthSystem healthSystem = null;
-        if (CharacterPlacementManager.Instance != null)
+        // Пріоритет на здоров'я КАРТКИ (щоб воно було індивідуальним для кожного персонажа в парі)
+        CharacterHealthSystem healthSystem = CurrentCard.GetComponentInChildren<CharacterHealthSystem>(true);
+        if (healthSystem == null) 
         {
-            var charObj = CharacterPlacementManager.Instance.GetCharacterObject(CurrentCard.OwnerID, CurrentCard.PairID);
-            if (charObj != null)
-            {
-                healthSystem = charObj.GetComponentInChildren<CharacterHealthSystem>(true);
-            }
-        }
-
-        // 2. Fallback to the card's local health system if not on map
-        if (healthSystem == null)
-        {
-            healthSystem = CurrentCard.GetComponentInChildren<CharacterHealthSystem>(true);
+            healthSystem = CurrentCard.gameObject.AddComponent<CharacterHealthSystem>();
+            healthSystem.Initialize(CurrentCard.OwnerID, CurrentCard.PairID);
         }
 
         int activeBars = 0; 

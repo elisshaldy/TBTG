@@ -374,6 +374,13 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             // Only allow if it's our turn
             if (OwnerID == InitiativeSystem.Instance.CurrentTurnPlayerID && IsPassive)
             {
+                var health = GetComponentInChildren<CharacterHealthSystem>();
+                if (health != null && health.HealthState == CharacterHealthSystem.CharHealth.Dead)
+                {
+                    Debug.Log("[Game] Cannot switch to a dead character!");
+                    return;
+                }
+
                 if (cardDeckController != null)
                 {
                     cardDeckController.MakeActive(this);
