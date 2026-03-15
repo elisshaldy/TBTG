@@ -50,6 +50,7 @@ MonoBehaviour:
   - RPC_AttackTile
   - RPC_AttackTiles
   - RPC_AttackCharacter
+  - RPC_SyncRotation
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
