@@ -656,20 +656,18 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         {
             GameObject victimObj = GetCharacterObject(victimKey.Item1, victimKey.Item2);
             
-            // Здоров'я тепер знімаємо з КАРТКИ, яка зараз активна на полі
-            CharacterHealthSystem health = null;
-            if (_deckController != null)
-            {
-                var activeCard = _deckController.GetActiveCardHandler(victimKey.Item1, victimKey.Item2);
-                if (activeCard != null)
-                {
-                    health = activeCard.GetComponentInChildren<CharacterHealthSystem>(true);
-                    if (health == null) health = activeCard.gameObject.AddComponent<CharacterHealthSystem>();
-                    
-                    // Ініціалізуємо, якщо ще не ініціалізовано
-                    if (health.OwnerID == -1) health.Initialize(victimKey.Item1, victimKey.Item2);
-                }
-            }
+        // Здоров'я тепер знімаємо з КАРТКИ, яка зараз активна на полі
+        CharacterHealthSystem health = null;
+        var activeCard = GetActiveCardForUnit(victimKey.Item1, victimKey.Item2);
+        
+        if (activeCard != null)
+        {
+            health = activeCard.GetComponentInChildren<CharacterHealthSystem>(true);
+            if (health == null) health = activeCard.gameObject.AddComponent<CharacterHealthSystem>();
+            
+            // Ініціалізуємо, якщо ще не ініціалізовано
+            if (health.OwnerID == -1) health.Initialize(victimKey.Item1, victimKey.Item2);
+        }
 
             if (health != null)
             {
@@ -703,9 +701,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
 
     private void HandleCharacterDeath(int ownerID, int pairID)
     {
-        if (_deckController == null) return;
-
-        var deadCard = _deckController.GetActiveCardHandler(ownerID, pairID);
+        var deadCard = GetActiveCardForUnit(ownerID, pairID);
         if (deadCard == null) return;
 
         var partnerCard = deadCard.PartnerCard;
@@ -1154,6 +1150,29 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
     #region HELPERS
 
     public int GetLibraryIndex(CharacterData data) => _library != null ? _library.AllCharacters.IndexOf(data) : -1;
+
+    private CardDragHandler GetActiveCardForUnit(int ownerID, int pairID)
+    {
+        if (_spawnedCharLibIndices.TryGetValue((ownerID, pairID), out int currentLibIdx))
+        {
+            // 1. Try active controller first (for current player)
+            if (_deckController != null)
+            {
+                var card = _deckController.GetActiveCardHandler(ownerID, pairID);
+                if (card != null && GetLibraryIndex(card.GetComponent<CardInfo>()?.CharData) == currentLibIdx)
+                    return card;
+            }
+
+            // 2. Fallback: Search all cards (incl. inactive for Hotseat victim)
+            var allCards = FindObjectsOfType<CardDragHandler>(true);
+            return allCards.FirstOrDefault(c => 
+                c.OwnerID == ownerID && 
+                c.PairID == pairID && 
+                c.GetComponent<CardInfo>() != null &&
+                GetLibraryIndex(c.GetComponent<CardInfo>().CharData) == currentLibIdx);
+        }
+        return null;
+    }
 
     private Tile FindTileAt(Vector2Int pos)
     {
