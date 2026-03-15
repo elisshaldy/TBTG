@@ -101,7 +101,7 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         }
     }
 
-    private void UpdateVisualRotation()
+    private void UpdateVisualRotation(bool sendRPC = true)
     {
         GameObject charObj = GetCharacterObject(_activeCharacterKey.ownerID, _activeCharacterKey.pairID);
         if (charObj != null)
@@ -112,6 +112,24 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
             // Apply Mirror effect on X axis
             Vector3 currentScale = charObj.transform.localScale;
             currentScale.x = Mathf.Abs(currentScale.x) * (_isReversed ? -1f : 1f);
+            charObj.transform.localScale = currentScale;
+        }
+
+        if (sendRPC && PhotonNetwork.InRoom && photonView != null)
+        {
+            photonView.RPC("RPC_SyncRotation", RpcTarget.Others, _activeCharacterKey.ownerID, _activeCharacterKey.pairID, _activeOrientation, _isReversed);
+        }
+    }
+
+    [PunRPC]
+    private void RPC_SyncRotation(int ownerID, int pairID, int orientation, bool isReversed)
+    {
+        GameObject charObj = GetCharacterObject(ownerID, pairID);
+        if (charObj != null)
+        {
+            charObj.transform.rotation = Quaternion.Euler(-90, orientation * 90f, 0);
+            Vector3 currentScale = charObj.transform.localScale;
+            currentScale.x = Mathf.Abs(currentScale.x) * (isReversed ? -1f : 1f);
             charObj.transform.localScale = currentScale;
         }
     }
@@ -370,37 +388,40 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
 
     public bool IsTileUnderAttack(Vector2Int tileCoords)
     {
-        if (_activeCharacterData == null || _activeCharacterData.AttackPatternGrid == null) return false;
+        if (_activeCharacterKey == (-1, -1)) return false;
+        return CheckPositionInAttackPattern(_activeCharacterKey.ownerID, _activeCharacterKey.pairID, tileCoords, _activeOrientation, _isReversed);
+    }
 
-        var gridSlot = _tileOccupants.FirstOrDefault(x => x.Value == _activeCharacterKey);
-        if (gridSlot.Value != _activeCharacterKey) return false;
+    private bool CheckPositionInAttackPattern(int attackerOwnerID, int attackerPairID, Vector2Int targetPos, int orientation, bool isReversed)
+    {
+        CharacterData data = GetCharacterData(attackerOwnerID, attackerPairID);
+        if (data == null || data.AttackPatternGrid == null) return false;
+
+        var attackerKey = (attackerOwnerID, attackerPairID);
+        var gridSlot = _tileOccupants.FirstOrDefault(x => x.Value == attackerKey);
+        if (gridSlot.Value != attackerKey) return false;
 
         Vector2Int charGridPos = gridSlot.Key;
-        Vector2Int relOffset = tileCoords - charGridPos;
+        Vector2Int relOffset = targetPos - charGridPos;
         
-        // Rotate the offset relative to the character based on current orientation
-        // (x, y) rotated counter-clockwise by _activeOrientation * 90
+        // World-to-Pattern rotation
         Vector2Int rotatedRel = relOffset;
-        switch (_activeOrientation)
+        switch (orientation)
         {
-            case 1: rotatedRel = new Vector2Int(relOffset.y, -relOffset.x); break; // 90 CW in world -> rotate -90 in pattern
-            case 2: rotatedRel = new Vector2Int(-relOffset.x, -relOffset.y); break; // 180
-            case 3: rotatedRel = new Vector2Int(-relOffset.y, relOffset.x); break; // 270 CW in world -> rotate 90 in pattern
+            case 1: rotatedRel = new Vector2Int(relOffset.y, -relOffset.x); break; 
+            case 2: rotatedRel = new Vector2Int(-relOffset.x, -relOffset.y); break; 
+            case 3: rotatedRel = new Vector2Int(-relOffset.y, relOffset.x); break; 
         }
 
-        // Apply Reverse (Mirror) if active
-        if (_isReversed)
-        {
-            rotatedRel.x = -rotatedRel.x;
-        }
+        if (isReversed) rotatedRel.x = -rotatedRel.x;
 
-        Vector2Int patternCharPos = _activeCharacterData.AttackPatternGrid.CharacterPosition;
+        Vector2Int patternCharPos = data.AttackPatternGrid.CharacterPosition;
         int px = rotatedRel.x + patternCharPos.x;
         int py = rotatedRel.y + patternCharPos.y;
 
         if (px >= 0 && px < 3 && py >= 0 && py < 3)
         {
-            return _activeCharacterData.AttackPatternGrid.Get(px, py);
+            return data.AttackPatternGrid.Get(px, py);
         }
 
         return false;
@@ -628,74 +649,79 @@ public class CharacterPlacementManager : MonoBehaviourPunCallbacks
         // 2. ВИКОНАННЯ АТАКИ
         if (PhotonNetwork.InRoom)
         {
-            photonView.RPC("RPC_AttackCharacter", RpcTarget.All, _activeCharacterKey.ownerID, _activeCharacterKey.pairID, targetPos.x, targetPos.y);
+            photonView.RPC("RPC_AttackCharacter", RpcTarget.All, _activeCharacterKey.ownerID, _activeCharacterKey.pairID, targetPos.x, targetPos.y, _activeOrientation, _isReversed);
         }
         else
         {
-            ExecuteAttack(_activeCharacterKey.ownerID, _activeCharacterKey.pairID, targetPos);
+            ExecuteAttack(_activeCharacterKey.ownerID, _activeCharacterKey.pairID, targetPos, _activeOrientation, _isReversed);
         }
     }
 
     [PunRPC]
-    private void RPC_AttackCharacter(int attackerOwnerID, int attackerPairID, int tx, int ty)
+    private void RPC_AttackCharacter(int attackerOwnerID, int attackerPairID, int tx, int ty, int orientation, bool isReversed)
     {
-        ExecuteAttack(attackerOwnerID, attackerPairID, new Vector2Int(tx, ty));
+        ExecuteAttack(attackerOwnerID, attackerPairID, new Vector2Int(tx, ty), orientation, isReversed);
     }
 
-    private void ExecuteAttack(int attackerOwnerID, int attackerPairID, Vector2Int targetPos)
+    private void ExecuteAttack(int attackerOwnerID, int attackerPairID, Vector2Int triggerPos, int orientation, bool isReversed)
     {
-        // Ефект на атакуючому
+        // 1. Ефект на атакуючому та отримання даних
         GameObject attackerObj = GetCharacterObject(attackerOwnerID, attackerPairID);
         if (attackerObj != null && EffectManager.Instance != null)
-        {
             EffectManager.Instance.PlayAttackerEffect(attackerObj.transform.position);
+
+        bool hitAny = false;
+        
+        // Создаем копию списка координат, чтобы избежать ошибок при модификации коллекции (хотя у нас тут только чтение)
+        var allOccupants = _tileOccupants.ToList();
+
+        foreach (var occupant in allOccupants)
+        {
+            if (CheckPositionInAttackPattern(attackerOwnerID, attackerPairID, occupant.Key, orientation, isReversed))
+            {
+                ApplyDamageToVictim(occupant.Value.Item1, occupant.Value.Item2, occupant.Key);
+                hitAny = true;
+            }
         }
 
-        // Перевірка цілі
-        if (_tileOccupants.TryGetValue(targetPos, out var victimKey))
+        // 3. Если патерн вообще никого не зацепил — играем эффект промаха на клетке клика
+        if (!hitAny)
         {
-            GameObject victimObj = GetCharacterObject(victimKey.Item1, victimKey.Item2);
-            
-        // Здоров'я тепер знімаємо з КАРТКИ, яка зараз активна на полі
+            Tile t = FindTileAt(triggerPos);
+            if (t != null && EffectManager.Instance != null)
+                EffectManager.Instance.PlayMissEffect(t.transform.position);
+        }
+
+        // 4. Завершение хода (ПОВНОЕ)
+        if (InitiativeSystem.Instance != null && attackerOwnerID == InitiativeSystem.Instance.CurrentTurnPlayerID)
+        {
+            InitiativeSystem.Instance.ConsumeAction(true);
+        }
+    }
+
+    private void ApplyDamageToVictim(int victimOwnerID, int victimPairID, Vector2Int pos)
+    {
+        GameObject victimObj = GetCharacterObject(victimOwnerID, victimPairID);
         CharacterHealthSystem health = null;
-        var activeCard = GetActiveCardForUnit(victimKey.Item1, victimKey.Item2);
+        var activeCard = GetActiveCardForUnit(victimOwnerID, victimPairID);
         
         if (activeCard != null)
         {
             health = activeCard.GetComponentInChildren<CharacterHealthSystem>(true);
             if (health == null) health = activeCard.gameObject.AddComponent<CharacterHealthSystem>();
-            
-            // Ініціалізуємо, якщо ще не ініціалізовано
-            if (health.OwnerID == -1) health.Initialize(victimKey.Item1, victimKey.Item2);
+            if (health.OwnerID == -1) health.Initialize(victimOwnerID, victimPairID);
         }
 
-            if (health != null)
-            {
-                health.TakeHit();
-                if (victimObj != null && EffectManager.Instance != null) 
-                    EffectManager.Instance.PlayHitEffect(victimObj.transform.position);
-
-                // --- НОВА ЛОГІКА СМЕРТІ ---
-                if (health.HealthState == CharacterHealthSystem.CharHealth.Dead)
-                {
-                    HandleCharacterDeath(victimKey.Item1, victimKey.Item2);
-                }
-            }
-        }
-        else
+        if (health != null)
         {
-            // Промах
-            Tile t = FindTileAt(targetPos);
-            if (t != null && EffectManager.Instance != null)
-            {
-                EffectManager.Instance.PlayMissEffect(t.transform.position);
-            }
-        }
+            health.TakeHit();
+            if (victimObj != null && EffectManager.Instance != null) 
+                EffectManager.Instance.PlayHitEffect(victimObj.transform.position);
 
-        // Завершення ходу (ПОВНЕ)
-        if (InitiativeSystem.Instance != null && attackerOwnerID == InitiativeSystem.Instance.CurrentTurnPlayerID)
-        {
-            InitiativeSystem.Instance.ConsumeAction(true);
+            if (health.HealthState == CharacterHealthSystem.CharHealth.Dead)
+            {
+                HandleCharacterDeath(victimOwnerID, victimPairID);
+            }
         }
     }
 
